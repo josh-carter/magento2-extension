@@ -1,9 +1,9 @@
 {
-  "name":"strakertranslations/straker-magento2",
+  "name":"straker/easy-translation-platform",
   "type":"magento2-module",
   "description":"Translation Module for Magento 2",
   "homepage":"https://strakertranslations.com/magento",
-  "version":"0.0.1",
+  "version":"1.0.7",
   "license":[
     "OSL-3.0",
     "AFL-3.0"
@@ -17,8 +17,8 @@
      {
             "type":"package",
             "package":{
-                "name":"strakertranslations/straker-magento2",
-                "version":"1.0.5",
+                "name":"straker/easy-translation-platform",
+                "version":"1.0.7",
                 "source":{
                     "url":"https://github.com/strakertranslations/magento2-extension",
                     "type":"git"
