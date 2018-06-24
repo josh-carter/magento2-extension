@@ -3,7 +3,7 @@
   "type":"magento2-module",
   "description":"Translation Module for Magento 2",
   "homepage":"https://strakertranslations.com/magento",
-  "version":"0.0.1",
+  "version":"v1.0.7",
   "license":[
     "OSL-3.0",
     "AFL-3.0"
