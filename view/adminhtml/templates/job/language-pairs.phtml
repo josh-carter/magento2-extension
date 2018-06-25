@@ -38,6 +38,7 @@
         }
 
         function removeErrorIconFromTab() {
+            var tabs = $('li[role="tab"]');
             if(!isEmpty(tabs) && tabs.length > 0 && !isEmpty(tabs[0])){
                 var cssError = '_error';
                 var tab = $(tabs[0]);
@@ -314,7 +315,6 @@
                 return true;
             }
             return false;
-
         }
 
         function accessLanguageTab(){
@@ -394,17 +394,18 @@
                 resetLanguagePairElements();
             }
         }
-
+// console.log();
         //============ Event listeners =============
-        if(!isEmpty(tabs)){
-            tabs.on('click', 'a', function () {
+        // console.log($('ul[role="tablist"]'));
+        // if(!isEmpty($('li[role="tab"]'))){
+            $('#job_tabs').on('click', 'a', function () {
                 if(this.id === 'job_tabs_select_destination'){
                     accessLanguageTab();
                 }else{
                     accessOtherTab();
                 }
             });
-        }
+        // }
 
         if(!isEmpty(nextButton)){
             nextButton.on("click", function (e) {
@@ -446,6 +447,7 @@
             //when job content (products, categories, cms pages and cms blocks) checked
             editForm.on('click', 'input', function () {
 //                checkStoreData();
+                console.log(this);
                 $('input[type="hidden"]').trigger('change');
 
             });
@@ -453,9 +455,9 @@
 
         $('input[type="hidden"]').change(function () {
             var name = $(this).prop('name');
-            if($.inArray(name, hiddenInputs)){
+            // if($.inArray(name, hiddenInputs) !== -1){
                 checkStoreData();
-            }
+            // }
         });
 
         if (!isEmpty(saveButton)) {
