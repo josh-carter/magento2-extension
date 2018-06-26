@@ -76,37 +76,5 @@
                 </field>
             </group>
         </section>
-
-        <section id="demonstration" translate="label" sortOrder="30" showInWebsite="1" showInDefault="1" showInStore="1">
-            <class>separator-top</class>
-            <label>Demonstration</label>
-            <tab>easytranslationplatform</tab>
-            <resource>Straker_EasyTranslationPlatform::config</resource>
-            <group id="complete_job" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>Complete Job</label>
-                <field id="tj_number" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>TJ Number</label>
-                    <comment>eg. TJ285380</comment>
-                </field>
-                <field id="translate_job" translate="label" type="button" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <frontend_model>Straker\EasyTranslationPlatform\Block\Adminhtml\Settings\Config\CompleteJob</frontend_model>
-                </field>
-            </group>
-            <group id="data" translate="label" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="20">
-                <label>Translation Data</label>
-                <field id="reset_account_button" type="button" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Reset All</label>
-                    <frontend_model>Straker\EasyTranslationPlatform\Block\Adminhtml\Settings\Config\ResetAccountButton</frontend_model>
-                </field>
-                <field id="straker_backup_button" translate="label" type="button" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Backup</label>
-                    <frontend_model>Straker\EasyTranslationPlatform\Block\Adminhtml\Settings\Config\BackupButton</frontend_model>
-                </field>
-                <field id="straker_restore_button" translate="label" type="button" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Restore</label>
-                    <frontend_model>Straker\EasyTranslationPlatform\Block\Adminhtml\Settings\Config\RestoreButton</frontend_model>
-                </field>
-            </group>
-        </section>
     </system>
 </config>
