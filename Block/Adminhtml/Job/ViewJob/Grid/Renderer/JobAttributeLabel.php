@@ -5,9 +5,6 @@ namespace Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Rende
 use Magento\Backend\Block\Context;
 use Magento\Framework\DataObject;
 use Magento\Backend\Block\Widget\Grid\Column\Renderer\AbstractRenderer;
-use Straker\EasyTranslationPlatform\Helper\BlockHelper;
-use Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeTranslation;
-use Straker\EasyTranslationPlatform\Model\JobType;
 use Straker\EasyTranslationPlatform\Helper\PageHelper;
 use Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeTranslation\CollectionFactory as AttributeTranslationCollection;
 use Magento\Eav\Model\Entity\AttributeFactory;
