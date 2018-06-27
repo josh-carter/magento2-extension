@@ -8,7 +8,6 @@ class JobStatus extends AbstractModel implements JobStatusInterface, IdentityInt
 {
     const CACHE_TAG                 = 'straker_easytranslationplatform_jobstatus';
     const ENTITY                    = 'straker_job_status';
-    const JOBSTATUS                 = ['init', 'queued','ready','in_progress','completed','confirmed'];
     const JOB_STATUS_INIT           = 1;
     const JOB_STATUS_QUEUED         = 2;
     const JOB_STATUS_READY          = 3;
@@ -24,5 +23,9 @@ class JobStatus extends AbstractModel implements JobStatusInterface, IdentityInt
     public function getIdentities()
     {
         return [self::CACHE_TAG . '_' . $this->getId()];
+    }
+
+    public static function getJobStatus(){
+        return ['init', 'queued','ready','in_progress','completed','confirmed'];
     }
 }
