@@ -8,7 +8,6 @@ class JobType extends AbstractModel implements JobTypeInterface, IdentityInterfa
 {
     const CACHE_TAG             = 'straker_easytranslationplatform_jobtype';
     const ENTITY                = 'straker_job_type';
-    const JOBTYPE               = ['product', 'category', 'attribute', 'page', 'block'];
     const JOB_TYPE_PRODUCT      = 1;
     const JOB_TYPE_CATEGORY     = 2;
     const JOB_TYPE_ATTRIBUTE    = 3;
