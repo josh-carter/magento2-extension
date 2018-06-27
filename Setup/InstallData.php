@@ -24,7 +24,7 @@ class InstallData implements InstallDataInterface
 
         $data = [];
 
-        foreach (Model\JobType::JOBTYPE as $type) {
+        foreach (Model\JobType::getJobTypes() as $type) {
             $data[] = ['type_name' => $type ];
         }
 

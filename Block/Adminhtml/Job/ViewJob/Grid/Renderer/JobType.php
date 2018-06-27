@@ -12,7 +12,8 @@ class JobType extends AbstractRenderer
     function render(DataObject $row)
     {
         $jobTypeId = $row->getData('job_type_id');
-        $row->setData('job_type', ucwords(JobTypeModel::JOBTYPE[$jobTypeId-1]));
+        $jobTypes = JobTypeModel::getJobTypes();
+        $row->setData('job_type', ucwords($jobTypes[$jobTypeId-1]));
         return parent::render($row);
     }
 }
