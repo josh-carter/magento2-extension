@@ -3,7 +3,6 @@ namespace Straker\EasyTranslationPlatform\Model;
 
 use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Model\AbstractModel;
-use Symfony\CS\Fixer\Symfony\SelfAccessorFixer;
 
 class JobType extends AbstractModel implements JobTypeInterface, IdentityInterface
 {
@@ -24,5 +23,9 @@ class JobType extends AbstractModel implements JobTypeInterface, IdentityInterfa
     public function getIdentities()
     {
         return [self::CACHE_TAG . '_' . $this->getId()];
+    }
+
+    public static function getJobTypes(){
+        return ['product', 'category', 'attribute', 'page', 'block'];
     }
 }
