@@ -14,7 +14,7 @@ class InstallData implements InstallDataInterface
 
         $data = [];
 
-        foreach (Model\JobStatus::JOBSTATUS as $status) {
+        foreach (Model\JobStatus::getJobStatus() as $status) {
             $data[] = ['status_name' => $status ];
         }
 
