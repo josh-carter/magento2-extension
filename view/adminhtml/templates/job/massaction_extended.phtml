@@ -41,7 +41,6 @@
             id="<?php echo $block->getHtmlId() ?>-mass-select"
             class="action-select-multiselect"
             data-menu="grid-mass-select">
-<!--            <optgroup label="--><?php ///* @escapeNotVerified */ echo __('Mass Actions')?><!--">-->
                 <option disabled selected></option>
             <?php if ($block->getUseSelectAll()):?>
                 <option value="selectAll">
@@ -57,7 +56,6 @@
                 <option value="unselectVisible">
                     <?php /* @escapeNotVerified */ echo __('Deselect All on This Page') ?>
                 </option>
-<!--            </optgroup>-->
         </select>
         <label for="<?php echo $block->getHtmlId() ?>-mass-select"></label>
     </div>
