@@ -55,7 +55,7 @@ class Save extends \Magento\Backend\App\Action
 
                 $this->_setup->saveAttributes($attributes);
 
-                $resultRedirect->setPath('/Setup_TestingStoreView/index/');
+                $resultRedirect->setPath('*/setup_testingstoreview/index/');
 
                 return $resultRedirect;
             } catch (LocalizedException $e) {
@@ -72,7 +72,7 @@ class Save extends \Magento\Backend\App\Action
                 $this->messageManager->addException($e, __('Something went wrong while saving the product attributes.'));
             }
 
-            $resultRedirect->setPath('/*/index/');
+            $resultRedirect->setPath('*/jobs/index/');
         }
 
         return $resultRedirect;

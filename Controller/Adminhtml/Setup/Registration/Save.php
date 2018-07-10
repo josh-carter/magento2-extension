@@ -47,13 +47,14 @@ class Save extends Action
         $resultRedirect = $this->resultRedirectFactory->create();
 
         if ($data) {
+
             try {
                 $this->_setup->saveClientData($data);
                 $oRegistration = $this->_strakerAPI->callRegister($data);
                 $this->_setup->saveAccessToken($oRegistration->access_token);
                 $this->_setup->saveAppKey($oRegistration->application_key);
                 $this->_reinitConfig->reinit();
-                $resultRedirect->setPath('/Setup_productattributes/index/');
+                $resultRedirect->setPath('*/setup_productattributes/index/');
                 return $resultRedirect;
             } catch (LocalizedException $e) {
                 $this->_logger->error('error'.__FILE__.' '.__LINE__.'', [$e]);
@@ -70,8 +71,7 @@ class Save extends Action
                 $this->_strakerAPI->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
                 $this->messageManager->addException($e, __('There was an error registering your details'));
             }
-
-            $resultRedirect->setPath('/*/index/');
+            $resultRedirect->setPath('*/jobs/index/');
         }
 
         return $resultRedirect;
