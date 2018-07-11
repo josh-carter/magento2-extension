@@ -52,12 +52,7 @@ class Save extends \Magento\Backend\App\Action
         if ($data) {
             try {
                 $attributes = $this->sortData($data);
-
                 $this->_setup->saveAttributes($attributes);
-
-                $resultRedirect->setPath('*/setup_testingstoreview/index/');
-
-                return $resultRedirect;
             } catch (LocalizedException $e) {
                 $this->_logger->error('error'.__FILE__.' '.__LINE__, [$e]);
                 $this->_strakerAPI->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
@@ -71,10 +66,10 @@ class Save extends \Magento\Backend\App\Action
                 $this->_strakerAPI->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
                 $this->messageManager->addException($e, __('Something went wrong while saving the product attributes.'));
             }
-
-            $resultRedirect->setPath('*/jobs/index/');
         }
 
+        $fromAction = empty($data['from_action']) ? 'new' : $data['from_action'];
+        $resultRedirect->setPath('*/jobs/'. $fromAction . '/');
         return $resultRedirect;
     }
 

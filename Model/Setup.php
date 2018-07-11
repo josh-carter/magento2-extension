@@ -2,10 +2,8 @@
 
 namespace Straker\EasyTranslationPlatform\Model;
 
-use Composer\Cache;
 use Exception;
 use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Registry;

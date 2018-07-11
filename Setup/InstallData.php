@@ -21,7 +21,6 @@ class InstallData implements InstallDataInterface
         $setup->getConnection()
             ->insertMultiple($setup->getTable(Model\JobStatus::ENTITY), $data);
 
-
         $data = [];
 
         foreach (Model\JobType::getJobTypes() as $type) {

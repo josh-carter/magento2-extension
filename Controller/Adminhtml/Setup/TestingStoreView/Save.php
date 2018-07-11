@@ -93,7 +93,8 @@ class Save extends \Magento\Backend\App\Action
                 }
             }
         }
-        $resultRedirect->setPath('*/jobs/new');
+        $fromAction = empty($data['from_action']) ? 'new' : $data['from_action'];
+        $resultRedirect->setPath('*/jobs/'. $fromAction . '/');
         return $resultRedirect;
     }
 }
