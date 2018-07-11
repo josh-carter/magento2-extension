@@ -550,4 +550,8 @@ class ProductHelper extends AbstractHelper
         $summaryArray['product'] = $productArray;
         $this->_xmlHelper->addContentSummary($summaryArray);
     }
+
+    public function getConfigHelper(){
+        return $this->_configHelper;
+    }
 }

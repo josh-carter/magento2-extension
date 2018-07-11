@@ -51,32 +51,43 @@ class Form extends Generic
             ['legend' => __('Category Attributes'), 'class' => 'settings-attributes']
         );
 
+        $defaultAttributes = $this->getDefaultAttributes();
         $fieldset->addField('default_attributes', 'multiselect', [
             'label' => __('Default'),
             'name' => 'default[]',
             'required' => true,
-            'values' =>  $this->getDefaultAttributes()[0],
-            'value'=> $this->getDefaultAttributes()[1],
+            'values' =>  $defaultAttributes[0],
+            'value'=>  $defaultAttributes[1],
             'class'=>'straker-attributes'
         ]);
 
+        $customAttributes = $this->getCustomAttributes();
         $fieldset->addField('custom_attributes', 'multiselect', [
             'label' => __('Custom'),
             'name' => 'custom[]',
-            'values' =>  $this->getCustomAttributes()[0],
-            'value'=> $this->getCustomAttributes()[1],
+            'values' => $customAttributes[0],
+            'value'=> $customAttributes[1],
             'class'=>'straker-attributes'
         ]);
 
+        $categoryAttributes = $this->getCategoryAttributes();
         $fieldset2->addField('category_attributes', 'multiselect', [
             'label' => __('Default'),
             'name' => 'category[]',
             'required' => true,
-            'values' =>  $this->getCategoryAttributes()[0],
-            'value'=> $this->getCategoryAttributes()[1],
+            'values' =>  $categoryAttributes[0],
+            'value'=> $categoryAttributes[1],
             'class'=>'straker-attributes'
         ]);
 
+        $fieldset->addField(
+            'from_action',
+            'hidden',
+            [
+                'name' => 'from_action',
+                'value' => $this->_request->getParam('from')
+            ]
+        );
 
         $form->setUseContainer(true);
 
@@ -128,7 +139,6 @@ class Form extends Generic
         }
 
         usort($values, function ($a, $b) {
-
             return strcmp($a['label'], $b['label']);
         });
 
