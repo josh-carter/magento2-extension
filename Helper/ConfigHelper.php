@@ -369,4 +369,36 @@ class ConfigHelper extends AbstractHelper
             'page_id'
         ];
     }
+
+    public function getUserInfo(){
+        $data = array();
+        if ( !empty($this->scopeConfig->getValue('straker/general/first_name')) ) {
+            $data['first_name'] = $this->scopeConfig->getValue('straker/general/first_name');
+        }
+
+        if ( !empty($this->scopeConfig->getValue('straker/general/last_name')) ) {
+            $data['last_name'] = $this->scopeConfig->getValue('straker/general/last_name');
+        }
+
+        if ( !empty($this->scopeConfig->getValue('straker/general/email')) ) {
+            $data['email'] = $this->scopeConfig->getValue('straker/general/email');
+        }
+
+        if ( !empty($this->scopeConfig->getValue('straker/general/country')) ) {
+            $data['country'] = $this->scopeConfig->getValue('straker/general/country');
+        }
+
+        if ( !empty($this->scopeConfig->getValue('straker/general/company_name')) ) {
+            $data['company_name'] = $this->scopeConfig->getValue('straker/general/company_name');
+        }
+
+        if ( !empty($this->scopeConfig->getValue('straker/general/phone_number')) ) {
+            $data['phone_number'] = $this->scopeConfig->getValue('straker/general/phone_number');
+        }
+
+        if ( !empty($this->scopeConfig->getValue('straker/general/url')) ) {
+            $data['url'] = $this->scopeConfig->getValue('straker/general/url');
+        }
+        return $data;
+    }
 }

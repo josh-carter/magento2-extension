@@ -30,6 +30,9 @@ class CustomAttributeSource implements ArrayInterface
                        'value' => $attribute->getId()
                     ];
                 }
+                usort($this->_option, function ($a, $b) {
+                    return strcmp($a['label'], $b['label']);
+                });
                 return $this->_option;
             }
         }

@@ -9,7 +9,6 @@ use Magento\Framework\Data\FormFactory;
 
 class Form extends Generic
 {
-
     protected $_strakerAPIInterface;
     protected $_Registry;
 
@@ -50,10 +49,16 @@ class Form extends Generic
             ]
         );
 
+        $fieldset->addField(
+            'from_action',
+            'hidden',
+            [
+                'name' => 'from_action',
+                'value' => $this->_request->getParam('from')
+            ]
+        );
+
         $form->setUseContainer(true);
-
-        $form->setValues($this->_session->getData('form_data'));
-
         $this->setForm($form);
 
         return parent::_prepareForm();

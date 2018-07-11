@@ -2,10 +2,8 @@
 
 namespace Straker\EasyTranslationPlatform\Model;
 
-use Composer\Cache;
 use Exception;
 use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Registry;
@@ -49,10 +47,25 @@ class Setup extends AbstractModel implements SetupInterface
     public function saveClientData($data)
     {
         $this->_configModel->saveConfig('straker/general/name', $data['first_name'] . ' ' . $data['last_name'], 'default', 0);
-
+        $this->_configModel->saveConfig('straker/general/first_name', $data['first_name'], 'default', 0);
+        $this->_configModel->saveConfig('straker/general/last_name', $data['last_name'] , 'default', 0);
         $this->_configModel->saveConfig('straker/general/email', $data['email'], 'default', 0);
 
-        $this->_configModel->saveConfig('straker/general/url', $data['url'], 'default', 0);
+        if(!empty($data['country'])) {
+            $this->_configModel->saveConfig('straker/general/country', $data['country'], 'default', 0);
+        }
+
+        if(!empty($data['company_name'])) {
+            $this->_configModel->saveConfig('straker/general/company_name', $data['company_name'], 'default', 0);
+        }
+
+        if(!empty($data['phone_number'])) {
+            $this->_configModel->saveConfig('straker/general/phone_number', $data['phone_number'], 'default', 0);
+        }
+
+        if(!empty($data['url'])) {
+            $this->_configModel->saveConfig('straker/general/url', $data['url'], 'default', 0);
+        }
 
         return $this->_configModel;
     }
@@ -98,6 +111,7 @@ class Setup extends AbstractModel implements SetupInterface
             $this->_configModel->saveConfig('straker_config/attribute/category', $attributes['category'], 'default', 0);
         }
 
+        $this->_cacheManager->clean(\Magento\Framework\App\Cache\Type\Config::CACHE_TAG);
         return $this->_configModel;
     }
 
