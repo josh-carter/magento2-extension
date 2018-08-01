@@ -212,13 +212,21 @@ class Save extends Action
 
     /**
      * @param $job_object
-     * @return bool
      */
     protected function _summitJob($job_object)
     {
         $mergeResult    = $this->mergeJobData($job_object);
         $sourceFile     = $mergeResult['filename'];
         $summary        = $mergeResult['summary'];
+
+        if (empty($sourceFile)) {
+            $sourceFileMessage = 'Failed to merge job files';
+            $this->_logger->error(__FILE__ . ' ' . __LINE__ . ' ' . $sourceFileMessage);
+            $this->_api->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $sourceFileMessage);
+            $this->messageManager->addError(__($sourceFileMessage));
+            return;
+        }
+
         $strakerJobData = current($job_object);
         $defaultTitle   = $strakerJobData->getData('sl').'_'.$strakerJobData->getData('tl').'_'.$strakerJobData->getData('source_store_id').'_'.$strakerJobData->getData('job_id');
 
@@ -237,7 +245,6 @@ class Save extends Action
         $response = '';
 
         try {
-
             $response = $this->_api->callTranslate($this->_jobRequest);
 
             if(key_exists('success', $response) && $response->success){
@@ -255,12 +262,12 @@ class Save extends Action
                     $this->messageManager->addSuccess(__('Your job was successfully sent to Straker Translations'));
                 }
             }else {
-                $this->messageManager->addErrorMessage(__($response->message));
+                $message = isset($response->message) ? $response->message : (method_exists($response, 'getMessage') ? $response->getMessage() : 'Unknown networking issue.');
+                $this->messageManager->addErrorMessage(__($message));
             }
-
         } catch (Exception $e) {
-            $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$response]);
-            $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), array($e));
+            $this->_logger->error(__FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$response]);
+            $this->_logger->error(__FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), array($e));
             $this->_api->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
             $this->messageManager->addError(__('Something went wrong while submitting your job to Straker Translations.'));
         }
@@ -307,7 +314,6 @@ class Save extends Action
                             $dataNode = $this->_xmlHelper->getDom()->importNode($dataNode, true);
                             $this->_xmlHelper->getRoot()->appendChild($dataNode);
                         }
-
                     }
                 }
 //                for($i = 0; $i < $dataNodes->length; $i++){
@@ -345,7 +351,7 @@ class Save extends Action
             $this->messageManager->addError(__('Something went wrong while submitting your job to Straker Translations.'));
         }
 
-        return '';
+        return ['filename' => '', 'summary' => ''];
     }
 
     protected function checkEmptyJob($data)
