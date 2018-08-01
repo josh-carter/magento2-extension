@@ -247,7 +247,6 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
                 }
 
                 if (empty($this->getData('job_number'))) {
-
                     $return['isSuccess'] = false;
                     $return['emptyTJ'] = true;
                     return $return;
