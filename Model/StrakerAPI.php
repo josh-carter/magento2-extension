@@ -99,7 +99,6 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
             }
 
         }catch(Exception $e){
-
             $this->_messageManager->addError('Straker API error. Please check logs.');
             $this->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
         }
