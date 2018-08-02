@@ -59,6 +59,10 @@ class Setup extends AbstractModel implements SetupInterface
             $this->_configModel->saveConfig('straker/general/company_name', $data['company_name'], 'default', 0);
         }
 
+        if(!empty($data['company_size'])) {
+            $this->_configModel->saveConfig('straker/general/company_size', $data['company_size'], 'default', 0);
+        }
+
         if(!empty($data['phone_number'])) {
             $this->_configModel->saveConfig('straker/general/phone_number', $data['phone_number'], 'default', 0);
         }

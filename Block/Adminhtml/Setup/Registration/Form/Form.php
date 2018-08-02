@@ -101,7 +101,20 @@ class Form extends Generic
             [
                 'name' => 'company_name',
                 'label' => __('Company Name'),
-                'title' => __('company_name')
+                'title' => __('company_name'),
+                'required' => true
+            ]
+        );
+
+        $fieldset->addField(
+            'company_size',
+            'select',
+            [
+                'name' => 'company_size',
+                'label' => __('Company Size'),
+                'title' => __('company_size'),
+                'required' => true,
+                'options' => $this->_getCompanySizeOptions()
             ]
         );
 
@@ -166,5 +179,15 @@ class Form extends Generic
         }
 
         return $aCountries;
+    }
+
+    private function _getCompanySizeOptions() {
+        return array(
+            ''          => '-',
+            '1 - 10'    => '1 - 10',
+            '11 - 50'   => '11 - 50',
+            '51 - 250'  => '51 - 250',
+            '250+'      => '250+'
+        );
     }
 }
