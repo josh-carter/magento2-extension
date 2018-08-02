@@ -1,7 +1,6 @@
 <?php
 namespace Straker\EasyTranslationPlatform\Model;
 
-use Magento\Framework\Message\MessageInterface;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Registry;
@@ -63,25 +62,26 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
         $httpClient = $this->_httpClient->create();
         $return = '';
 
-        switch(strtolower($method)){
-            case 'post':
-                $method = Zend_Http_Client::POST;
-                $httpClient->setParameterPost($request);
-                if(!empty($request['source_file'])){
-                    $httpClient->setFileUpload($request['source_file'], 'source_file');
-                }
-                break;
-            case 'get':
-                $method = Zend_Http_Client::GET;
-                break;
-        }
-
-        $httpClient->setUri($url);
-        $httpClient->setConfig(['timeout' => $timeout, 'verifypeer' => 0]);
-        $httpClient->setHeaders($this->getHeaders());
-        $httpClient->setMethod($method);
-
         try{
+
+            switch(strtolower($method)){
+                case 'post':
+                    $method = Zend_Http_Client::POST;
+                    $httpClient->setParameterPost($request);
+                    if(!empty($request['source_file'])){
+                        $httpClient->setFileUpload($request['source_file'], 'source_file');
+                    }
+                    break;
+                case 'get':
+                    $method = Zend_Http_Client::GET;
+                    break;
+            }
+
+            $httpClient->setUri($url);
+            $httpClient->setConfig(['timeout' => $timeout, 'verifypeer' => 0]);
+            $httpClient->setHeaders($this->getHeaders());
+            $httpClient->setMethod($method);
+
             $response = $httpClient->request();
 
             if(!$response->isError()){
