@@ -42,7 +42,6 @@ class Save extends Action
     public function execute()
     {
         $data = $this->getRequest()->getParams();
-
         $resultRedirect = $this->resultRedirectFactory->create();
 
         if ($data) {
@@ -53,12 +52,6 @@ class Save extends Action
                 $this->_setup->saveAccessToken($oRegistration->access_token);
                 $this->_setup->saveAppKey($oRegistration->application_key);
                 $this->_reinitConfig->reinit();
-            } catch (LocalizedException $e) {
-                $this->_logger->error('error'.__FILE__.' '.__LINE__.'', [$e]);
-                $this->_strakerAPI->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
-                $resultRedirect->setPath('/*/index/');
-                $this->messageManager->addError('There was an error registering your details');
-                return $resultRedirect;
             } catch (\RuntimeException $e) {
                 $this->_logger->error('error'.__FILE__.' '.__LINE__, [$e]);
                 $this->_strakerAPI->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
