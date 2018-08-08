@@ -72,7 +72,7 @@ class Edit extends \Magento\Backend\App\Action
                 /** \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
                 $resultRedirect = $this->resultRedirectFactory->create();
 
-                return $resultRedirect->setPath('*/*/');
+                return $resultRedirect->setPath('*/*/*/');
             }
         }
 

@@ -94,12 +94,12 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
                     $return = $body;
                 }
             }else{
-                $this->_messageManager->addError('Straker API error. Please check logs.');
+                $this->_messageManager->addError(__('Straker API error. Please check logs.'));
                 $return = $response;
             }
-
         }catch(Exception $e){
-            $this->_messageManager->addError('Straker API error. Please check logs.');
+            $this->_logger->error('error'.__FILE__.' '.__LINE__, [$e]);
+            $this->_messageManager->addException($e, 'Straker API error. Please check logs.');
             $this->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
         }
 
@@ -331,11 +331,16 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
             'hostName'         => $_SERVER['HTTP_HOST']
         ];
 
-        $httpClient->setHeaders($this->getHeaders());
-        $httpClient->setConfig(['timeout' => 300, 'verifypeer' => 0]);
-        $httpClient->setMethod(Zend_Http_Client::POST);
-        $httpClient->setParameterPost($requestData);
-        $httpClient->setUri($url);
-        $httpClient->request();
+        try{
+            $httpClient->setHeaders($this->getHeaders());
+            $httpClient->setConfig(['timeout' => 300, 'verifypeer' => 0]);
+            $httpClient->setMethod(Zend_Http_Client::POST);
+            $httpClient->setParameterPost($requestData);
+            $httpClient->setUri($url);
+            $httpClient->request();
+        }catch(\Zend_Http_Client_Exception $e){
+            $this->_logger->error('error'.__FILE__.' '.__LINE__, [$e]);
+            $this->_messageManager->addExceptionMessage($e, __('Something went wrong while connecting Straker API.'));
+        }
     }
 }
