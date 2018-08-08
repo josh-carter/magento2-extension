@@ -1,7 +1,6 @@
 requirejs([
     'jquery'
 ], function ( $ ) {
-
     $('li[data-ui-id="menu-straker-easytranslationplatform-accounts"]').on('click', function (event) {
         event.preventDefault();
         var url = 'https://deltaray.strakertranslations.com/user/login';
@@ -13,5 +12,4 @@ requirejs([
         var url = 'https://www.strakertranslations.com/terms-conditions';
         window.open(url, '_blank');
     });
-
 });
