@@ -3,8 +3,8 @@
 namespace Straker\EasyTranslationPlatform\Block\Adminhtml\Support\Form;
 
 use Magento\Backend\Block\Widget\Form\Generic;
-use Straker\EasyTranslationPlatform\Api\Data\StrakerAPIInterface;
 use Straker\EasyTranslationPlatform\Model\ResourceModel\Job\CollectionFactory as JobCollection;
+use Straker\EasyTranslationPlatform\Helper\ConfigHelper;
 use Magento\Backend\Block\Template\Context;
 use Magento\Framework\Registry;
 use Magento\Framework\Data\FormFactory;
@@ -14,18 +14,20 @@ class Form extends Generic
 
     protected $_jobCollection;
     protected $_Registry;
+    protected $_configHelper;
 
     public function __construct(
         Context $context,
         Registry $registry,
         FormFactory $formFactory,
-        StrakerAPIInterface $strakerAPIInterface,
+        ConfigHelper $configHelper,
         JobCollection $jobCollection,
         array $data = []
     ) {
         $this->_formFactory = $formFactory;
         $this->_Registry = $registry;
         $this->_jobCollection = $jobCollection;
+        $this->_configHelper = $configHelper;
 
         parent::__construct($context, $registry, $formFactory, $data);
     }
@@ -82,7 +84,6 @@ class Form extends Generic
                 'label' => __('Job Number'),
                 'title' => __('job_number'),
                 'name' => 'job_id',
-                'required' => true,
                 'options' => $this->_getTJNumbers()
             ]
         );
@@ -133,6 +134,16 @@ class Form extends Generic
         );
 
         $fieldset->addField(
+            'module_version',
+            'hidden',
+            [
+                'name' => 'module_version',
+                'label' => __('Module Version'),
+                'title' => __('Module version')
+            ]
+        );
+
+        $fieldset->addField(
             'app_version',
             'hidden',
             [
@@ -150,7 +161,8 @@ class Form extends Generic
         $form->setValues(
             [
                 'url'=>$this->_storeManager->getStore()->getBaseUrl(),
-                'app_version'=>'1.0.0',
+                'app_version'=> $this->_configHelper->getMagentoVersion(),
+                'module_version'=>$this->_configHelper->getModuleVersion(),
                 'name'=>$this->getRequest()->getParam('name'),
                 'email'=>$this->getRequest()->getParam('email'),
                 'job_id'=>$this->getRequest()->getParam('job_id'),

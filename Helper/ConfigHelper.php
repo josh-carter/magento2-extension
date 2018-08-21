@@ -139,7 +139,7 @@ class ConfigHelper extends AbstractHelper
             return $this->scopeConfig->getValue('straker/general/domain/' . $version);
         }
 
-        if ($this->isSandboxMode()) {
+        if ($this->isSandboxMode() && $domain !== 'support') {
             $siteDomain = $this->scopeConfig->getValue('straker/general/domain/sandbox');
         }else{
             $siteDomain = $this->scopeConfig->getValue('straker/general/domain/'. $siteVersion);
@@ -183,7 +183,7 @@ class ConfigHelper extends AbstractHelper
 
     public function getSupportUrl()
     {
-        return $this->_getSiteDomain().'/'.$this->scopeConfig->getValue('straker/general/api_url/support');
+        return $this->_getSiteDomain('support').'/'.$this->scopeConfig->getValue('straker/general/api_url/support');
     }
 
     public function getPaymentPageUrl()
