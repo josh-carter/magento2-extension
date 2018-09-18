@@ -21,7 +21,7 @@ use Straker\EasyTranslationPlatform\Model\ResourceModel\Job\CollectionFactory as
 
 class Products extends \Magento\Backend\Block\Widget\Grid\Extended
 {
-
+    protected $_massactionBlockName = \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Massaction\Extended::class;
     protected $productCollectionFactory;
     protected $jobFactory;
     protected $sourceStoreId;

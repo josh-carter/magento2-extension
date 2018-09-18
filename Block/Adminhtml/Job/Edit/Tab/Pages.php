@@ -11,7 +11,7 @@ use Straker\EasyTranslationPlatform\Model\JobFactory;
 
 class Pages extends \Magento\Backend\Block\Widget\Grid\Extended
 {
-
+    protected $_massactionBlockName = \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Massaction\Extended::class;
     protected $pageCollection;
     protected $jobFactory;
     protected $sourceStoreId;
