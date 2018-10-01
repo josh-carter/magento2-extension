@@ -12,6 +12,7 @@ use Straker\EasyTranslationPlatform\Model\JobFactory;
 class Blocks extends Extended
 {
 
+    protected $_massactionBlockName = \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Massaction\Extended::class;
     protected $_blockCollectionFactory;
     protected $_jobFactory;
     protected $_sourceStoreId;
