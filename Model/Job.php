@@ -116,7 +116,7 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
      * @param $jobKey
      * @throws \Exception
      */
-    public function updateTJNumber($testJobNumber, $jobData, $isSandbox, $jobKey): void
+    public function updateTJNumber($testJobNumber, $jobData, $isSandbox, $jobKey)
     {
         if(empty($this->getData('job_number')) && !empty($jobData->tj_number)){
             if($isSandbox){
