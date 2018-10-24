@@ -6,6 +6,7 @@ use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Registry;
+use Magento\Setup\Exception;
 use Straker\EasyTranslationPlatform\Helper\ImportHelper;
 use Straker\EasyTranslationPlatform\Logger\Logger;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as MagentoProductCollectionFactory;
@@ -106,6 +107,29 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
         }
         $fileNameArray = $this->_renameTranslatedFileName($filePath, $sourceFilename);
         return $fileNameArray;
+    }
+
+    /**
+     * @param $testJobNumber
+     * @param $jobData
+     * @param $isSandbox
+     * @param $jobKey
+     * @throws \Exception
+     */
+    public function updateTJNumber($testJobNumber, $jobData, $isSandbox, $jobKey): void
+    {
+        if(empty($this->getData('job_number')) && !empty($jobData->tj_number)){
+            if($isSandbox){
+                if(!empty($jobKey)){
+                    $testJobNumber = $this->getTestJobNumberByJobKey($jobKey);
+                }
+                $this->setData('job_number', 'Test Job ' . $testJobNumber);
+            }else{
+                $this->setData('job_number', $jobData->tj_number);
+            }
+
+            $this->save();
+        }
     }
 
     /**
@@ -231,95 +255,91 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
         $isSandbox = $this->_importHelper->configHelper->isSandboxMode();
         $jobKey = $this->getJobKey();
         $testJobNumber = $this->getId();
-        $empty_file = false;
-        switch (strtolower($jobData->status)) {
-            case 'queued':
+        $isEmptyFile = false;
 
-                if (empty($this->getData('job_number')) && !empty($jobData->tj_number)) {
-                    if($isSandbox){
-                        if (!empty($jobKey)) {
-                            $testJobNumber = $this->getTestJobNumberByJobKey($jobKey);
-                        }
-                        $this->setData('job_number', 'Test Job ' . $testJobNumber);
-                    }else{
-                        $this->setData('job_number', $jobData->tj_number)->save();
+        try {
+            switch (strtolower($jobData->status)) {
+                case 'queued':
+
+                    $this->updateTJNumber($testJobNumber, $jobData, $isSandbox, $jobKey);
+
+                    if (empty($this->getData('job_number'))) {
+                        $return['isSuccess'] = false;
+                        $return['emptyTJ'] = true;
+                        return $return;
                     }
-                }
 
-                if (empty($this->getData('job_number'))) {
-                    $return['isSuccess'] = false;
-                    $return['emptyTJ'] = true;
-                    return $return;
-                }
+                    if (!empty($jobData->quotation) && strcasecmp($jobData->quotation, 'ready') === 0) {
+                        $this->setData('job_status_id', JobStatus::JOB_STATUS_READY)
+                            ->save($this);
+                    } else {
+                        $this->setData('job_status_id', JobStatus::JOB_STATUS_QUEUED)
+                            ->save($this);
+                    }
+                    break;
+                case 'in_progress':
+                    $this->updateTJNumber($testJobNumber, $jobData, $isSandbox, $jobKey);
+                    $this->setData('job_status_id', JobStatus::JOB_STATUS_INPROGRESS)->save($this);
+                    break;
+                case 'completed':
+                    $this->updateTJNumber($testJobNumber, $jobData, $isSandbox, $jobKey);
 
-                if (!empty($jobData->quotation) && strcasecmp($jobData->quotation, 'ready') === 0) {
-                    $this->setData('job_status_id', JobStatus::JOB_STATUS_READY)
-                        ->save();
-                } else {
-                    $this->setData('job_status_id', JobStatus::JOB_STATUS_QUEUED)
-                        ->save();
-                }
-                break;
-            case 'in_progress':
-                $this->setData('job_status_id', JobStatus::JOB_STATUS_INPROGRESS)->save();
-                break;
-            case 'completed':
-                if (!empty($jobData->translated_file) && count($jobData->translated_file)) {
-                    $downloadUrl = reset($jobData->translated_file)->download_url;
-                    if (!empty($downloadUrl)) {
-                        $fileContent = $this->_strakerApi->getTranslatedFile($downloadUrl);
-                        $fileNameArray = $this->generateTranslatedFilename($jobData->source_file);
-                        $fileFullName = implode(DIRECTORY_SEPARATOR, $fileNameArray);
-                        $result = true;
+                    if (!empty($jobData->translated_file) && count($jobData->translated_file)) {
+                        $downloadUrl = reset($jobData->translated_file)->download_url;
+                        if (!empty($downloadUrl)) {
+                            $fileContent = $this->_strakerApi->getTranslatedFile($downloadUrl);
+                            $fileNameArray = $this->generateTranslatedFilename($jobData->source_file);
+                            $fileFullName = implode(DIRECTORY_SEPARATOR, $fileNameArray);
+                            $result = true;
 
-                        if (!file_exists($fileFullName)) {
-                            $result = file_put_contents($fileFullName,$fileContent);
-                        }
-
-                        $firstLine = fgets(fopen($fileFullName, 'r'));
-
-                        if(preg_match('/^[<?xml]+/',$firstLine)==0){
-                            $result = false;
-                            $empty_file = true;
-                        }
-
-                        if ($result == false && $empty_file == true) {
-                            $return['isSuccess'] = false;
-                            $return['empty_file'] = false;
-                            $testJobNumber = $this->getTestJobNumberByJobKey($jobKey);
-                            $return['Message'] = __($this->getData('job_number').' - Failed to write content to ' . $fileFullName);
-                            $this->_logger->addError($return['Message']);
-                        } else {
-                            $this->setData('download_url', $downloadUrl)
-                                ->setData('translated_file', $fileNameArray['name'])->save();
-                            $this->_importHelper->create($this->getId())
-                                ->parseTranslatedFile()
-                                ->saveData();
-                            if (empty($this->getData('job_number')) && $isSandbox) {
-                                if (!empty($jobKey)) {
-                                    $testJobNumber = $this->getTestJobNumberByJobKey($jobKey);
-                                }
-                                $this->setData('job_number', 'Test Job ' . $testJobNumber);
+                            if (!file_exists($fileFullName)) {
+                                $result = file_put_contents($fileFullName,$fileContent);
                             }
-                            $this->setData('job_status_id', JobStatus::JOB_STATUS_COMPLETED)->save();
+
+                            $firstLine = fgets(fopen($fileFullName, 'r'));
+
+                            if(preg_match('/^[<?xml]+/',$firstLine)==0){
+                                $result = false;
+                                $isEmptyFile = true;
+                            }
+
+                            if ($result == false && $isEmptyFile == true) {
+                                $return['isSuccess'] = false;
+                                $return['empty_file'] = false;
+                                $return['Message'] = __($this->getData('job_number').' - Failed to write content to ' . $fileFullName);
+                                $this->_logger->addError($return['Message']);
+                            } else {
+                                $this->setData('download_url', $downloadUrl)
+                                    ->setData('translated_file', $fileNameArray['name'])->save($this);
+                                $this->_importHelper->create($this->getId())
+                                    ->parseTranslatedFile()
+                                    ->saveData();
+
+                                $this->setData('job_status_id', JobStatus::JOB_STATUS_COMPLETED)->save($this);
+                            }
+                        } else {
+                            $return['isSuccess'] = false;
+                            $return['Message'] = __('Download url is not found for the job ( \'job_key\': \'' . $jobData->job_key . '\').');
+                            $this->_logger->addError($return['Message']);
                         }
                     } else {
                         $return['isSuccess'] = false;
-                        $return['Message'] = __('Download url is not found for the job ( \'job_key\': \'' . $jobData->job_key . '\').');
+                        $return['Message'] = __('Download file is not found for the job ( \'job_key\': \'' . $jobData->job_key . '\').');
                         $this->_logger->addError($return['Message']);
                     }
-                } else {
+                    break;
+                default:
                     $return['isSuccess'] = false;
-                    $return['Message'] = __('Download file is not found for the job ( \'job_key\': \'' . $jobData->job_key . '\').');
+                    $return['Message'] = __('Unknown status is found for the job ( \'job_key\': \'' . $jobData->job_key . '\').');
                     $this->_logger->addError($return['Message']);
-                }
-                break;
-            default:
-                $return['isSuccess'] = false;
-                $return['Message'] = __('Unknown status is found for the job ( \'job_key\': \'' . $jobData->job_key . '\').');
-                $this->_logger->addError($return['Message']);
-                break;
+                    break;
+            }
+        }catch(\Exception $e){
+            $return['isSuccess'] = false;
+            $return['Message'] = __(' An Error with the message \'' . $e->getMessage() . '\' occurs while processing the job with the key - ' . $jobData->job_key);
+            $this->_logger->addError($return['Message']);
         }
+
         return $return;
     }
 
