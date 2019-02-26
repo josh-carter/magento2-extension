@@ -78,7 +78,7 @@
 
                     if (firstLoad) {
                         this.addListener('click', this.categoryClick);
-                        this.addListener('beforenodedrop', categoryMove.bind(this));
+                        // this.addListener('beforenodedrop', categoryMove.bind(this));
                     }
 
                     this.loader.buildCategoryTree(root, data);
@@ -279,7 +279,7 @@
                 categoryLoader.createNode = function(config) {
                     config.uiProvider = Ext.tree.CheckboxNodeUI;
                     var node;
-                    var _node = Object.clone(config);
+                    // var _node = Object.clone(config);
                     if (config.children && !config.children.length) {
                         delete(config.children);
                         node = new Ext.tree.AsyncTreeNode(config);
@@ -301,8 +301,6 @@
                 };
 
                 categoryLoader.buildCategoryTree = function (parent, config) {
-
-                    var catIds;
                     if (!config) return null;
 
                     if (parent && config && config.length) {
@@ -316,7 +314,7 @@
                             } else {
                                 node = new Ext.tree.TreeNode(config[i]);
                             }
-                            //node.attributes.checked = true;
+
                             parent.appendChild(node);
                             node.loader = node.getOwnerTree().loader;
                             if (_node.children) {
@@ -324,7 +322,6 @@
                             }
                         }
                     }
-
                 };
 
                 categoryLoader.buildHash = function (node) {
@@ -387,7 +384,7 @@
                     parameters: {
                         text: '<?php /* @escapeNotVerified */ echo htmlentities($block->getRoot()->getName()) ?>',
                         draggable: false,
-                        allowDrop: <?php if ($block->getRoot()->getIsVisible()): ?>true<?php else : ?>false<?php endif; ?>,
+                        allowDrop: false,
                         id: <?php /* @escapeNotVerified */ echo (int)$block->getRoot()->getId() ?>,
                         expanded: true,
                         store_id: <?php /* @escapeNotVerified */ echo (int)$block->getStore()->getId() ?>,
@@ -442,106 +439,6 @@
                 }
                 jQuery('input[name="categories"]').val(ids.join(',')) ;
             }
-
-            function addNew(url, isRoot) {
-                if (isRoot) {
-                    tree.currentNodeId = tree.root.id;
-                }
-
-                if (/store\/\d+/.test(url)) {
-                    url = url.replace(/store\/\d+/, "store/" + tree.storeId);
-                }
-                else {
-                    url += "store/" + tree.storeId + "/";
-                }
-
-                url += 'parent/' + tree.currentNodeId;
-                updateContent(url);
-            }
-
-            function categoryMove(obj) {
-                var data = {id: obj.dropNode.id, form_key: FORM_KEY};
-
-                data.point = obj.point;
-                switch (obj.point) {
-                    case 'above' :
-                        data.pid = obj.target.parentNode.id;
-                        data.paid = obj.dropNode.parentNode.id;
-                        if (obj.target.previousSibling) {
-                            data.aid = obj.target.previousSibling.id;
-                        } else {
-                            data.aid = 0;
-                        }
-                        break;
-                    case 'below' :
-                        data.pid = obj.target.parentNode.id;
-                        data.aid = obj.target.id;
-                        break;
-                    case 'append' :
-                        data.pid = obj.target.id;
-                        data.paid = obj.dropNode.parentNode.id;
-                        if (obj.target.lastChild) {
-                            data.aid = obj.target.lastChild.id;
-                        } else {
-                            data.aid = 0;
-                        }
-                        break;
-                    default :
-                        obj.cancel = true;
-                        return obj;
-                }
-
-                var pd = [];
-                for (var key in data) {
-                    pd.push(encodeURIComponent(key), "=", encodeURIComponent(data[key]), "&");
-                }
-                pd.splice(pd.length - 1, 1);
-
-                jQuery('[data-id="information-dialog-category"]').modal({
-                    modalClass: 'confirm',
-                    title:  jQuery.mage.__('Warning message'),
-                    buttons: [{
-                        text: 'Cancel',
-                        class: 'action-secondary',
-                        click: function () {
-                            reRenderTree();
-                            this.closeModal();
-                        }
-                    }, {
-                        text: 'Ok',
-                        class: 'action-primary',
-                        click: function () {
-                            (function ($) {
-                                $.ajax({
-                                    url: '<?php /* @escapeNotVerified */ echo $block->getMoveUrl() ?>',
-                                    method: 'POST',
-                                    data: pd.join(""),
-                                    showLoader: true
-                                }).done(function (data) {
-                                    if (data.messages && data.messages.length > 0) {
-                                        $('[name=category-edit-form] .messages').html(data.messages);
-                                    }
-                                    if (data.error) {
-                                        reRenderTree();
-                                    } else {
-                                        $(obj.tree.container.dom).trigger('categoryMove.tree');
-                                    }
-                                }).fail(function (jqXHR, textStatus) {
-                                    if (window.console) {
-                                        console.log(textStatus);
-                                    }
-                                    location.reload();
-                                });
-                            })(jQuery);
-                            this.closeModal();
-                        }
-                    }]
-
-                }).trigger('openModal');
-
-            }
-
-            window.addNew = addNew;
 
         });
 
