@@ -245,6 +245,17 @@ class ConfigHelper extends AbstractHelper
         return  empty($return) ? [] : explode(',', $return);
     }
 
+    /**
+     * get use selected products' filter from core_config
+     *
+     * @return array
+     */
+    public function getProductFilters()
+    {
+        $return =  $this->scopeConfig->getValue('straker_config/filters/product_filters', 'default', 0);
+        return  empty($return) ? [] : explode(',', $return);
+    }
+
     public function getStoreInfo($storeId)
     {
         $collection = $this->_scopeFactory->create(

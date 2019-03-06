@@ -2,10 +2,9 @@
 
 namespace Straker\EasyTranslationPlatform\Helper;
 
-use Composer\DependencyResolver\Transaction;
-use Exception;
 use Magento\Catalog\Api\Data\ProductAttributeInterface;
 use Magento\Catalog\Model\Product\Type;
+use Magento\Catalog\Ui\Component\Listing\Attribute\RepositoryInterface;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\Eav\Model\Config;
 use Magento\Framework\App\Helper\AbstractHelper;
@@ -14,21 +13,14 @@ use Magento\Eav\Model\AttributeRepository;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory as AttributeCollection;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollection;
 use Magento\Framework\App\Helper\Context;
-use Magento\Framework\Data\Collection;
 use Magento\GroupedProduct\Model\Product\Type\Grouped;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\DB\TransactionFactory;
 
-use Straker\EasyTranslationPlatform\Model\AttributeOptionTranslation;
 use Straker\EasyTranslationPlatform\Model\AttributeTranslationFactory;
-use Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeTranslation;
 use Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeTranslation\Collection as AttributeTranslationCollection;
 use Straker\EasyTranslationPlatform\Model\AttributeOptionTranslationFactory;
-use Straker\EasyTranslationPlatform\Helper\ConfigHelper;
-use Straker\EasyTranslationPlatform\Helper\AttributeHelper;
-use Straker\EasyTranslationPlatform\Helper\XmlHelper;
 use Straker\EasyTranslationPlatform\Logger\Logger;
-use Symfony\Component\Finder\Iterator\RecursiveDirectoryIterator;
 
 class ProductHelper extends AbstractHelper
 {
@@ -69,14 +61,14 @@ class ProductHelper extends AbstractHelper
     protected $_configHelper;
     protected $_attributeHelper;
     protected $_xmlHelper;
-    protected $_transactionFactory;
     protected $_attributeTranslationsCollectionFactory;
 
+    //stores attributes that used in grid as filters
+    protected $_productFilters;
 
     /**
      * ProductHelper constructor.
      * @param Context $context
-     * @param ProductFactory $productFactory
      * @param AttributeRepository $attributeRepository
      * @param AttributeCollection $attributeCollectionFactory
      * @param ProductCollection $productCollectionFactory
@@ -88,10 +80,12 @@ class ProductHelper extends AbstractHelper
      * @param \Straker\EasyTranslationPlatform\Helper\XmlHelper $xmlHelper
      * @param Logger $logger
      * @param StoreManagerInterface $storeManager
+     * @param RepositoryInterface $productFilters
+     * @param AttributeTranslationCollection $attributeTranslationCollectionFactory
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function __construct(
         Context $context,
-        ProductFactory $productFactory,
         AttributeRepository $attributeRepository,
         AttributeCollection $attributeCollectionFactory,
         ProductCollection $productCollectionFactory,
@@ -103,7 +97,7 @@ class ProductHelper extends AbstractHelper
         XmlHelper $xmlHelper,
         Logger $logger,
         StoreManagerInterface $storeManager,
-        TransactionFactory $transactionFactory,
+        RepositoryInterface $productFilters,
         AttributeTranslationCollection $attributeTranslationCollectionFactory
     ) {
         $this->_attributeCollectionFactory = $attributeCollectionFactory;
@@ -117,8 +111,8 @@ class ProductHelper extends AbstractHelper
         $this->_logger = $logger;
         $this->_entityTypeId =  $eavConfig->getEntityType(ProductAttributeInterface::ENTITY_TYPE_CODE)->getEntityTypeId();
         $this->_storeManager = $storeManager;
-        $this->_transactionFactory = $transactionFactory;
         $this->_attributeTranslationsCollectionFactory = $attributeTranslationCollectionFactory;
+        $this->_productFilters = $productFilters;
         parent::__construct($context);
     }
 
@@ -138,8 +132,8 @@ class ProductHelper extends AbstractHelper
     {
         /** @var \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection $collection */
         $collection = $this->getAttributes()
-                        ->addFieldToFilter('is_user_defined', [ 'eq' => 1 ])
-                        ->addFieldToFilter('attribute_code', ['nin'=>$this->_translatableAttributeCode]);
+            ->addFieldToFilter('is_user_defined', [ 'eq' => 1 ])
+            ->addFieldToFilter('attribute_code', ['nin'=>$this->_translatableAttributeCode]);
         return $collection;
     }
 
@@ -154,6 +148,14 @@ class ProductHelper extends AbstractHelper
         return $collection;
     }
 
+    /**
+     * Retrieve the attributes which used in grid for Product type
+     *
+     * @return ProductAttributeInterface[]
+     */
+    public function getProductGridAttributeList(){
+        return $this->_productFilters->getList();
+    }
 
     /**
      * @param $product_ids

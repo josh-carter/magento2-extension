@@ -137,7 +137,7 @@ class Blocks extends Extended
                 'type'=>'options',
                 'options'=>['1'=>'Yes','0'=>'No'],
                 'filter_index'=>'is_translated',
-                'renderer' => 'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Renderer\TranslatedValueCMS',
+                'renderer' => 'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Renderer\TranslatedValue',
                 'filter_condition_callback' => [$this, 'filterName']
             ]
         );
