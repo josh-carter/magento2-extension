@@ -75,7 +75,7 @@
                     <source_model>Straker\EasyTranslationPlatform\Model\Config\Source\CategoryAttributeSource</source_model>
                 </field>
             </group>
-            <group id="filters" translate="label" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="filter" translate="label" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Filter Settings</label>
                 <field id="product_filters" translate="label" type="multiselect" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Product Grid Filters</label>
