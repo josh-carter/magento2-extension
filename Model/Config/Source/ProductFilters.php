@@ -26,7 +26,6 @@ class ProductFilters implements ArrayInterface
     public function toOptionArray()
     {
         $this->_productAttributes = $this->_productHelper->getProductGridAttributeList();
-
         if (!empty($this->_productAttributes)) {
             if (count($this->_productAttributes)) {
                 foreach ($this->_productAttributes as $attribute) {
@@ -41,6 +40,7 @@ class ProductFilters implements ArrayInterface
                 return $this->_option;
             }
         }
-        return [ 'label' => __('No attributes are available! '), 'value' => '' ];
+
+        return [[ 'label' => 'No attributes are available! ', 'value' => '' ]];
     }
 }

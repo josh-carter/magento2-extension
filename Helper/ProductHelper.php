@@ -8,14 +8,12 @@ use Magento\Catalog\Ui\Component\Listing\Attribute\RepositoryInterface;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\Eav\Model\Config;
 use Magento\Framework\App\Helper\AbstractHelper;
-use Magento\Catalog\Model\ProductFactory;
 use Magento\Eav\Model\AttributeRepository;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory as AttributeCollection;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollection;
 use Magento\Framework\App\Helper\Context;
 use Magento\GroupedProduct\Model\Product\Type\Grouped;
 use Magento\Store\Model\StoreManagerInterface;
-use Magento\Framework\DB\TransactionFactory;
 
 use Straker\EasyTranslationPlatform\Model\AttributeTranslationFactory;
 use Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeTranslation\Collection as AttributeTranslationCollection;
@@ -53,6 +51,22 @@ class ProductHelper extends AbstractHelper
     protected $_multiSelectInputTypes = [
         'select', 'multiselect'
     ];
+
+    protected $_productFilterTypes = [
+        'text', 'price', 'weight', 'date', 'select', 'multiselect', 'boolean'
+    ];
+
+    /**
+     * @var array
+     */
+    protected $filterMap = [
+        'default' => 'text',
+        'select' => 'options',
+        'boolean' => 'options',
+        'multiselect' => 'options',
+        'date' => 'datetime',
+    ];
+
     protected $_attributeCollectionFactory;
     protected $_productCollectionFactory;
     protected $_attributeTranslationFactory;
@@ -154,8 +168,53 @@ class ProductHelper extends AbstractHelper
      * @return ProductAttributeInterface[]
      */
     public function getProductGridAttributeList(){
-        return $this->_productFilters->getList();
+        $attributes = $this->_productFilters->getList();
+        if (!empty($attributes)){
+            return array_filter($attributes, function($attrCode){
+                $attr = $this->getProductAttribute($attrCode);
+                return !is_null($attr) && in_array($attr->getFrontendInput(), $this->_productFilterTypes);
+            });
+        }
+        return [];
     }
+
+    /**
+     * Retrieve the attributes which used in grid for Product type
+     *
+     * @return ProductAttributeInterface[]
+     */
+    public function getSelectedProductFilters(){
+        $productFilters = $this->_configHelper->getProductFilters();
+        /** @var ProductAttributeInterface[] $attributes */
+        $attributes = [];
+        if (!empty($productFilters)){
+            $filterCollection = $this->_attributeCollectionFactory->create();
+            $filterCollection->setEntityTypeFilter($this->_entityTypeId)
+                ->addFieldToFilter('attribute_code', ['in' => $productFilters]);
+            /** @var ProductAttributeInterface $attribute */
+            foreach($filterCollection->getItems() as $attribute){
+                $frontendInput = $attribute->getFrontendInput();
+                if (in_array($frontendInput, $this->_productFilterTypes)){
+                    $data = [];
+                    $data['header'] = $attribute->getDefaultFrontendLabel();
+                    $data['code'] = $attribute->getAttributeCode();
+                    $data['frontendInput'] = $frontendInput;
+                    $data['backendModel'] = $attribute->getBackendModel();
+                    $data['type'] = $this->getFilterType($frontendInput);
+
+                    if($data['frontendInput'] === 'boolean'){
+                        $data['options'] = [0 => __('No'), 1 => 'Yes'];
+                    }else{
+                        $data['options'] = $this->toGridOptionArray($attribute->getSource()->getAllOptions());
+                    }
+
+                    $attributes[$attribute->getAttributeCode()] = $data;
+                }
+            }
+        }
+        return $attributes;
+    }
+
 
     /**
      * @param $product_ids
@@ -168,7 +227,6 @@ class ProductHelper extends AbstractHelper
         $source_store_id,
         $includeChildren = true
     ) {
-
         if (strpos($product_ids, '&') !== false) {
             $product_ids = explode('&', $product_ids);
         }
@@ -556,4 +614,43 @@ class ProductHelper extends AbstractHelper
     public function getConfigHelper(){
         return $this->_configHelper;
     }
+
+    /**
+     * Retrieve filter type by $frontendInput
+     *
+     * @param string $frontendInput
+     * @return string
+     */
+    protected function getFilterType($frontendInput)
+    {
+        return isset($this->filterMap[$frontendInput]) ? $this->filterMap[$frontendInput] : $this->filterMap['default'];
+    }
+
+    /**
+     * get a product's attribute by attribute code
+     *
+     * @param $attributeCode
+     * @return \Magento\Eav\Api\Data\AttributeInterface|null
+     */
+    public function getProductAttribute($attributeCode){
+        try{
+            $attribute = $this->_attributeRepository->get(ProductAttributeInterface::ENTITY_TYPE_CODE, $attributeCode);
+            return $attribute;
+        }catch(\Exception $e){
+            return null;
+        }
+    }
+
+    private function toGridOptionArray($array){
+        $newArray = [];
+        if(is_array($array) && sizeof($array) > 0){
+            foreach($array as $a){
+                if(isset($a['value']) && isset($a['label']) && !empty($a['value'])) {
+                    $newArray[$a['value']] = $a['label'];
+                }
+            }
+        }
+        return $newArray;
+    }
+
 }

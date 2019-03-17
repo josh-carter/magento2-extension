@@ -252,7 +252,7 @@ class ConfigHelper extends AbstractHelper
      */
     public function getProductFilters()
     {
-        $return =  $this->scopeConfig->getValue('straker_config/filters/product_filters', 'default', 0);
+        $return =  $this->scopeConfig->getValue('straker_config/filter/product_filters', 'default', 0);
         return  empty($return) ? [] : explode(',', $return);
     }
 

@@ -10,57 +10,86 @@ use Straker\EasyTranslationPlatform\Model\JobType;
  */
 class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 {
+    protected $targetStoreId;
 
     public function is_translated($targetStoreId)
     {
-        $strakerJobs = $this->_resource->getTableName('straker_job');
-        $strakerTrans = $this->_resource->getTableName('straker_attribute_translation');
+        $this->targetStoreId = $targetStoreId;
+
+        $isTranslatedSelect = $this->_buildIsTranslatedSelect();
 
         $this->getSelect()
-            ->reset(Select::COLUMNS)
-            ->columns(
-                ['e.entity_id', 'e.sku', 'type_id', 'attribute_set_id', 'MAX(IF((stTrans.is_published AND stJob.job_id) IS NULL, 0, 1)) as is_translated']
-            )->joinLeft(
-                ['stTrans' => $strakerTrans],
+            ->joinLeft(
+                ['stTrans' => $isTranslatedSelect],
                 'e.entity_id=stTrans.entity_id',
-                []
-            )->joinLeft(
-                ['stJob' => $strakerJobs],
-                'stTrans.job_id=stJob.job_id and stJob.target_store_id=' . (empty($targetStoreId) ? 0 : $targetStoreId) . ' and stJob.job_type_id='. JobType::JOB_TYPE_PRODUCT,
-                []
-            )->group('entity_id');
-
+                ['IF(is_translated IS NULL, 0, 1) AS is_translated']
+            );
 
         return $this;
     }
 
-    public function getSelectCountSql()
-    {
-        //         parent::getSelectCountSql();
-        $this->_renderFilters();
-        $countSelect = clone $this->getSelect();
+    /**
+     * Build a Select which query all the translated product from straker tables
+     *
+     * @return Select
+     */
+    private function _buildIsTranslatedSelect(){
+
+        $strakerJobs = $this->_resource->getTableName('straker_job');
+        $strakerTrans = $this->_resource->getTableName('straker_attribute_translation');
 
         $select = clone $this->getSelect();
-        $select
-            ->reset(Select::ORDER)
-            ->reset(Select::LIMIT_COUNT)
-            ->reset(Select::LIMIT_OFFSET);
+        $select->reset();
 
-        $countSelect
-            ->reset()
-            ->from(['s' => $select])
-            ->reset(Select::COLUMNS)
-            ->columns('COUNT(DISTINCT entity_id)');
+        $select->from(
+            ['stJob' => $strakerJobs],
+            []
+        )->join(
+            ['stTrans' => $strakerTrans],
+            'stTrans.job_id=stJob.job_id and stJob.target_store_id=' . (empty($this->targetStoreId) ? 0 : $this->targetStoreId) . ' and stJob.job_type_id='. JobType::JOB_TYPE_PRODUCT,
+            ['entity_id', 'MAX(IF((stTrans.is_published AND stJob.job_id) IS NULL, 0, 1)) as is_translated']
+        )->group('stTrans.entity_id');
 
-        return $countSelect;
-    }
-
-    function _buildClearSelect($select = null)
-    {
-        if (null === $select) {
-            $select = clone $this->getSelect();
-        }
-        $select->reset(\Magento\Framework\DB\Select::ORDER);
         return $select;
     }
+
+    public function getSelectCountSql()
+    {
+        $parentSelect = parent::getSelectCountSql();
+
+        $isTranslatedSelect = $this->_buildIsTranslatedSelect();
+
+        $parentSelect
+            ->joinLeft(
+                ['stTrans' => $isTranslatedSelect],
+                'e.entity_id=stTrans.entity_id',
+                []
+            )->reset(Select::COLUMNS)
+            ->columns('COUNT(DISTINCT e.entity_id)');
+
+
+        return $parentSelect;
+    }
+
+    function getAllIds($limit = null, $offset = null)
+    {
+        $idsSelect = $this->_getClearSelect();
+        $idsSelect->columns('e.' . $this->getEntity()->getIdFieldName());
+        $idsSelect->limit($limit, $offset);
+        $idsSelect->resetJoinLeft();
+        $isTranslatedSelect = $this->_buildIsTranslatedSelect();
+
+        $idsSelect->joinLeft(
+            ['stTrans' => $isTranslatedSelect],
+            'e.entity_id=stTrans.entity_id',
+            []
+        );
+        return $this->getConnection()->fetchCol($idsSelect, $this->_bindParams);
+    }
+//
+//    protected function _afterLoad()
+//    {
+////        var_dump($this->getSelect()->assemble());
+//        return parent::_afterLoad();
+//    }
 }
