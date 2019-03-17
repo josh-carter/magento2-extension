@@ -37,7 +37,7 @@ class PageHelper extends AbstractHelper
     protected $_pageData;
     protected $_storeId;
 
-    protected $_attributes = ['title','meta_keywords','meta_description','content_heading','content'];
+    protected $_attributes = ['title','meta_keywords','meta_description','content_heading','content','meta_title'];
     protected $_strakerApi;
 
     public function __construct(
