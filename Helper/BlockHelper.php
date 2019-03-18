@@ -251,4 +251,8 @@ class BlockHelper extends AbstractHelper
         $summaryArray['cms_block'] = count($this->_blockData);
         $this->_xmlHelper->addContentSummary($summaryArray);
     }
+
+    public function getSummary(){
+        return ['cms_block' => count($this->_blockData)];
+    }
 }

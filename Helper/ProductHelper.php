@@ -599,6 +599,11 @@ class ProductHelper extends AbstractHelper
 
     public function addSummaryNode()
     {
+        $summaryArray['product'] = $this->getSummary();
+        $this->_xmlHelper->addContentSummary($summaryArray);
+    }
+
+    public function getSummary(){
         $productArray = [];
         foreach($this->_productData as $productData){
             if(key_exists($productData['product_type'], $productArray)){
@@ -607,8 +612,7 @@ class ProductHelper extends AbstractHelper
                 $productArray[$productData['product_type']] = 1;
             }
         }
-        $summaryArray['product'] = $productArray;
-        $this->_xmlHelper->addContentSummary($summaryArray);
+        return $productArray;
     }
 
     public function getConfigHelper(){

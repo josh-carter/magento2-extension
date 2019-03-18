@@ -6,7 +6,6 @@ use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Registry;
-use Magento\Setup\Exception;
 use Straker\EasyTranslationPlatform\Helper\ImportHelper;
 use Straker\EasyTranslationPlatform\Logger\Logger;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as MagentoProductCollectionFactory;

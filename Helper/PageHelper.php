@@ -245,9 +245,13 @@ class PageHelper extends AbstractHelper
         return $this;
     }
 
-    public function addSummaryNode()
+    private function addSummaryNode()
     {
-        $summaryArray['cms_page'] = count($this->_pageData);
+        $summaryArray = $this->getSummary();
         $this->_xmlHelper->addContentSummary($summaryArray);
+    }
+
+    public function getSummary(){
+        return ['cms_page' => count($this->_pageData)];
     }
 }

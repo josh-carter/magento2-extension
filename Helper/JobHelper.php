@@ -39,6 +39,8 @@ class JobHelper extends AbstractHelper
     protected $_messageManager;
     protected $_strakerApi;
 
+    const SEPARATOR = '--';
+
     public function __construct(
         Context $context,
         JobFactory $jobFactory,
@@ -117,7 +119,10 @@ class JobHelper extends AbstractHelper
                 ->saveProductData($this->jobModel->getId())
                 ->generateProductXML($this->jobModel);
 
-            $this->jobModel->addData(['source_file'=>$jobFile]);
+            $this->jobModel->addData([
+                'source_file'   =>  $jobFile,
+                'summary'       =>  json_encode($this->_productHelper->getSummary())
+            ]);
 
             $this->jobModel->save();
 
@@ -150,7 +155,10 @@ class JobHelper extends AbstractHelper
                 ->saveCategoryData($this->jobModel->getId())
                 ->generateCategoryXML($this->jobModel);
 
-            $this->jobModel->addData(['source_file'=>$jobFile]);
+            $this->jobModel->addData([
+                'source_file'   =>  $jobFile,
+                'summary'       =>  json_encode($this->_categoryHelper->getSummary())
+            ]);
 
             $this->jobModel->save();
 
@@ -171,7 +179,6 @@ class JobHelper extends AbstractHelper
         try{
 
             $this->jobModel->addData(['job_type_id'=> JobType::JOB_TYPE_PAGE]);
-
             $this->jobModel->save();
 
             $jobFile = $this->_pageHelper->getPages($this->jobData['pages'], $this->jobModel->getData('source_store_id'))
@@ -179,7 +186,10 @@ class JobHelper extends AbstractHelper
                 ->savePageData($this->jobModel->getId())
                 ->generatePageXML($this->jobModel);
 
-            $this->jobModel->addData(['source_file'=>$jobFile]);
+            $this->jobModel->addData([
+                'source_file'   =>  $jobFile,
+                'summary'       =>  json_encode($this->_pageHelper->getSummary())
+            ]);
 
             $this->jobModel->save();
 
@@ -206,7 +216,10 @@ class JobHelper extends AbstractHelper
                 ->saveBlockData($this->jobModel->getId())
                 ->generateBlockXML($this->jobModel);
 
-            $this->jobModel->addData(['source_file'=>$jobFile]);
+            $this->jobModel->addData([
+                'source_file'   =>  $jobFile,
+                'summary'       =>  json_encode($this->_blockHelper->getSummary())
+            ]);
 
             $this->jobModel->save();
 
