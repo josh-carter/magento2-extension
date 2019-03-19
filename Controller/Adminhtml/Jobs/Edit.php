@@ -86,12 +86,12 @@ class Edit extends \Magento\Backend\App\Action
         /** @var \Magento\Backend\Model\View\Result\Page $resultPage */
         $resultPage = $this->_initAction();
         $resultPage->addBreadcrumb(
-            $id ? __('Edit Job') : __('New Job'),
-            $id ? __('Edit Job') : __('New Job')
+            $id ? __('Edit Job') : __('New Translation Job'),
+            $id ? __('Edit Job') : __('New Translation Job')
         );
         $resultPage->getConfig()->getTitle()->prepend(__('Jobs'));
         $resultPage->getConfig()->getTitle()
-            ->prepend($model->getId() ? $model->getTitle() : __('New Job'));
+            ->prepend($model->getId() ? $model->getTitle() : __('New Translation Job'));
 
         return $resultPage;
     }

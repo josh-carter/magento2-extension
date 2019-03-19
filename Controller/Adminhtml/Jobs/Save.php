@@ -256,9 +256,9 @@ class Save extends Action
                 }
 
                 if(!$this->_configHelper->isSandboxMode()){
-                    $this->messageManager->addSuccess(__('Your job was successfully sent to Straker Translations to be quoted.'));
+                    $this->messageManager->addSuccess(__('Your job was successfully sent to Straker Translations to be quoted. We will analyze the content and send you a quote as soon as we have the results.'));
                 }else{
-                    $this->messageManager->addSuccess(__('Your job was successfully sent to Straker Translations'));
+                    $this->messageManager->addSuccess(__('Your job was successfully sent to Straker Translations.'));
                 }
             }else {
                 $message = isset($response->message) ? $response->message : (method_exists($response, 'getMessage') ? $response->getMessage() : 'Unknown networking issue.');
