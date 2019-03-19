@@ -134,10 +134,6 @@ class Save extends Action
                 $this->_saveStoreConfigData($data);
             }
 
-            if (isset($data['blocks']) && strlen($data['blocks'])>0) {
-                $jobData[] = $this->_jobHelper->createJob($data)->generateBlockJob();
-            }
-
             if (isset($data['products']) && strlen($data['products'])>0) {
                 $jobData[] = $this->_jobHelper->createJob($data)->generateProductJob();
             }
@@ -150,6 +146,9 @@ class Save extends Action
                 $jobData[] = $this->_jobHelper->createJob($data)->generatePageJob();
             }
 
+            if (isset($data['blocks']) && strlen($data['blocks'])>0) {
+                $jobData[] = $this->_jobHelper->createJob($data)->generateBlockJob();
+            }
             try {
 
                 $this->_summitJob($jobData);

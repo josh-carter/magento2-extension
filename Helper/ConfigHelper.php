@@ -256,6 +256,12 @@ class ConfigHelper extends AbstractHelper
         return  empty($return) ? [] : explode(',', $return);
     }
 
+    public function shouldTranslateBlockTitle()
+    {
+        $return =  $this->scopeConfig->getValue('straker_config/attribute/include_cms_block_title', 'default', 0);
+        return  (empty($return) || $return == '0') ? false : true;
+    }
+
     public function getStoreInfo($storeId)
     {
         $collection = $this->_scopeFactory->create(
