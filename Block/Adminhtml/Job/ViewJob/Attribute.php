@@ -49,7 +49,7 @@ class Attribute extends Container
                             'job_type_id' => $this->_job->getJobTypeId()
                         ]) . '\') ',
                     'class' => 'primary',
-                    'title' => __('Publish the job of ' . $this->_job->getJobNumber())
+                    'title' => __('Publish the job of %1', $this->_job->getJobNumber())
                 ],
                 0,
                 50

@@ -35,7 +35,7 @@ class Form extends Generic
 
         $fieldset = $form->addFieldset(
             'base_fieldset',
-            ['legend' => __(' '), 'class' => 'fieldset-wide']
+            ['legend' => '', 'class' => 'fieldset-wide']
         );
 
         $fieldset->addField(

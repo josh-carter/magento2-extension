@@ -323,13 +323,13 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
                         }
                     } else {
                         $return['isSuccess'] = false;
-                        $return['Message'] = __('Download file is not found for the job (job_key: 1%', $jobData->job_key);
+                        $return['Message'] = __('Download file is not found for the job (job_key: 1%)', $jobData->job_key);
                         $this->_logger->addError($return['Message']);
                     }
                     break;
                 default:
                     $return['isSuccess'] = false;
-                    $return['Message'] = __('Unknown status is found for the job (job_key', $jobData->job_key);
+                    $return['Message'] = __('Unknown status is found for the job (job_key: 1%)', $jobData->job_key);
                     $this->_logger->addError($return['Message']);
                     break;
             }

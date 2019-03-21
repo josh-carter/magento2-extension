@@ -143,7 +143,7 @@ class Index extends Action
                 $dataArray = (array)$apiData;
                 $result['status'] = false;
                 if(key_exists('message', $dataArray)){
-                    $result['message'] =  __( 'Server: ' . $dataArray['message'] );
+                    $result['message'] =  __( 'Server: 1%', $dataArray['message'] );
                 }
 //                $this->messageManager->addErrorMessage( $result['message'] );
                 $this->_logger->addError($result['message'], $dataArray);
