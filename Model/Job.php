@@ -305,7 +305,7 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
                             if ($result == false && $isEmptyFile == true) {
                                 $return['isSuccess'] = false;
                                 $return['empty_file'] = false;
-                                $return['Message'] = __($this->getData('job_number').' - Failed to write content to ' . $fileFullName);
+                                $return['Message'] = __('%1 - Failed to write content to 2%', $this->getData('job_number'),  $fileFullName);
                                 $this->_logger->addError($return['Message']);
                             } else {
                                 $this->setData('download_url', $downloadUrl)
@@ -318,24 +318,24 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
                             }
                         } else {
                             $return['isSuccess'] = false;
-                            $return['Message'] = __('Download url is not found for the job ( \'job_key\': \'' . $jobData->job_key . '\').');
+                            $return['Message'] = __('Download url is not found for the job (job_key: 1%)', $jobData->job_key);
                             $this->_logger->addError($return['Message']);
                         }
                     } else {
                         $return['isSuccess'] = false;
-                        $return['Message'] = __('Download file is not found for the job ( \'job_key\': \'' . $jobData->job_key . '\').');
+                        $return['Message'] = __('Download file is not found for the job (job_key: 1%', $jobData->job_key);
                         $this->_logger->addError($return['Message']);
                     }
                     break;
                 default:
                     $return['isSuccess'] = false;
-                    $return['Message'] = __('Unknown status is found for the job ( \'job_key\': \'' . $jobData->job_key . '\').');
+                    $return['Message'] = __('Unknown status is found for the job (job_key', $jobData->job_key);
                     $this->_logger->addError($return['Message']);
                     break;
             }
         }catch(\Exception $e){
             $return['isSuccess'] = false;
-            $return['Message'] = __(' An Error with the message \'' . $e->getMessage() . '\' occurs while processing the job with the key - ' . $jobData->job_key);
+            $return['Message'] = __(' An Error with the message "1%" occurs while processing the job with the key - 2%' , $e->getMessage(), $jobData->job_key);
             $this->_logger->addError($return['Message']);
         }
 

@@ -355,14 +355,8 @@ class ConfigHelper extends AbstractHelper
     }
 
     public function getCreateTestStoreViewMessage(){
-        return
-            '<p>'
-            . __(
-                'Please <a href="'
-                . $this->_urlFactory->create()->getUrl('adminhtml/system_config/edit', ['section' => 'straker_config'])
-                . '">create a testing Store View.</a>'
-            )
-            . '</p>';
+        $url = $this->_urlFactory->create()->getUrl('adminhtml/system_config/edit', ['section' => 'straker_config']);
+        return '<p>' . __('Please %1 create a testing store view.%2', '<a href="' . $url . '">', '</a>') . '</p>';
     }
 
     public function validProperties()

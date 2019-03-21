@@ -169,7 +169,7 @@ class Save extends Action
 
             } catch (Exception $e) {
 
-                $this->messageManager->addException($e, __('Something went wrong while saving the job.'.$e->getMessage()));
+                $this->messageManager->addException($e, __('Something went wrong while saving the job. %1', $e->getMessage()));
                 $this->_api->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
                 $this->_logger->error('error'.__FILE__.' '.__LINE__, [$e]);
             }

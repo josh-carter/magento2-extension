@@ -46,7 +46,7 @@ class Form extends Generic
 
         $fieldset = $form->addFieldset(
             'base_fieldset',
-            ['legend' => __(' '), 'class' => 'fieldset-wide']
+            ['legend' => ' ', 'class' => 'fieldset-wide']
         );
 
         $fieldset->addField(
@@ -55,7 +55,7 @@ class Form extends Generic
             [
                 'name' => 'first_name',
                 'label' => __('First Name'),
-                'title' => __('first_name'),
+                'title' => __('first name'),
                 'required' => true
             ]
         );
@@ -66,7 +66,7 @@ class Form extends Generic
             [
                 'name' => 'last_name',
                 'label' => __('Last Name'),
-                'title' => __('last_name'),
+                'title' => __('last name'),
                 'required' => true
             ]
         );
@@ -77,7 +77,7 @@ class Form extends Generic
             [
                 'name' => 'email',
                 'label' => __('Email'),
-                'title' => __('email'),
+                'title' => __('Email'),
                 'required' => true,
                 'class'=>'validate-email'
             ]
@@ -88,7 +88,7 @@ class Form extends Generic
             'select',
             [
                 'label' => __('Country'),
-                'title' => __('country'),
+                'title' => __('Country'),
                 'name' => 'country',
                 'required' => true,
                 'options' => $this->_getOptions()
@@ -101,7 +101,7 @@ class Form extends Generic
             [
                 'name' => 'company_name',
                 'label' => __('Company Name'),
-                'title' => __('company_name'),
+                'title' => __('Company Name'),
                 'required' => true
             ]
         );
@@ -112,7 +112,7 @@ class Form extends Generic
             [
                 'name' => 'company_size',
                 'label' => __('Company Size'),
-                'title' => __('company_size'),
+                'title' => __('Company Size'),
                 'required' => true,
                 'options' => $this->_getCompanySizeOptions()
             ]
@@ -124,7 +124,7 @@ class Form extends Generic
             [
                 'name' => 'phone_number',
                 'label' => __('Phone Number'),
-                'title' => __('phone_Number')
+                'title' => __('Phone Number')
             ]
         );
 
@@ -134,7 +134,7 @@ class Form extends Generic
             [
                 'name' => 'url',
                 'label' => __('Website Url'),
-                'title' => __('url'),
+                'title' => __('Website Url'),
                 'class'=>'validate-clean-url'
             ]
         );
@@ -143,9 +143,9 @@ class Form extends Generic
             'terms',
             'checkbox',
             [
-                'label' => __(' '),
+                'label' => '',
                 'name' => 'terms',
-                'after_element_html' => '<span>&nbsp;&nbsp;I have read and agreed to the</span><a href="https://www.strakertranslations.com/terms-conditions/" target="_blank"> terms and conditions</a>',
+                'after_element_html' => '<span>&nbsp;&nbsp;' . __('I have read and agreed to the %1 terms and conditions %2', '</span><a href="https://www.strakertranslations.com/terms-conditions/" target="_blank">', '</a>'),
                 'class'=>'checkbox required'
             ]
         );

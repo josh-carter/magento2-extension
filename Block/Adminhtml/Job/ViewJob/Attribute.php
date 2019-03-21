@@ -72,7 +72,7 @@ class Attribute extends Container
                         ]
                     ) . '\') ',
                 'class' => 'back',
-                'title' => __('Go to ' . $this->_referrer .  ' page')
+                'title' => __('Go to %1 page', $this->_referrer)
             ],
             0,
             30
@@ -123,7 +123,7 @@ class Attribute extends Container
                             'source_store_id' => $this->_requestData['source_store_id']
                         ]
                     ),
-                    'title' => __('Go to ' . $this->_referrer . ' page')
+                    'title' => __('Go to %1 page',  $this->_referrer)
 
                 ],
                 [
