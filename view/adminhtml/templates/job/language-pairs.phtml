@@ -14,7 +14,7 @@
         var destinationLanguageElement  = $('select[name="straker_destination_language"]');
         var sourceStoreElement          = $('select[name="magento_source_store"]');
         var sourceLanguageElement       = $('select[name="straker_source_language"]');
-        var contentTabs                 = $('#job_tabs_attachment_products,#job_tabs_categories,#job_tabs_cms_pages,#job_tabs_cms_blocks');
+        var contentTabs                 = $('#job_tabs_attachment_products,#job_tabs_categories,#job_tabs_cms_pages,#job_tabs_cms_blocks,#job-summary');
         var editForm                    = $('form#edit_form');
         var languagePairSetting         = {};
         // var tabs                        = $('li[role="tab"]');
@@ -290,6 +290,8 @@
                 block_data: $('input[name="blocks"]')
             };
 
+            updateSummary(data);
+
             if( name.trim() === ''){
                 return data;
             }else if($.inArray(name, data)){
@@ -329,6 +331,23 @@
             showElement(saveButton);
             showElement(resetButton);
             showElement(contentTabs);
+        }
+
+        function updateSummary(data) {
+            if(typeof data !== 'undefined'){
+                $.each(data, function (item) {
+                    var dataItem = data[item];
+                    if (typeof dataItem !== 'undefined' && typeof dataItem.val() !== 'undefined' && dataItem.val() !== ''){
+                        var delimiter = item.indexOf('category') === -1 ? '&' : ',';
+                        var values = dataItem.val().split(delimiter).filter( function (v) {
+                            return v.trim() !== '';
+                        });
+                        $('#job-summary  td.' + dataItem.attr('name')).html(values.length);
+                    }else{
+                        $('#job-summary  td.' + dataItem.attr('name')).html(0);
+                    }
+                });
+            }
         }
 
         (function init() {
