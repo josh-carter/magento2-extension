@@ -339,8 +339,11 @@
                     var dataItem = data[item];
                     if (typeof dataItem !== 'undefined' && typeof dataItem.val() !== 'undefined' && dataItem.val() !== ''){
                         var delimiter = item.indexOf('category') === -1 ? '&' : ',';
-                        var values = dataItem.val().split(delimiter).filter( function (v) {
-                            return v.trim() !== '';
+                        var currentValues = data[item].val().split(delimiter);
+                        var newValues = dataItem.val().split(delimiter);
+                        var values = currentValues.concat(newValues);
+                        values = values.filter( function (v, i) {
+                            return values.indexOf(v) === i && v.trim() !== '';
                         });
                         $('#job-summary  td.' + dataItem.attr('name')).html(values.length);
                     }else{
@@ -464,7 +467,7 @@
             });
 
             //when job content (products, categories, cms pages and cms blocks) checked
-            editForm.on('click', 'input', function () {
+            editForm.on('click', 'input, #job_tabs_categories_content a, #job_tabs_categories_content img.x-tree-node-icon', function () {
 //                checkStoreData();
                 $('input[type="hidden"]').trigger('change');
 
@@ -472,7 +475,7 @@
         }
 
         $('input[type="hidden"]').change(function () {
-            var name = $(this).prop('name');
+            // var name = $(this).prop('name');
             // if($.inArray(name, hiddenInputs) !== -1){
                 checkStoreData();
             // }

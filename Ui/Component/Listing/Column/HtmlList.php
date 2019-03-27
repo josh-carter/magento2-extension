@@ -73,13 +73,14 @@ class HtmlList extends Column
                             $isFirst = true;
                             $counter = 1;
                             $typeLength = sizeof($productTypes);
+                            $totalProducts = 0;
                             foreach($productTypes as $name => $label){
                                 if(isset($json[$name])){
                                     if($isFirst) {
-                                        $html .= '<ul><b>'. __($this->getLabel('product')) .'</b>';
+                                        $html .= '<ul><b>'. __($this->getLabel('product')) . ': PRODUCT_TOTAL' .  '</b>';
                                         $isFirst = false;
                                     }
-
+                                    $totalProducts += $json[$name];
                                     $html .= '<li>&nbsp;-&nbsp;' . __($label) . ': ' . $json[$name] . '</li>';
                                     $counter++;
 
@@ -88,6 +89,8 @@ class HtmlList extends Column
                                     }
                                 }
                             }
+
+                            $html = str_replace('PRODUCT_TOTAL', $totalProducts, $html);
 
                             if(isset($json['category'])){
                                 $html .= '<li><b>' . __($this->getLabel('category')) . ': '  . $json['category'] . '</b></li>';

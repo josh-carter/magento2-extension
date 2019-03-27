@@ -62,11 +62,11 @@
 
                     this.storeId = parameters['store_id'];
 
-                    if (this.storeId != 0 && $('add_root_category_button')) {
+                    if (this.storeId !== 0 && $('add_root_category_button')) {
                         $('add_root_category_button').hide();
                     }
 
-                    if ((typeof parameters['root_visible']) != 'undefined') {
+                    if ((typeof parameters['root_visible']) !== 'undefined') {
                         this.rootVisible = parameters['root_visible'] * 1;
                     }
 
@@ -129,7 +129,7 @@
                 selectCurrentNode: function () {
                     if (this.currentNodeId) {
                         var selectedNode = this.getNodeById(this.currentNodeId);
-                        if ((typeof selectedNode.attributes.path) != 'undefined') {
+                        if ((typeof selectedNode.attributes.path) !== 'undefined') {
                             var path = selectedNode.attributes.path;
                             if (!this.storeId) {
                                 path = '0/' + path;
@@ -295,7 +295,7 @@
 
                     this.buildCategoryTree(parent, config);
 
-                    if (typeof callback == "function") {
+                    if (typeof callback === "function") {
                         callback(this, parent);
                     }
                 };
@@ -329,12 +329,12 @@
 
                     hash = this.toArray(node.attributes);
 
-                    if (node.childNodes.length > 0 || (node.loaded == false && node.loading == false)) {
-                        hash['children'] = new Array;
+                    if (node.childNodes.length > 0 || (node.loaded === false && node.loading === false)) {
+                        hash['children'] = [];
 
                         for (var i = 0, len = node.childNodes.length; i < len; i++) {
                             if (!hash['children']) {
-                                hash['children'] = new Array;
+                                hash['children'] = [];
                             }
                             hash['children'].push(this.buildHash(node.childNodes[i]));
                         }
@@ -415,7 +415,7 @@
                 var catIds = '';
 
                 tree.root.cascade(function (n) {
-                    if (typeof n.id == "string") {
+                    if (typeof n.id === "string") {
                         if(n.attributes.checked){
                             catIds += n.id + ',';
                         }
