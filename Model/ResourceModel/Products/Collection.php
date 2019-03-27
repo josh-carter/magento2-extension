@@ -86,10 +86,10 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         );
         return $this->getConnection()->fetchCol($idsSelect, $this->_bindParams);
     }
-//
+
 //    protected function _afterLoad()
 //    {
-////        var_dump($this->getSelect()->assemble());
+//        var_dump($this->getSelect()->assemble());
 //        return parent::_afterLoad();
 //    }
 }

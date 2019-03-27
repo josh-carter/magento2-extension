@@ -318,7 +318,7 @@ class Products extends \Magento\Backend\Block\Widget\Grid\Extended
         $condition = $column->getFilter()->getCondition();
         $columnId =  $column->getFilterIndex() ? $column->getFilterIndex() : $column->getIndex();
         if(is_array($condition) && !empty(reset($condition)) && reset($condition) == '1'){
-            $collection->getSelect()->where($columnId . '=?', reset($condition));
+            $collection->getSelect()->where($columnId . ' IS NOT NULL');
         }else{
             $collection->getSelect()->where($columnId . ' IS NULL');
         }
