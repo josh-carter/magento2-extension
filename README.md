@@ -1,6 +1,5 @@
 # Straker Translations Magento 2 Extension
-![alt text]( https://www.strakertranslations.com/wp-content/themes/strakertranslations/assets/images/logo.png "Straker Translations")
-[Straker Translations](https://www.strakertranslations.com/)
+[![](https://www.strakertranslations.com/assets/images/logo.png "Straker Translations")](https://www.strakertranslations.com)
 
 This extension will add the ability to translate products, categories, cms pages and blocks into different languages via Straker Translations API. 
 
