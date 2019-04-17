@@ -54,6 +54,16 @@ class Form extends Generic
         );
 
         $fieldset->addField(
+            'desc',
+            'label',
+            [
+                'name' => 'desc',
+                'label' =>  ' ',
+                'after_element_html' => $this->getFormDesc()
+            ]
+        );
+
+        $fieldset->addField(
             'name',
             'text',
             [
@@ -63,7 +73,6 @@ class Form extends Generic
                 'required'  => true
             ]
         );
-
 
         $fieldset->addField(
             'email',
@@ -116,8 +125,8 @@ class Form extends Generic
             'textarea',
             [
                 'name'      => 'detail',
-                'label'     => __('Detail'),
-                'title'     => __('Detail'),
+                'label'     => __('Details'),
+                'title'     => __('Details'),
                 'required'  => true
             ]
         );
@@ -193,5 +202,24 @@ class Form extends Generic
         }
 
         return $options;
+    }
+
+    private function getFormDesc(){
+        return '<div>
+                    <h2>How can we help?</h2>
+                    <div>
+                        <h3 class="straker-support-form-title">Read our docs</h3>
+                        <p>Read our <a href="https://support.strakertranslations.com/extensions/magento2/" title="Straker Docs - Magento2" target="_blank">docs</a> available on Straker Translations knowledge base</p>
+                    </div>
+                    <div>
+                        <h3 class="straker-support-form-title">Magento Market Place</h3>
+                        <p>Visit our <a href="https://marketplace.magento.com/strakertranslations-straker-magento2.html#product.info.details.support" title="Magento Marketplace" target="_blank">support page</a> on Magento Marketplace</p>
+                    </div>
+                    <div>
+                        <h3 class="straker-support-form-title">Contact Us</h3>
+                        <p>Fill in the form below and we will be in touch</p>
+                    </div>
+                </div>
+               ';
     }
 }

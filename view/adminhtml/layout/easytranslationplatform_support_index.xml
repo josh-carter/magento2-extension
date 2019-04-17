@@ -5,7 +5,6 @@
             <referenceContainer name="page.messages">
                 <block class="Magento\Framework\View\Element\Messages" name="messages" as="messages"/>
             </referenceContainer>
-            <block class="Magento\Framework\View\Element\Template" template="Straker_EasyTranslationPlatform::support/title.phtml" />
             <block class="Straker\EasyTranslationPlatform\Block\Adminhtml\Support\FormContainer" name="support_container"/>
         </referenceContainer>
     </body>
