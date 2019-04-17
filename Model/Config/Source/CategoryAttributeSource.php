@@ -37,6 +37,6 @@ class CategoryAttributeSource implements ArrayInterface
                 return $this->_option;
             }
         }
-        return [ 'label' => __('No attributes are available! '), 'value' => '' ];
+        return [ ['label' => __('No attributes are available! '), 'value' => ''] ];
     }
 }

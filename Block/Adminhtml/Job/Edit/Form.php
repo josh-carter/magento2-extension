@@ -14,6 +14,7 @@ class Form extends Generic
      * Prepare form
      *
      * @return $this
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     protected function _prepareForm()
     {

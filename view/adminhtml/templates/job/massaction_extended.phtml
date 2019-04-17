@@ -71,13 +71,13 @@
 
         var showActions = function(gridIdsTotal, pageIdsTotal, pageCheckedIds, inputElement, containerId, massActionId) {
 //            console.log('============================= start showAction ================================');
-            if(typeof containerId == 'undefined' || typeof massActionId == 'undefined'){
+            if(typeof containerId === 'undefined' || typeof massActionId === 'undefined'){
 //                console.log('containerId or massActionId undefined');
                 containerId = '<?php echo $block->getParentBlock()->getHtmlId(); ?>';
                 massActionId = '<?php echo $block->getHtmlId() ?>';
             }
 
-            if(typeof gridIdsTotal == 'undefined' || typeof pageIdsTotal == 'undefined'  || pageCheckedIds == 'undefined' ){
+            if(typeof gridIdsTotal === 'undefined' || typeof pageIdsTotal === 'undefined'  || pageCheckedIds === 'undefined' ){
 //                console.log('gridIdsTotal, pageIdsTotal or pageCheckedIds undefined');
                 var pageIds = jQuery('#<?php echo $block->getParentBlock()->getHtmlId(); ?> tr input[type="checkbox"][name="massaction"]');
                 gridIdsTotal = <?php echo count(explode(',',$block->getGridIdsJson())); ?>;
@@ -90,7 +90,7 @@
             var optionUnSelectAll  = jQuery('#' + massActionId + '-mass-select option[value="unselectAll"]');
             var optionUnSelectVisible = jQuery('#' + massActionId + '-mass-select option[value="unselectVisible"]');
 
-            if(typeof inputElement == 'undefined'){
+            if(typeof inputElement === 'undefined'){
 //                console.log('inputElement undefined');
                 var inputElementName = '<?php echo $block->getParentBlock()->_getHiddenInputElementName(); ?>';
                 inputElement = jQuery('input[type="hidden"][name="'+ inputElementName +'"]');
@@ -122,7 +122,7 @@
         var filterAction = jQuery('#<?php echo $block->getParentBlock()->getHtmlId(); ?> .admin__filter-actions');
         var massActionForm = jQuery('#<?php echo $block->getHtmlId() ?>-form');
 
-        if( typeof filterAction != 'undefined' ){
+        if( typeof filterAction !== 'undefined' ){
             massActionForm.find('select').prop('disabled',true);
             massActionForm.hide();
             filterAction.insertAfter(massActionForm);
@@ -151,8 +151,50 @@
             this.blur();
         });
 
-        var triggerHiddenInputChange = function () {
+        varienGridMassaction.prototype.triggerHiddenInputChange = function () {
             jQuery('input[type="hidden"]').trigger('change');
+        };
+
+        varienGridMassaction.prototype.getCheckedValueAsArray = function () {
+            return this.checkedString.split(',').filter(function (v) {
+                return v.trim() !== ''
+            })
+        };
+        //
+        // /**
+        //  * @return {Array}
+        //  */
+        // varienGridMassaction.prototype.getCheckboxesValues = function () {
+        //     var result = [];
+        //
+        //
+        //     this.getCheckboxes().each(function (checkbox) { //eslint-disable-line no-extra-bind
+        //         result.push(checkbox.value);
+        //     });
+        //
+        //     result = result.concat(this.getCheckedValueAsArray());
+        //
+        //     result = result.filter(function (value, index) {
+        //         return value.trim() !== '' && result.indexOf(value) === index
+        //     });
+        //     return result;
+        // };
+
+        /**
+         * @param {*} values
+         */
+        varienGridMassaction.prototype.setCheckedValues = function (values) {
+            if(values === ''){
+                this.checkedString = values;
+            }else{
+                var checkedValues = this.checkedString.split(',');
+                var newCheckedValues = values.split(',');
+                var newValues = newCheckedValues.concat(checkedValues);
+                newValues = newValues.filter(function(v, i){
+                    return v.trim() !== '' && newValues.indexOf(v) === i;
+                });
+                this.checkedString = newValues.join(',');
+            }
         };
 
         varienGridMassaction.prototype.selectAll = function () {
@@ -160,7 +202,7 @@
             this.checkCheckboxes();
             this.updateCount();
             this.clearLastChecked();
-            triggerHiddenInputChange();
+            this.triggerHiddenInputChange();
             return false;
         };
 
@@ -169,7 +211,7 @@
             this.checkCheckboxes();
             this.updateCount();
             this.clearLastChecked();
-            triggerHiddenInputChange();
+            this.triggerHiddenInputChange();
             return false;
         };
 
@@ -178,7 +220,7 @@
             this.checkCheckboxes();
             this.updateCount();
             this.clearLastChecked();
-            triggerHiddenInputChange();
+            this.triggerHiddenInputChange();
             return false;
         };
 
@@ -189,7 +231,7 @@
             this.checkCheckboxes();
             this.updateCount();
             this.clearLastChecked();
-            triggerHiddenInputChange();
+            this.triggerHiddenInputChange();
             return false;
         };
 
@@ -198,7 +240,7 @@
             var tdElement = Event.findElement(evt, 'td');
             var trElement = Event.findElement(evt, 'tr');
 
-            if (typeof that.isDisabled != 'undefined' && that.isDisabled(evt)) {
+            if (typeof that.isDisabled !== 'undefined' && that.isDisabled(evt)) {
                 return false;
             }
 
@@ -206,12 +248,12 @@
                 if ($(tdElement).down('a') || $(tdElement).down('select')) {
                     return;
                 }
-                if (trElement.title && trElement.title.strip() != '#') {
+                if (trElement.title && trElement.title.strip() !== '#') {
                     that.getOldCallback('row_click')(grid, evt);
                 }
                 else {
                     var checkbox = Element.select(trElement, 'input');
-                    var isInput = Event.element(evt).tagName == 'input';
+                    var isInput = Event.element(evt).tagName === 'input';
                     var checked = isInput ? checkbox[0].checked : !checkbox[0].checked;
 
                     if (checked) {
@@ -246,10 +288,10 @@
             } else {
                 this.multiselect.removeClassName('_disabled');
             }
-            if (checkboxesChecked == checkboxesTotal && checkboxesTotal != 0) {
+            if (checkboxesChecked === checkboxesTotal && checkboxesTotal !== 0) {
                 this.count.removeClassName('_empty');
                 this.multiselect.addClassName('_checked').removeClassName('_indeterminate');
-            } else if (checkboxesChecked == 0) {
+            } else if (checkboxesChecked === 0) {
                 this.count.addClassName('_empty');
                 this.multiselect.removeClassName('_checked').removeClassName('_indeterminate');
             } else {

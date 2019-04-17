@@ -245,6 +245,23 @@ class ConfigHelper extends AbstractHelper
         return  empty($return) ? [] : explode(',', $return);
     }
 
+    /**
+     * get use selected products' filter from core_config
+     *
+     * @return array
+     */
+    public function getProductFilters()
+    {
+        $return =  $this->scopeConfig->getValue('straker_config/filter/product_filters', 'default', 0);
+        return  empty($return) ? [] : explode(',', $return);
+    }
+
+    public function shouldTranslateBlockTitle()
+    {
+        $return =  $this->scopeConfig->getValue('straker_config/attribute/include_cms_block_title', 'default', 0);
+        return  (empty($return) || $return == '0') ? false : true;
+    }
+
     public function getStoreInfo($storeId)
     {
         $collection = $this->_scopeFactory->create(
@@ -338,14 +355,8 @@ class ConfigHelper extends AbstractHelper
     }
 
     public function getCreateTestStoreViewMessage(){
-        return
-            '<p>'
-            . __(
-                'Please <a href="'
-                . $this->_urlFactory->create()->getUrl('adminhtml/system_config/edit', ['section' => 'straker_config'])
-                . '">create a testing Store View.</a>'
-            )
-            . '</p>';
+        $url = $this->_urlFactory->create()->getUrl('adminhtml/system_config/edit', ['section' => 'straker_config']);
+        return '<p>' . __('Please %1 create a testing store view.%2', '<a href="' . $url . '">', '</a>') . '</p>';
     }
 
     public function validProperties()

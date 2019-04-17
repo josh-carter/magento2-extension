@@ -10,9 +10,10 @@ use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 use Magento\Framework\Search\AggregationInterface;
 use Magento\Framework\Registry;
 use Straker\EasyTranslationPlatform\Helper\ConfigHelper;
-use Straker\EasyTranslationPlatform\Model;
-use Psr\Log\LoggerInterface;
+use Straker\EasyTranslationPlatform\Helper\JobHelper;
+use Straker\EasyTranslationPlatform\Logger\Logger;
 use Straker\EasyTranslationPlatform\Model\ResourceModel\Job\Collection as JobCollection;
+use Zend\Db\Sql\Select;
 
 /**
  * Class Collection
@@ -25,8 +26,6 @@ class Collection extends JobCollection implements SearchResultInterface
      */
     protected $aggregations;
     protected $_coreRegistry;
-//    protected $_configHelper;
-
 
     /**
      * Collection constructor.
@@ -46,7 +45,7 @@ class Collection extends JobCollection implements SearchResultInterface
      */
     public function __construct(
         EntityFactoryInterface $entityFactory,
-        LoggerInterface $logger,
+        Logger $logger,
         FetchStrategyInterface $fetchStrategy,
         ManagerInterface $eventManager,
         ConfigHelper $configHelper,
@@ -55,9 +54,7 @@ class Collection extends JobCollection implements SearchResultInterface
         $eventPrefix,
         $eventObject,
         $resourceModel,
-        $model = 'Magento\Framework\View\Element\UiComponent\DataProvider\Document',
-        $connection = null,
-        AbstractDb $resource = null
+        $model = 'Magento\Framework\View\Element\UiComponent\DataProvider\Document'
     ) {
         parent::__construct(
             $entityFactory,
@@ -168,13 +165,39 @@ class Collection extends JobCollection implements SearchResultInterface
     protected function _beforeLoad()
     {
         parent::_beforeLoad();
+        $strakerJobTypeTable = $this->_resource->getTable('straker_job_type');
+                $this->getSelect()
+                    ->reset(Select::COLUMNS)
+                    ->columns([
+                        'job_id',
+                        'job_number',
+                        'GROUP_CONCAT(summary  SEPARATOR \''. JobHelper::SEPARATOR .'\') AS summary',
+                        'created_at',
+                        'updated_at',
+                        'sl',
+                        'tl',
+                        'job_status_id',
+                        'job_type_id',
+                        'job_key',
+                        'source_store_id',
+                        'target_store_id',
+                        'source_file',
+                        'translated_file',
+                        'download_url',
+                        'is_test_job'
+                    ])->joinLeft(
+                        [ 'st_type' => $strakerJobTypeTable ],
+                        'st_type.type_id=main_table.job_type_id AND main_table.job_key IS NOT NULL AND main_table.job_key <> \'\'',
+                        'GROUP_CONCAT(st_type.type_name SEPARATOR \''. JobHelper::SEPARATOR . '\') AS job_types'
+                    )
+                    ->where('is_test_job = ?', $this->_configHelper->isSandboxMode())
+                    ->group('job_key');
         $this->getSelect()->where('is_test_job = ?', $this->_configHelper->isSandboxMode())->group('job_key');
         $hasUpdatedJob = $this->_coreRegistry->registry('job_updated');
         if( $hasUpdatedJob ){
             $this->getSelect()->order('updated_at DESC');
             $this->_coreRegistry->unregister('job_updated');
         }
-//        var_dump($this->getSelect()->__toString());exit;
         return $this;
     }
 }

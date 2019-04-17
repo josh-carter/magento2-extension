@@ -50,30 +50,39 @@ class Form extends Generic
 
         $fieldset = $form->addFieldset(
             'base_fieldset',
-            ['legend' => __(' '), 'class' => 'fieldset-wide']
+            ['legend' => ' ', 'class' => 'fieldset-wide']
+        );
+
+        $fieldset->addField(
+            'desc',
+            'label',
+            [
+                'name' => 'desc',
+                'label' =>  ' ',
+                'after_element_html' => $this->getFormDesc()
+            ]
         );
 
         $fieldset->addField(
             'name',
             'text',
             [
-                'name' => 'name',
-                'label' => __('Name'),
-                'title' => __('Name'),
-                'required' => true
+                'name'      => 'name',
+                'label'     => __('Name'),
+                'title'     => __('Name'),
+                'required'  => true
             ]
         );
-
 
         $fieldset->addField(
             'email',
             'text',
             [
-                'name' => 'email',
-                'label' => __('Email Address'),
-                'title' => __('email_address'),
-                'required' => true,
-                'class'=>'validate-email'
+                'name'      => 'email',
+                'label'     => __('Email Address'),
+                'title'     => __('Email Address'),
+                'required'  => true,
+                'class'     =>'validate-email'
             ]
         );
 
@@ -82,7 +91,7 @@ class Form extends Generic
             'select',
             [
                 'label' => __('Job Number'),
-                'title' => __('job_number'),
+                'title' => __('Job Number'),
                 'name' => 'job_id',
                 'options' => $this->_getTJNumbers()
             ]
@@ -92,19 +101,19 @@ class Form extends Generic
             'category',
             'select',
             [
-                'label' => __('Category'),
-                'title' => __('category'),
-                'name' => 'category',
-                'required' => true,
-                'options' => [
+                'label'     => __('Category'),
+                'title'     => __('Category'),
+                'name'      => 'category',
+                'required'  => true,
+                'options'   => [
                     ''=>'',
-                    'delivery'=>'Delivery',
-                    'quality'=>'Quality',
-                    'payment'=>'Payment',
-                    'job'=>'Job',
-                    'technical'=>'Technical',
-                    'invoice'=>'Invoice',
-                    'messages'=>'Messages'
+                    'delivery'  =>  __('Delivery'),
+                    'quality'   =>  __('Quality'),
+                    'payment'   =>  __('Payment'),
+                    'job'       =>  __('Job'),
+                    'technical' =>  __('Technical'),
+                    'invoice'   =>  __('Invoice'),
+                    'messages'  =>  __('Messages')
                 ]
             ]
         );
@@ -115,10 +124,10 @@ class Form extends Generic
             'detail',
             'textarea',
             [
-                'name' => 'detail',
-                'label' => __('Detail'),
-                'title' => __('detail'),
-                'required' => true
+                'name'      => 'detail',
+                'label'     => __('Details'),
+                'title'     => __('Details'),
+                'required'  => true
             ]
         );
 
@@ -126,10 +135,9 @@ class Form extends Generic
             'url',
             'hidden',
             [
-                'name' => 'url',
+                'name'  => 'url',
                 'label' => __('Website Url'),
-                'title' => __('url')
-
+                'title' => __('Website Url')
             ]
         );
 
@@ -137,9 +145,9 @@ class Form extends Generic
             'module_version',
             'hidden',
             [
-                'name' => 'module_version',
+                'name'  => 'module_version',
                 'label' => __('Module Version'),
-                'title' => __('Module version')
+                'title' => __('Module Version')
             ]
         );
 
@@ -147,9 +155,9 @@ class Form extends Generic
             'app_version',
             'hidden',
             [
-                'name' => 'app_version',
+                'name'  => 'app_version',
                 'label' => __('App Version'),
-                'title' => __('app_version')
+                'title' => __('App Version')
             ]
         );
 
@@ -160,14 +168,14 @@ class Form extends Generic
 
         $form->setValues(
             [
-                'url'=>$this->_storeManager->getStore()->getBaseUrl(),
-                'app_version'=> $this->_configHelper->getMagentoVersion(),
+                'url'           =>$this->_storeManager->getStore()->getBaseUrl(),
+                'app_version'   => $this->_configHelper->getMagentoVersion(),
                 'module_version'=>$this->_configHelper->getModuleVersion(),
-                'name'=>$this->getRequest()->getParam('name'),
-                'email'=>$this->getRequest()->getParam('email'),
-                'job_id'=>$this->getRequest()->getParam('job_id'),
-                'category'=>$this->getRequest()->getParam('category'),
-                'detail'=>$this->getRequest()->getParam('detail')
+                'name'          =>$this->getRequest()->getParam('name'),
+                'email'         =>$this->getRequest()->getParam('email'),
+                'job_id'        =>$this->getRequest()->getParam('job_id'),
+                'category'      =>$this->getRequest()->getParam('category'),
+                'detail'        =>$this->getRequest()->getParam('detail')
             ]
         );
 
@@ -194,5 +202,24 @@ class Form extends Generic
         }
 
         return $options;
+    }
+
+    private function getFormDesc(){
+        return '<div>
+                    <h2>How can we help?</h2>
+                    <div>
+                        <h3 class="straker-support-form-title">Read our docs</h3>
+                        <p>Read our <a href="https://support.strakertranslations.com/extensions/magento2/" title="Straker Docs - Magento2" target="_blank">docs</a> available on Straker Translations knowledge base</p>
+                    </div>
+                    <div>
+                        <h3 class="straker-support-form-title">Magento Market Place</h3>
+                        <p>Visit our <a href="https://marketplace.magento.com/strakertranslations-straker-magento2.html#product.info.details.support" title="Magento Marketplace" target="_blank">support page</a> on Magento Marketplace</p>
+                    </div>
+                    <div>
+                        <h3 class="straker-support-form-title">Contact Us</h3>
+                        <p>Fill in the form below and we will be in touch</p>
+                    </div>
+                </div>
+               ';
     }
 }

@@ -119,7 +119,7 @@ class Index extends Action
 
                     if (count($updatedJobs) > 0) {
                         $this->_coreRegistry->register('job_updated', true );
-                        $this->messageManager->addSuccessMessage(__(implode(', ', $updatedJobs)  .' has been updated.'));
+                        $this->messageManager->addSuccessMessage(__('%1 has been updated.', implode(', ', $updatedJobs)));
                     } elseif (count($localJobIds) <= 0) {
                         $result['status'] = false;
                         $result['message'] = __('You have not created any job.');
@@ -143,7 +143,7 @@ class Index extends Action
                 $dataArray = (array)$apiData;
                 $result['status'] = false;
                 if(key_exists('message', $dataArray)){
-                    $result['message'] =  __( 'Server: ' . $dataArray['message'] );
+                    $result['message'] =  __( 'Server: 1%', $dataArray['message'] );
                 }
 //                $this->messageManager->addErrorMessage( $result['message'] );
                 $this->_logger->addError($result['message'], $dataArray);

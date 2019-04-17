@@ -37,7 +37,7 @@ class PageHelper extends AbstractHelper
     protected $_pageData;
     protected $_storeId;
 
-    protected $_attributes = ['title','meta_keywords','meta_description','content_heading','content'];
+    protected $_attributes = ['title','meta_keywords','meta_description','content_heading','content','meta_title'];
     protected $_strakerApi;
 
     public function __construct(
@@ -245,9 +245,13 @@ class PageHelper extends AbstractHelper
         return $this;
     }
 
-    public function addSummaryNode()
+    private function addSummaryNode()
     {
-        $summaryArray['cms_page'] = count($this->_pageData);
+        $summaryArray = $this->getSummary();
         $this->_xmlHelper->addContentSummary($summaryArray);
+    }
+
+    public function getSummary(){
+        return ['cms_page' => count($this->_pageData)];
     }
 }

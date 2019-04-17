@@ -14,10 +14,13 @@ use Magento\Catalog\Model\Product\TypeFactory;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory as SetFactory;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 
-use Straker\EasyTranslationPlatform\Helper\ConfigHelper;
+use Straker\EasyTranslationPlatform\Helper\ProductHelper;
 use Straker\EasyTranslationPlatform\Model\JobFactory;
 use Straker\EasyTranslationPlatform\Model\ProductCollectionFactory;
 use Straker\EasyTranslationPlatform\Model\ResourceModel\Job\CollectionFactory as JobCollectionFactory;
+
+use Magento\Catalog\Ui\Component\Listing\Attribute\RepositoryInterface;
+
 
 class Products extends \Magento\Backend\Block\Widget\Grid\Extended
 {
@@ -25,7 +28,7 @@ class Products extends \Magento\Backend\Block\Widget\Grid\Extended
     protected $productCollectionFactory;
     protected $jobFactory;
     protected $sourceStoreId;
-    protected $_configHelper;
+    protected $productHelper;
     protected $jobCollectionFactory;
     protected $resourceConnection;
     protected $targetStoreId;
@@ -35,6 +38,10 @@ class Products extends \Magento\Backend\Block\Widget\Grid\Extended
     protected $productStatusModel;
     protected $productModel;
     protected $websitesModel;
+    protected $productFilters;
+
+
+    protected $repositoryInterface;
 
     public function __construct(
         Context $context,
@@ -42,7 +49,7 @@ class Products extends \Magento\Backend\Block\Widget\Grid\Extended
         JobFactory $jobFactory,
         ProductFactory $productFactory,
         ProductCollectionFactory $productCollectionFactory,
-        ConfigHelper $configHelper,
+        ProductHelper $productHelper,
         JobCollectionFactory $jobCollectionFactory,
         ResourceConnection $resourceConnection,
         VisibilityFactory $productVisibilityFactory,
@@ -50,11 +57,12 @@ class Products extends \Magento\Backend\Block\Widget\Grid\Extended
         SetFactory $productSetFactory,
         Status $productStatus,
         WebsiteFactory $websiteFactory,
+        RepositoryInterface $repositoryInterface,
         array $data = []
     ) {
         $this->jobFactory = $jobFactory;
         $this->productCollectionFactory = $productCollectionFactory;
-        $this->_configHelper = $configHelper;
+        $this->productHelper = $productHelper;
         $this->jobCollectionFactory = $jobCollectionFactory;
         $this->resourceConnection = $resourceConnection;
         $this->productVisibilityModel = $productVisibilityFactory->create();
@@ -63,6 +71,9 @@ class Products extends \Magento\Backend\Block\Widget\Grid\Extended
         $this->productModel = $productFactory->create();
         $this->productStatusModel = $productStatus;
         $this->websitesModel = $websiteFactory->create();
+
+        $this->repositoryInterface = $repositoryInterface;
+
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -84,70 +95,63 @@ class Products extends \Magento\Backend\Block\Widget\Grid\Extended
     protected function _prepareCollection()
     {
         $collection = $this->productCollectionFactory->create();
-        $collection->addAttributeToSelect(
-            'name'
-        )->addAttributeToSelect(
-            'price'
-        )->addAttributeToSelect(
-            'visibility'
-        )->addAttributeToSelect(
-            'status'
-        )->setStore(
+        $collection->addAttributeToSelect('*');
+
+        $collection->setStore(
             $this->sourceStoreId
         )->is_translated(
             $this->targetStoreId
         )->addWebsiteNamesToResult();
 
         $this->setCollection($collection);
+
         return parent::_prepareCollection();
     }
 
     /**
      * @return $this
+     * @throws \Exception
      */
     protected function _prepareColumns()
     {
-//
-//        $this->addColumn(
-//            'in_product',
-//            [
-//                'type' => 'massaction',
-////                'reander' => 'Magento\Backend\Block\Widget\Grid\Column\Renderer\Massaction',
-//                'name' => 'in_product',
-//                'align' => 'center',
-//                'index' => 'entity_id',
-//                'is_system' => true,
-//                'header_css_class' => 'col-select',
-//                'column_css_class' => 'col-select',
-//                'values' => $this->_getSelectedProducts()
-//            ]
-//        );
-
         $this->addColumn(
             'entity_id',
             [
-                'header' => __('Product ID'),
-                'type' => 'number',
-                'index' => 'entity_id',
-                'header_css_class' => 'col-id',
-                'column_css_class' => 'col-id',
+                'header'            => __('Product ID'),
+                'type'              => 'number',
+                'index'             => 'entity_id',
+                'header_css_class'  => 'col-id',
+                'column_css_class'  => 'col-id',
             ]
         );
+
+        $this->addColumn(
+            'product_thumbnail_image',
+            [
+                'header'    => __('Thumbnail'),
+                'index'     => 'product_thumbnail_image',
+                'width'     => '97',
+                'filter'    => false,
+                'sortable'  => false,
+                'renderer'  => 'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Renderer\Thumbnail'
+            ]
+        );
+
         $this->addColumn(
             'name',
             [
-                'header' => __('Name'),
-                'index' => 'name',
-                'class' => 'xxx',
+                'header'    => __('Name'),
+                'index'     => 'name',
+                'class'     => 'xxx',
             ]
         );
         $this->addColumn(
             'type',
             [
-                'header' => __('Type'),
-                'index' => 'type_id',
-                'type' => 'options',
-                'options' => $this->productTypeModel->getOptionArray()
+                'header'    => __('Type'),
+                'index'     => 'type_id',
+                'type'      => 'options',
+                'options'   => $this->productTypeModel->getOptionArray()
             ]
         );
 
@@ -158,46 +162,46 @@ class Products extends \Magento\Backend\Block\Widget\Grid\Extended
         $this->addColumn(
             'attribute_set',
             [
-                'header' => __('Attribute Set'),
-                'index' => 'attribute_set_id',
-                'type' => 'options',
-                'options' => $sets
+                'header'    => __('Attribute Set'),
+                'index'     => 'attribute_set_id',
+                'type'      => 'options',
+                'options'   => $sets
             ]
         );
         $this->addColumn(
             'sku',
             [
-                'header' => __('Sku'),
-                'index' => 'sku',
-                'class' => 'xxx',
+                'header'    => __('Sku'),
+                'index'     => 'sku',
+                'class'     => 'xxx',
             ]
         );
         $this->addColumn(
             'price',
             [
-                'header' => __('Price'),
-                'type' => 'currency',
-                'index' => 'price',
+                'header'    => __('Price'),
+                'type'      => 'currency',
+                'index'     => 'price',
             ]
         );
 
         $this->addColumn(
             'visibility',
             [
-                'header' => __('Visibility'),
-                'type' => 'options',
-                'options' => $this->productVisibilityModel->getOptionArray(),
-                'index' => 'visibility',
+                'header'    => __('Visibility'),
+                'type'      => 'options',
+                'options'   => $this->productVisibilityModel->getOptionArray(),
+                'index'     => 'visibility',
             ]
         );
 
         $this->addColumn(
             'status',
             [
-                'header' => __('Status'),
-                'index' => 'status',
-                'type' => 'options',
-                'options' => $this->productStatusModel->getOptionArray(),
+                'header'    => __('Status'),
+                'index'     => 'status',
+                'type'      => 'options',
+                'options'   => $this->productStatusModel->getOptionArray(),
             ]
         );
 
@@ -205,13 +209,31 @@ class Products extends \Magento\Backend\Block\Widget\Grid\Extended
             $this->addColumn(
                 'websites',
                 [
-                    'header' => __('Websites'),
-                    'sortable' => false,
-                    'index' => 'websites',
-                    'type' => 'options',
-                    'options' => $this->websitesModel->toOptionHash()
+                    'header'    => __('Websites'),
+                    'sortable'  => false,
+                    'index'     => 'websites',
+                    'type'      => 'options',
+                    'options'   => $this->websitesModel->toOptionHash()
                 ]
             );
+        }
+
+        $this->getProductFilters();
+        foreach($this->productFilters as $filter){
+            $columnConfig = [];
+            $columnConfig['header'] = $filter['header'];
+            $columnConfig['index'] = $filter['code'];
+            $columnConfig['type'] = $filter['type'];
+
+            if($filter['type'] === 'options'){
+                $columnConfig['options'] = $filter['options'];
+            }
+
+            if($filter['frontendInput'] === 'multiselect'){
+                $columnConfig['renderer'] = 'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Renderer\MultiSelect';
+            }
+
+            $this->addColumn($filter['code'],$columnConfig);
         }
 
         $this->addColumn(
@@ -220,11 +242,9 @@ class Products extends \Magento\Backend\Block\Widget\Grid\Extended
                 'header' => __('Translated'),
                 'index' => 'is_translated',
                 'width' => '50px',
-                'type'=>'options',
-                'options'=>['1'=>'Yes','0'=>'No'],
-//                'filter_index'=>'stTrans.translated_value',
-                'renderer' => 'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Renderer\TranslatedValue',
-                'filter_condition_callback' => array($this, '_filterCallback'),
+                'type'=> 'options',
+                'options' => [0 => __('No'), 1 => __('Yes')],
+                'filter_condition_callback' => [$this, '_filterIsTranslated'],
                 'order_callback' => [$this, '_orderIsTranslated']
             ]
         );
@@ -293,10 +313,15 @@ class Products extends \Magento\Backend\Block\Widget\Grid\Extended
         return true;
     }
 
-    protected function _filterCallback($collection, $column)
+    protected function _filterIsTranslated($collection, $column)
     {
         $condition = $column->getFilter()->getCondition();
-        $collection->getSelect()->having('`is_translated` = ?', reset($condition));
+        $columnId =  $column->getFilterIndex() ? $column->getFilterIndex() : $column->getIndex();
+        if(is_array($condition) && !empty(reset($condition)) && reset($condition) == '1'){
+            $collection->getSelect()->where($columnId . ' IS NOT NULL');
+        }else{
+            $collection->getSelect()->where($columnId . ' IS NULL');
+        }
         return $this;
     }
 
@@ -304,7 +329,8 @@ class Products extends \Magento\Backend\Block\Widget\Grid\Extended
     //1, rewrite _setCollectionOrder.
     //2. implement callback defined in column data, like 'order_callback' => [$this, '_orderIsTranslated'].
     protected function _orderIsTranslated($collection, $column){
-        $collection->getSelect()->order($column->getIndex() . ' ' . strtoupper($column->getDir()));
+        $columnId =  $column->getFilterIndex() ? $column->getFilterIndex() : $column->getIndex();
+        $collection->getSelect()->order($columnId . ' ' . strtoupper($column->getDir()));
     }
 
     protected function _setCollectionOrder($column)
@@ -331,5 +357,11 @@ class Products extends \Magento\Backend\Block\Widget\Grid\Extended
     {
         $serializerBlock = $this->_getSerializerBlock();
         return empty($serializerBlock) ? 'job_products' : $serializerBlock->getReloadParamName();
+    }
+    
+    private function getProductFilters(){
+        if(empty($this->productFilters)){
+            $this->productFilters = $this->productHelper->getSelectedProductFilters();
+        }
     }
 }

@@ -267,9 +267,13 @@ class CategoryHelper extends AbstractHelper
         return $this;
     }
 
-    public function addSummaryNode()
+    private function addSummaryNode()
     {
-        $summaryArray['category'] = count($this->_categoryData);
+        $summaryArray = $this->getSummary();
         $this->_xmlHelper->addContentSummary($summaryArray);
+    }
+
+    public function getSummary(){
+        return ['category' => count($this->_categoryData)];
     }
 }

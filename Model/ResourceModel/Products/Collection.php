@@ -10,67 +10,86 @@ use Straker\EasyTranslationPlatform\Model\JobType;
  */
 class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 {
+    protected $targetStoreId;
 
-    public function is_translated($target_store_id)
+    public function is_translated($targetStoreId)
     {
+        $this->targetStoreId = $targetStoreId;
+
+        $isTranslatedSelect = $this->_buildIsTranslatedSelect();
+
+        $this->getSelect()
+            ->joinLeft(
+                ['stTrans' => $isTranslatedSelect],
+                'e.entity_id=stTrans.entity_id',
+                ['IF(is_translated IS NULL, 0, 1) AS is_translated']
+            );
+
+        return $this;
+    }
+
+    /**
+     * Build a Select which query all the translated product from straker tables
+     *
+     * @return Select
+     */
+    private function _buildIsTranslatedSelect(){
+
         $strakerJobs = $this->_resource->getTableName('straker_job');
         $strakerTrans = $this->_resource->getTableName('straker_attribute_translation');
 
-        $this->getSelect()
-            ->reset(Select::COLUMNS)
-            ->columns(
-                ['e.entity_id', 'e.sku', 'type_id', 'attribute_set_id', 'MAX(IF((stTrans.is_published AND stJob.job_id) IS NULL, 0, 1)) as is_translated']
-            )->joinLeft(
-                ['stTrans' => $strakerTrans],
-                'e.entity_id=stTrans.entity_id',
-                []
-            )->joinLeft(
-                ['stJob' => $strakerJobs],
-                'stTrans.job_id=stJob.job_id and stJob.target_store_id=' . $target_store_id . ' and stJob.job_type_id='. JobType::JOB_TYPE_PRODUCT,
-                []
-            )->group('entity_id');
+        $select = clone $this->getSelect();
+        $select->reset();
 
-//        var_dump($this->getSelect()->__toString());exit;
-        return $this;
+        $select->from(
+            ['stJob' => $strakerJobs],
+            []
+        )->join(
+            ['stTrans' => $strakerTrans],
+            'stTrans.job_id=stJob.job_id and stJob.target_store_id=' . (empty($this->targetStoreId) ? 0 : $this->targetStoreId) . ' and stJob.job_type_id='. JobType::JOB_TYPE_PRODUCT,
+            ['entity_id', 'MAX(IF((stTrans.is_published AND stJob.job_id) IS NULL, 0, 1)) as is_translated']
+        )->group('stTrans.entity_id');
+
+        return $select;
     }
 
     public function getSelectCountSql()
     {
-//         parent::getSelectCountSql();
-        $this->_renderFilters();
-        $countSelect = clone $this->getSelect();
+        $parentSelect = parent::getSelectCountSql();
 
-        $select = clone $this->getSelect();
-        $select
-            ->reset(Select::ORDER)
-            ->reset(Select::LIMIT_COUNT)
-            ->reset(Select::LIMIT_OFFSET);
+        $isTranslatedSelect = $this->_buildIsTranslatedSelect();
 
-        $countSelect
-            ->reset()
-            ->from(['s' => $select])
-            ->reset(Select::COLUMNS)
-            ->columns('COUNT(DISTINCT entity_id)');
-//        var_dump($countSelect->__toString());
-//        $select->reset(Select::COLUMNS)->columns('e.entity_id');
-//        $select->reset(Select::HAVING);
-//        $select->reset(Select::GROUP);
-//        $group = $this->getSelect()->getPart(Select::GROUP);
-//        $countSelect->columns(new \Zend_Db_Expr(("COUNT(DISTINCT " . implode(", ", $group) . ")")));
-//        $countSelect->columns(new \Zend_Db_Expr(("COUNT(DISTINCT s.entity_id)")));
+        $parentSelect
+            ->joinLeft(
+                ['stTrans' => $isTranslatedSelect],
+                'e.entity_id=stTrans.entity_id',
+                []
+            )->reset(Select::COLUMNS)
+            ->columns('COUNT(DISTINCT e.entity_id)');
 
-//        var_dump($countSelect->__toString());
 
-        return $countSelect;
+        return $parentSelect;
     }
 
-    function _buildClearSelect($select = null)
+    function getAllIds($limit = null, $offset = null)
     {
-        if (null === $select) {
-            $select = clone $this->getSelect();
-        }
-        $select->reset(\Magento\Framework\DB\Select::ORDER);
-        return $select;
+        $idsSelect = $this->_getClearSelect();
+        $idsSelect->columns('e.' . $this->getEntity()->getIdFieldName());
+        $idsSelect->limit($limit, $offset);
+        $idsSelect->resetJoinLeft();
+        $isTranslatedSelect = $this->_buildIsTranslatedSelect();
+
+        $idsSelect->joinLeft(
+            ['stTrans' => $isTranslatedSelect],
+            'e.entity_id=stTrans.entity_id',
+            []
+        );
+        return $this->getConnection()->fetchCol($idsSelect, $this->_bindParams);
     }
 
+//    protected function _afterLoad()
+//    {
+//        var_dump($this->getSelect()->assemble());
+//        return parent::_afterLoad();
+//    }
 }

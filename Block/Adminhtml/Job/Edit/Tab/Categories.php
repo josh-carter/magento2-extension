@@ -50,4 +50,23 @@ class Categories extends \Magento\Catalog\Block\Adminhtml\Category\Tree implemen
     {
         return false;
     }
+
+    /**
+     * @param bool|null $expanded
+     * @return string
+     */
+    public function getLoadTreeUrl($expanded = null)
+    {
+        $params = ['_current' => true, 'id' => null, 'store' => null];
+        if ($expanded === null && $this->_backendSession->getIsTreeWasExpanded() || $expanded == true) {
+            $params['expand_all'] = true;
+        }
+        return $this->getUrl('catalog/category/categoriesJson', $params);
+    }
+
+    protected function _isCategoryMoveable($node)
+    {
+        return false;
+    }
+
 }

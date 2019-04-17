@@ -62,6 +62,10 @@
             </group>
             <group id="attribute" translate="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Attribute Settings</label>
+                <field id="include_cms_block_title" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Translate Title of CMS Block</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
                 <field id="product_default" translate="label" type="multiselect" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Product Default Attributes</label>
                     <source_model>Straker\EasyTranslationPlatform\Model\Config\Source\DefaultAttributeSource</source_model>
@@ -73,6 +77,14 @@
                 <field id="category" translate="label" type="multiselect" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Category Attributes</label>
                     <source_model>Straker\EasyTranslationPlatform\Model\Config\Source\CategoryAttributeSource</source_model>
+                </field>
+            </group>
+            <group id="filter" translate="label" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Filter Settings</label>
+                <field id="product_filters" translate="label" type="multiselect" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Product Grid Filters</label>
+                    <source_model>Straker\EasyTranslationPlatform\Model\Config\Source\ProductFilters</source_model>
+                    <can_be_empty>1</can_be_empty>
                 </field>
             </group>
         </section>

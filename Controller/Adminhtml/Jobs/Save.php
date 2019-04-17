@@ -134,10 +134,6 @@ class Save extends Action
                 $this->_saveStoreConfigData($data);
             }
 
-            if (isset($data['blocks']) && strlen($data['blocks'])>0) {
-                $jobData[] = $this->_jobHelper->createJob($data)->generateBlockJob();
-            }
-
             if (isset($data['products']) && strlen($data['products'])>0) {
                 $jobData[] = $this->_jobHelper->createJob($data)->generateProductJob();
             }
@@ -150,6 +146,9 @@ class Save extends Action
                 $jobData[] = $this->_jobHelper->createJob($data)->generatePageJob();
             }
 
+            if (isset($data['blocks']) && strlen($data['blocks'])>0) {
+                $jobData[] = $this->_jobHelper->createJob($data)->generateBlockJob();
+            }
             try {
 
                 $this->_summitJob($jobData);
@@ -170,7 +169,7 @@ class Save extends Action
 
             } catch (Exception $e) {
 
-                $this->messageManager->addException($e, __('Something went wrong while saving the job.'.$e->getMessage()));
+                $this->messageManager->addException($e, __('Something went wrong while saving the job. %1', $e->getMessage()));
                 $this->_api->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
                 $this->_logger->error('error'.__FILE__.' '.__LINE__, [$e]);
             }
@@ -257,9 +256,9 @@ class Save extends Action
                 }
 
                 if(!$this->_configHelper->isSandboxMode()){
-                    $this->messageManager->addSuccess(__('Your job was successfully sent to Straker Translations to be quoted.'));
+                    $this->messageManager->addSuccess(__('Your job was successfully sent to Straker Translations to be quoted. We will analyze the content and send you a quote as soon as we have the results.'));
                 }else{
-                    $this->messageManager->addSuccess(__('Your job was successfully sent to Straker Translations'));
+                    $this->messageManager->addSuccess(__('Your job was successfully sent to Straker Translations.'));
                 }
             }else {
                 $message = isset($response->message) ? $response->message : (method_exists($response, 'getMessage') ? $response->getMessage() : 'Unknown networking issue.');

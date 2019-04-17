@@ -99,34 +99,40 @@ class BlockHelper extends AbstractHelper
 
     /**
      * @return $this
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function getSelectedBlockAttributes()
     {
-
         $blockData = [];
+        $includeTitle = $this->_configHelper->shouldTranslateBlockTitle();
 
         foreach ($this->_blockData as $data) {
 
             $attributeData = [];
 
             foreach ($this->_attributes as $attribute){
-
-                if(in_array($attribute,$this->_attributes))
-                {
-                    array_push($attributeData, [
-                        'attribute_code'=>$attribute,
-                        'label'=>$attribute,
-                        'value'=>$data->getData($attribute)
-                    ]);
+                if(in_array($attribute,$this->_attributes)) {
+                    if ($attribute !== 'title' || ($attribute === 'title' && $includeTitle)){
+                        array_push($attributeData, [
+                            'attribute_code'=>$attribute,
+                            'label'=>$attribute,
+                            'value'=>$data->getData($attribute)
+                        ]);
+                    }
                 }
             }
 
-            $blockData[] = [
+            $blockInfo = [
                 'block_id'=>$data->getId(),
-                'page_title'=>$data->getTitle(),
                 'page_url'=>$this->_storeManager->getStore($this->_storeId)->getBaseUrl().$data->getIdentifier().'.html',//check
                 'attributes'=>$attributeData
             ];
+
+            if($includeTitle){
+                $blockInfo['page_title'] = $data->getTitle();
+            }
+
+            $blockData[] = $blockInfo;
         }
 
         $this->_blockData = $blockData;
@@ -250,5 +256,9 @@ class BlockHelper extends AbstractHelper
     {
         $summaryArray['cms_block'] = count($this->_blockData);
         $this->_xmlHelper->addContentSummary($summaryArray);
+    }
+
+    public function getSummary(){
+        return ['cms_block' => count($this->_blockData)];
     }
 }

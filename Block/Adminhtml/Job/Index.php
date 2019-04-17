@@ -29,7 +29,7 @@ class Index extends \Magento\Backend\Block\Widget\Container
     {
         $addNewJobButton = [
             'id' => 'add_new_job',
-            'label' => __('Add New Job'),
+            'label' => __('Add New Translation Job'),
             'class' => 'primary',
             'onclick' => "setLocation('" . $this->_getAddNewJobUrl() . "')"
         ];

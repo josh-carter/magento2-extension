@@ -44,7 +44,7 @@ class Edit extends \Magento\Backend\Block\Widget\Form\Container
 
         $this->buttonList->remove('back');
 
-        $this->buttonList->update('save', 'label', __('Create Job'));
+        $this->buttonList->update('save', 'label', __('Create Translation Job'));
     }
 
     /**

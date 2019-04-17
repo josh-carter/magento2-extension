@@ -51,32 +51,6 @@ class Blocks extends Extended
         $this->targetStoreId = $this->getRequest()->getParam('target_store_id');
     }
 
-    /**
-     * add Column Filter To Collection
-     */
-//    protected function _addColumnFilterToCollection($column)
-//    {
-//        if ($column->getId() == 'in_product') {
-//            //$productIds = $this->_getSelectedProducts();
-//
-//            if (empty($productIds)) {
-//                $productIds = 0;
-//            }
-//            if ($column->getFilter()->getValue()) {
-//                $this->getCollection()->addFieldToFilter('entity_id', array('in' => $productIds));
-//            } else {
-//                if ($productIds) {
-//                    $this->getCollection()->addFieldToFilter('entity_id', array('nin' => $productIds));
-//                }
-//            }
-//        } else {
-//            parent::_addColumnFilterToCollection($column);
-//        }
-//
-//        return $this;
-//    }
-
-
     protected function _prepareCollection()
     {
         $collection = $this->_blockCollectionFactory;
@@ -131,14 +105,12 @@ class Blocks extends Extended
         $this->addColumn(
             'is_translated',
             [
-                'header' => __('Translated'),
-                'index' => 'is_translated',
-                'width' => '50px',
-                'type'=>'options',
-                'options'=>['1'=>'Yes','0'=>'No'],
-                'filter_index'=>'is_translated',
-                'renderer' => 'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Renderer\TranslatedValueCMS',
-                'filter_condition_callback' => [$this, 'filterName']
+                'header'                    => __('Translated'),
+                'index'                     => 'is_translated',
+                'width'                     => '50px',
+                'type'                      =>'options',
+                'options'                   =>  [0 => __('No'), 1 => __('Yes')],
+                'filter_condition_callback' => [$this, 'filterIsTranslated']
             ]
         );
 
@@ -187,7 +159,7 @@ class Blocks extends Extended
         return true;
     }
 
-    function filterName($collection, $column)
+    function filterIsTranslated($collection, $column)
     {
         $condition = $column->getFilter()->getCondition();
         $collection->getSelect()->having('`is_translated` =  ?', reset($condition));

@@ -14,6 +14,7 @@ use Magento\Framework\Setup\UpgradeSchemaInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
 use Straker\EasyTranslationPlatform\Model\AttributeTranslation;
+use Straker\EasyTranslationPlatform\Model\Job;
 
 /**
  * Upgrade the CatalogRule module DB scheme
@@ -35,11 +36,15 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->increaseInt($setup, $context);
         }
 
+        if (version_compare($context->getVersion(), '1.1.0', '<')){
+            $this->addSummaryColumn($setup, $context);
+        }
+
         $setup->endSetup();
     }
 
     /**
-     * Remove Sub Product Discounts
+     * Add Label Column
      * @param SchemaSetupInterface $setup
      * @return void
      */
@@ -139,6 +144,23 @@ class UpgradeSchema implements UpgradeSchemaInterface
             'option_id',
             $setup->getTable('eav_attribute_option'),
             'option_id'
+        );
+    }
+
+
+    private function addSummaryColumn(SchemaSetupInterface $setup)
+    {
+        $connection = $setup->getConnection();
+        $connection->addColumn(
+            $setup->getTable(Job::ENTITY),
+            'summary',
+            [
+                'type'      => Table::TYPE_TEXT,
+                'length'    => 255,
+                'nullable'  => true,
+                'after'     => 'download_url',
+                'comment'   => 'Job Summary'
+            ]
         );
     }
 }

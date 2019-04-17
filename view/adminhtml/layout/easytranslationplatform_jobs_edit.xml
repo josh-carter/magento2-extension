@@ -49,6 +49,7 @@
                     </argument>
                 </action>
             </block>
+            <block class="Magento\Framework\View\Element\Template" template="Straker_EasyTranslationPlatform::job/summary.phtml"/>
         </referenceContainer>
         <referenceContainer name="js">
             <block class="Magento\Framework\View\Element\Template" template="Straker_EasyTranslationPlatform::job/language-pairs.phtml"/>

@@ -100,14 +100,13 @@ class Pages extends \Magento\Backend\Block\Widget\Grid\Extended
         $this->addColumn(
             'is_translated',
             [
-                'header' => __('Translated'),
-                'index' => 'is_translated',
-                'width' => '50px',
-                'type'=>'options',
-                'options'=>['1'=>'Yes','0'=>'No'],
-                'filter_index'=>'stTrans.translated_value',
-                'renderer' => 'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Renderer\TranslatedValue',
-                'filter_condition_callback' => [$this, 'filterName']
+                'header'                    =>  __('Translated'),
+                'index'                     =>  'is_translated',
+//                'filter_index'              =>  'stTrans.translated_value',
+                'width'                     =>  '50px',
+                'type'                      =>  'options',
+                'options'                   =>  [0 => __('No'), 1 => __('Yes')],
+                'filter_condition_callback' =>  [$this, 'filterIsTranslated']
             ]
         );
 
@@ -147,7 +146,7 @@ class Pages extends \Magento\Backend\Block\Widget\Grid\Extended
         return true;
     }
 
-    function filterName($collection, $column)
+    function filterIsTranslated($collection, $column)
     {
         $condition = $column->getFilter()->getCondition();
         $collection->getSelect()->having('`is_translated` = ? ', reset($condition));

@@ -14,7 +14,7 @@
         var destinationLanguageElement  = $('select[name="straker_destination_language"]');
         var sourceStoreElement          = $('select[name="magento_source_store"]');
         var sourceLanguageElement       = $('select[name="straker_source_language"]');
-        var contentTabs                 = $('#job_tabs_attachment_products,#job_tabs_categories,#job_tabs_cms_pages,#job_tabs_cms_blocks');
+        var contentTabs                 = $('#job_tabs_attachment_products,#job_tabs_categories,#job_tabs_cms_pages,#job_tabs_cms_blocks,#job-summary');
         var editForm                    = $('form#edit_form');
         var languagePairSetting         = {};
         // var tabs                        = $('li[role="tab"]');
@@ -220,7 +220,7 @@
         }
 
         function showConfirm() {
-            var content = $.mage.__('You have previously setup a language pairs that is different from you current setting, do you really want to override previous setting?');
+            var content = $.mage.__('Your current language selection is different than the default language pair you had previously set up. Do you really want to override the previous setting?');
             confirm({
                 title: 'Please confirm',
                 content: content,
@@ -290,6 +290,8 @@
                 block_data: $('input[name="blocks"]')
             };
 
+            updateSummary(data);
+
             if( name.trim() === ''){
                 return data;
             }else if($.inArray(name, data)){
@@ -329,6 +331,26 @@
             showElement(saveButton);
             showElement(resetButton);
             showElement(contentTabs);
+        }
+
+        function updateSummary(data) {
+            if(typeof data !== 'undefined'){
+                $.each(data, function (item) {
+                    var dataItem = data[item];
+                    if (typeof dataItem !== 'undefined' && typeof dataItem.val() !== 'undefined' && dataItem.val() !== ''){
+                        var delimiter = item.indexOf('category') === -1 ? '&' : ',';
+                        var currentValues = data[item].val().split(delimiter);
+                        var newValues = dataItem.val().split(delimiter);
+                        var values = currentValues.concat(newValues);
+                        values = values.filter( function (v, i) {
+                            return values.indexOf(v) === i && v.trim() !== '';
+                        });
+                        $('#job-summary  td.' + dataItem.attr('name')).html(values.length);
+                    }else{
+                        $('#job-summary  td.' + dataItem.attr('name')).html(0);
+                    }
+                });
+            }
         }
 
         (function init() {
@@ -445,7 +467,7 @@
             });
 
             //when job content (products, categories, cms pages and cms blocks) checked
-            editForm.on('click', 'input', function () {
+            editForm.on('click', 'input, #job_tabs_categories_content a, #job_tabs_categories_content img.x-tree-node-icon', function () {
 //                checkStoreData();
                 $('input[type="hidden"]').trigger('change');
 
@@ -453,7 +475,7 @@
         }
 
         $('input[type="hidden"]').change(function () {
-            var name = $(this).prop('name');
+            // var name = $(this).prop('name');
             // if($.inArray(name, hiddenInputs) !== -1){
                 checkStoreData();
             // }

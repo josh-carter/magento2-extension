@@ -3,11 +3,10 @@ namespace Straker\EasyTranslationPlatform\Model\ResourceModel\Job;
 
 use Magento\Framework\Data\Collection\Db\FetchStrategyInterface;
 use Magento\Framework\Data\Collection\EntityFactoryInterface;
-use Magento\Framework\DB\Select;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 use Magento\Framework\Registry;
-use Psr\Log\LoggerInterface;
+use Straker\EasyTranslationPlatform\Logger\Logger;
 use Straker\EasyTranslationPlatform\Helper\ConfigHelper;
 
 class Collection extends AbstractCollection
@@ -22,7 +21,7 @@ class Collection extends AbstractCollection
 
     public function __construct(
         EntityFactoryInterface $entityFactory,
-        LoggerInterface $logger,
+        Logger $logger,
         FetchStrategyInterface $fetchStrategy,
         ManagerInterface $eventManager,
         ConfigHelper $configHelper,
