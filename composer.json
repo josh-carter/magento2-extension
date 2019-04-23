@@ -1,7 +1,7 @@
 {
   "name":"strakertranslations/straker-magento2",
   "type":"magento2-module",
-  "version":"1.1.0",
+  "version":"1.1.1",
   "description":"Translation Module for Magento 2",
   "homepage":"https://strakertranslations.com/magento",
   "license":[
@@ -20,7 +20,7 @@
     }
   ],
   "require": {
-    "php": ">=5.3.0"
+    "php": ">=5.6.0"
   },
   "autoload":{
     "files":["registration.php"],

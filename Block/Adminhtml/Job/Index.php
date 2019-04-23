@@ -1,7 +1,6 @@
 <?php
 namespace Straker\EasyTranslationPlatform\Block\Adminhtml\Job;
 
-use Magento\Backend\Block\Template;
 use Magento\Backend\Block\Widget\Context;
 use Straker\EasyTranslationPlatform\Helper\ConfigHelper;
 use Magento\Framework\App\Config;

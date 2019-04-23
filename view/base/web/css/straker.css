@@ -366,3 +366,18 @@ tr.job-option{
     margin: 18px 0 10px 0;
     font-weight: 500;
 }
+
+.straker-about-page {
+    max-width: 800px;
+    font-size: 1.2em;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.straker-about-page img {
+    margin-left: -20px;
+}
+
+.straker-about-page p {
+    line-height: 1.5em;
+}
