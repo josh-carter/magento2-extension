@@ -7,7 +7,7 @@ use Straker\EasyTranslationPlatform\Helper\ConfigHelper;
 
 class Index extends \Magento\Backend\Block\Template
 {
-    private const TEMPLATE =  'Straker_EasyTranslationPlatform::about/about.phtml';
+    const TEMPLATE =  'Straker_EasyTranslationPlatform::about/about.phtml';
 
     /** @var $_configHelper \Straker\EasyTranslationPlatform\Helper\ConfigHelper */
     private $_configHelper;
