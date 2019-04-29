@@ -13,7 +13,7 @@ use Straker\EasyTranslationPlatform\Helper\ConfigHelper;
 use Straker\EasyTranslationPlatform\Helper\JobHelper;
 use Straker\EasyTranslationPlatform\Logger\Logger;
 use Straker\EasyTranslationPlatform\Model\ResourceModel\Job\Collection as JobCollection;
-use Zend\Db\Sql\Select;
+use Magento\Framework\DB\Select;
 
 /**
  * Class Collection

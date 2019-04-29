@@ -79,9 +79,13 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
 
             $httpClient->setUri($url);
             $httpClient->setConfig(['timeout' => $timeout, 'verifypeer' => 0]);
-            $httpClient->setHeaders($this->getHeaders());
-            $httpClient->setMethod($method);
+//
+            $headers = $this->getHeaders();
+            if (!empty($headers)){
+                $httpClient->setHeaders($headers);
+            }
 
+            $httpClient->setMethod($method);
             $response = $httpClient->request();
 
             if(!$response->isError()){
@@ -187,8 +191,15 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
 
     public function getHeaders()
     {
-        $this->_headers[] = 'Authorization: Bearer ' . $this->_configHelper->getAccessToken();
-        $this->_headers[] = 'X-Auth-App: ' . $this->_configHelper->getApplicationKey();
+        $token = $this->_configHelper->getAccessToken();
+        if(!empty($token)){
+            $this->_headers[] = 'Authorization: Bearer ' . $token;
+        }
+
+        $key = $this->_configHelper->getApplicationKey();
+        if(!empty($key)){
+            $this->_headers[] = 'X-Auth-App: ' . $key;
+        }
         return $this->_headers;
     }
 
@@ -240,7 +251,8 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
         if(file_exists($fileFullPath)){
             $result = json_decode(file_get_contents($fileFullPath));
         }else{
-            $result = $this->_call($this->_getCountriesUrl());
+            $countriesUrl = $this->_getCountriesUrl();
+            $result = $this->_call($countriesUrl);
             if(!empty($result)){
                 file_put_contents($fileFullPath, json_encode($result));
             }
