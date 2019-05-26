@@ -17,6 +17,13 @@
 
     <div class="categories-side-col">
         <?php if ($block->getRoot()): ?>
+        <div class="tree-actions">
+            <?php if ($block->getRoot()): ?>
+                <a href="#" onclick="tree.collapseTree(); return false;"><?= /* @escapeNotVerified */ __('Collapse All') ?></a>
+                <span class="separator">|</span>
+                <a href="#" onclick="tree.expandTree(); return false;"><?= /* @escapeNotVerified */ __('Expand All') ?></a>
+            <?php endif; ?>
+        </div>
         <div class="tree-holder">
             <div id="tree-div" class="tree-wrapper"></div>
         </div>
@@ -386,7 +393,7 @@
                         draggable: false,
                         allowDrop: false,
                         id: <?php /* @escapeNotVerified */ echo (int)$block->getRoot()->getId() ?>,
-                        expanded: true,
+                        expanded: <?= (int)$block->getIsWasExpanded() ?>,
                         store_id: <?php /* @escapeNotVerified */ echo (int)$block->getStore()->getId() ?>,
                         category_id: <?php /* @escapeNotVerified */ echo (int)$block->getCategoryId() ?>
                     },
