@@ -14,21 +14,21 @@ class InstallData implements InstallDataInterface
 
         $data = [];
 
-        foreach (Model\JobStatus::getJobStatus() as $status) {
-            $data[] = ['status_name' => $status ];
+        foreach (Model\JobStatus::getJobStatus() as $id => $status) {
+            $data[] = ['status_id' => ++$id, 'status_name' => $status ];
         }
 
         $setup->getConnection()
-            ->insertMultiple($setup->getTable(Model\JobStatus::ENTITY), $data);
+            ->insertOnDuplicate($setup->getTable(Model\JobStatus::ENTITY), $data, ['status_name']);
 
         $data = [];
 
-        foreach (Model\JobType::getJobTypes() as $type) {
-            $data[] = ['type_name' => $type ];
+        foreach (Model\JobType::getJobTypes() as $id => $type) {
+            $data[] = ['type_id' => ++$id, 'type_name' => $type ];
         }
 
         $setup->getConnection()
-            ->insertMultiple($setup->getTable(Model\JobType::ENTITY), $data);
+            ->insertOnDuplicate($setup->getTable(Model\JobType::ENTITY), $data, ['type_name']);
 
         $setup->endSetup();
     }
