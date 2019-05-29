@@ -3,7 +3,7 @@
     <default>
         <straker>
             <general>
-                <version>local</version>
+                <version>uat</version>
                 <domain>
                     <local>https://local-app.strakertranslations.com</local>
                     <dev>https://dev-app.strakertranslations.com</dev>
