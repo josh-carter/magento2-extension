@@ -101,7 +101,7 @@ class HtmlList extends Column
                             }
 
                             if(isset($json['cms_block'])){
-                                $html .= '<li><b>' . _($this->getLabel('block')) . ': ' . $json['cms_block'] . '</b></li>';
+                                $html .= '<li><b>' . __($this->getLabel('block')) . ': ' . $json['cms_block'] . '</b></li>';
                             }
 
                         }
