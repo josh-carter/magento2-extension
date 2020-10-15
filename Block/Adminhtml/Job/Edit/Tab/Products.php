@@ -22,7 +22,7 @@ use Straker\EasyTranslationPlatform\Model\ResourceModel\Job\CollectionFactory as
 use Magento\Catalog\Ui\Component\Listing\Attribute\RepositoryInterface;
 
 
-class Products extends \Magento\Backend\Block\Widget\Grid\Extended
+class Products extends \Straker\EasyTranslationPlatform\Block\Adminhtml\Widget\Grid\Extended
 {
     protected $_massactionBlockName = \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Massaction\Extended::class;
     protected $productCollectionFactory;

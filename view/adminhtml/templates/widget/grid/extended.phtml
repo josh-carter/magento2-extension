@@ -1,0 +1,21 @@
+<!--Renders everything from parent template first -->
+<?php include ($block->getTemplateFile('Magento_Backend::widget/grid/extended.phtml'));?>
+
+<!--After rendering parent template, more options are inserted via frontend DOM manipulation -->
+<?php if ($block->getPagerVisibility()): ?>
+    <script type="text/javascript">
+
+        var selectElement = document.getElementById("<?= $block->escapeHtml($block->getHtmlId()) ?>_page-limit");
+
+        selectElement.innerHTML += "<option value='500'<?php if ($block->getCollection()->getPageSize() == 500): ?>selected='selected'<?php endif; ?>>500</option>"
+
+        selectElement.innerHTML += "<option value='750'<?php if ($block->getCollection()->getPageSize() == 750): ?>selected='selected'<?php endif; ?>>750</option>"
+
+        selectElement.innerHTML += "<option value='1000'<?php if ($block->getCollection()->getPageSize() == 1000): ?>selected='selected'<?php endif; ?>>1000</option>"
+
+        selectElement.innerHTML += "<option value='1500'<?php if ($block->getCollection()->getPageSize() == 1500): ?>selected='selected'<?php endif; ?>>1500</option>"
+
+        selectElement.innerHTML += "<option value='2000'<?php if ($block->getCollection()->getPageSize() == 2000): ?>selected='selected'<?php endif; ?>>2000</option>";
+
+    </script>
+<?php endif ?>
