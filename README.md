@@ -18,3 +18,5 @@ or get latest release `composer require strakertranslations/straker-magento2`
 
 ## SandBox Mode
 * To enable sandbox mode go to the configuration page and select the Straker Translations configuration tab to set the environment for testing. 
+
+## Update
