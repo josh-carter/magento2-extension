@@ -39,7 +39,10 @@ class Collection extends AbstractCollection
      */
     protected function _construct()
     {
-        $this->_init('Straker\EasyTranslationPlatform\Model\Job', 'Straker\EasyTranslationPlatform\Model\ResourceModel\Job');
+        $this->_init(
+            \Straker\EasyTranslationPlatform\Model\Job::class,
+            \Straker\EasyTranslationPlatform\Model\ResourceModel\Job::class
+        );
     }
 
 }
