@@ -88,22 +88,24 @@ class MassConfirm extends Action implements HttpPostActionInterface
         $collection = $this->filter->getCollection($this->collectionFactory->create());
         $jobKeys = $collection->getColumnValues('job_key');
         $jobIds = $this->getAllJobs($jobKeys);
+        $publishedJobs = [];
 
         foreach ($jobIds as $jobId) {
             try {
                 $job = $this->jobFactory->create();
                 $this->jobResource->load($job, $jobId);
+                $jobNumber = $job->getData('job_number');
+                $jobType = $job->getJobType();
                 $this->importHelper->create($job->getId())->publishTranslatedData();
                 $job->setData('job_status_id', JobStatus::JOB_STATUS_CONFIRMED);
                 $this->jobResource->save($job);
-                $this->messageManager->addSuccessMessage(
-                    __(
-                        'Translated job (Id: %1, Type: 2%) has been published for %3 store',
-                        $job->getId(),
-                        $job->getJobType(),
-                        $this->storeManager->getStore($job->getData('target_store_id'))->getName()
-                    )
-                );
+
+                if (!key_exists($jobNumber, $publishedJobs)) {
+                    $publishedJobs[$jobNumber] = [];
+                }
+
+                $publishedJobs[$jobNumber][] = $jobType;
+
             } catch (Exception $e) {
                 $this->messageManager->addErrorMessage($e->getMessage());
                 $this->logger->error('error'.__FILE__.' '.__LINE__, [$e]);
@@ -115,6 +117,17 @@ class MassConfirm extends Action implements HttpPostActionInterface
                     )
                 );
             }
+        }
+
+        foreach ($publishedJobs as $jobNumber => $publishedJob) {
+            $this->messageManager->addSuccessMessage(
+                __(
+                    'Translated job %1 (%2) has been published for %3 store',
+                    $jobNumber,
+                    implode(', ', $publishedJob),
+                    $this->storeManager->getStore($job->getData('target_store_id'))->getName()
+                )
+            );
         }
 
         if (!count($jobIds)) {

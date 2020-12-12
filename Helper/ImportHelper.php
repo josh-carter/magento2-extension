@@ -2,12 +2,14 @@
 
 namespace Straker\EasyTranslationPlatform\Helper;
 
+use Magento\Cms\Model\Block;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\Xml\Parser;
 use Magento\Eav\Api\AttributeRepositoryInterface;
 use Magento\Catalog\Model\Product\Action as ProductAction;
 use Magento\Framework\App\ResourceConnection;
+use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
 use Magento\Framework\Message\ManagerInterface;
@@ -29,6 +31,7 @@ use Straker\EasyTranslationPlatform\Helper\XmlHelper;
 
 use Straker\EasyTranslationPlatform\Model\AttributeTranslation;
 use Straker\EasyTranslationPlatform\Model\BlockCollection;
+use Straker\EasyTranslationPlatform\Model\JobStatus;
 use Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeTranslation as AttributeTranslationResourceModel;
 use Straker\EasyTranslationPlatform\Model\JobFactory;
 use Straker\EasyTranslationPlatform\Model\AttributeOptionTranslation;
@@ -859,7 +862,9 @@ class ImportHelper extends AbstractHelper
 
             $original_block = $this->_blockFactory->create()->load($key);
 
-            $existingBlock = $this->_blockCollection->addFieldToFilter('store_id',$this->_jobModel->getTargetStoreId())->addFieldToFilter('identifier', $original_block->getIdentifier());
+            $existingBlock = $this->_blockCollection
+                ->addFieldToFilter('store_id',$this->_jobModel->getTargetStoreId())
+                ->addFieldToFilter('identifier', $original_block->getIdentifier());
 
             if (count($existingBlock->getItems()) === 1) {
 
@@ -867,11 +872,7 @@ class ImportHelper extends AbstractHelper
 
                 $oldBlock = reset($items);
 
-//                $data = array_merge($data,$oldBlock->getData());
-
                 try{
-
-//                    $oldBlock->setData($data)->save();
 
                     foreach($data as $k => $v){
                         $oldBlock->setData($k, $v);
@@ -888,16 +889,15 @@ class ImportHelper extends AbstractHelper
 
 
             } else {
+                //Cms blocks that link to `All default store views` (store_id: [0]) are not allowed to save with the same identifier.
+                $this->unlinkDefaultStore($original_block, $this->_jobModel->getSourceStoreId());
 
                 $originalData = $original_block->getData();
-
                 unset($originalData['block_id']);
-
                 unset($originalData['store_id']);
-
                 unset($originalData['stores']);
 
-                $originalData['stores'] = [$this->_jobModel->getTargetStoreId()];
+                $originalData['stores'] = $originalData['store_id'] = [$this->_jobModel->getTargetStoreId()];
 
                 $dbData = array_merge($originalData, $data);
 
@@ -922,4 +922,18 @@ class ImportHelper extends AbstractHelper
 
     }
 
+    private function unlinkDefaultStore(
+        Block $originalBlock,
+        $sourceStoreId
+    ) {
+        $stores = $originalBlock->getStores();
+        if(in_array(\Magento\Store\Model\Store::DEFAULT_STORE_ID, $stores)){
+            unset($stores[\Magento\Store\Model\Store::DEFAULT_STORE_ID]);
+            if(!in_array($sourceStoreId, $stores)) {
+                $stores[] = $sourceStoreId;
+            }
+            $originalBlock->setStores($stores);
+            $originalBlock->save()->load($originalBlock->getId());
+        }
+    }
 }
