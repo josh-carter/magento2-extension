@@ -50,7 +50,6 @@ class Save extends Action
         'magento_destination_store','straker_destination_language','magento_source_store','straker_source_language'
     ];
 
-
     protected $_jobRequest;
     protected $_attributeRepository;
     protected $_xmlHelper;
@@ -123,14 +122,11 @@ class Save extends Action
     public function execute()
     {
         $data = $this->getRequest()->getPostValue();
-//        var_dump($data);exit;
-
         $resultRedirect = $this->resultRedirectFactory->create();
-
         $jobData = [];
 
-        if ($data && $this->checkEmptyJob($data)>0) {
-            if (strlen($data['magento_source_store'])>0) {
+        if ($data && $this->checkEmptyJob($data) > 0) {
+            if (strlen($data['magento_source_store']) > 0) {
                 $this->_saveStoreConfigData($data);
             }
 
@@ -150,30 +146,21 @@ class Save extends Action
                 $jobData[] = $this->_jobHelper->createJob($data)->generateBlockJob();
             }
             try {
-
                 $this->_summitJob($jobData);
-
                 return $resultRedirect->setPath('*/*/');
-
-            } catch (LocalizedException $e) {
-
-                $this->messageManager->addError($e->getMessage());
-                $this->_logger->error('error'.__FILE__.' '.__LINE__, [$e]);
-                $this->_api->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
-
             } catch (RuntimeException $e) {
-
-                $this->messageManager->addError($e->getMessage());
+                $this->messageManager->addErrorMessage($e->getMessage());
                 $this->_logger->error('error'.__FILE__.' '.__LINE__, [$e]);
                 $this->_api->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
-
             } catch (Exception $e) {
-
-                $this->messageManager->addException($e, __('Something went wrong while saving the job. %1', $e->getMessage()));
+                $this->messageManager->addExceptionMessage(
+                    $e,
+                    __('Something went wrong while saving the job. %1', $e->getMessage())
+                );
                 $this->_api->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
                 $this->_logger->error('error'.__FILE__.' '.__LINE__, [$e]);
             }
-
+            //
             return $resultRedirect->setPath('*/*/edit', ['job_id' => $this->getRequest()->getParam('job_id')]);
         }
 
