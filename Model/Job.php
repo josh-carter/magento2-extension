@@ -101,7 +101,7 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
     public function generateTranslatedFilename($sourceFilename)
     {
         $filePath = $this->_importHelper->configHelper->getTranslatedXMLFilePath();
-        if(!file_exists($filePath)){
+        if (!file_exists($filePath)) {
             mkdir($filePath, 0777, true);
         }
         $fileNameArray = $this->_renameTranslatedFileName($filePath, $sourceFilename);
@@ -117,13 +117,13 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
      */
     public function updateTJNumber($testJobNumber, $jobData, $isSandbox, $jobKey)
     {
-        if(empty($this->getData('job_number')) && !empty($jobData->tj_number)){
-            if($isSandbox){
-                if(!empty($jobKey)){
+        if (empty($this->getData('job_number')) && !empty($jobData->tj_number)) {
+            if ($isSandbox) {
+                if (!empty($jobKey)) {
                     $testJobNumber = $this->getTestJobNumberByJobKey($jobKey);
                 }
                 $this->setData('job_number', 'Test Job ' . $testJobNumber);
-            }else{
+            } else {
                 $this->setData('job_number', $jobData->tj_number);
             }
 
@@ -259,7 +259,6 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
         try {
             switch (strtolower($jobData->status)) {
                 case 'queued':
-
                     $this->updateTJNumber($testJobNumber, $jobData, $isSandbox, $jobKey);
 
                     if (empty($this->getData('job_number'))) {
@@ -292,12 +291,12 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
                             $result = true;
 
                             if (!file_exists($fileFullName)) {
-                                $result = file_put_contents($fileFullName,$fileContent);
+                                $result = file_put_contents($fileFullName, $fileContent);
                             }
 
                             $firstLine = fgets(fopen($fileFullName, 'r'));
 
-                            if(preg_match('/^[<?xml]+/',$firstLine)==0){
+                            if (preg_match('/^[<?xml]+/', $firstLine)==0) {
                                 $result = false;
                                 $isEmptyFile = true;
                             }
@@ -305,7 +304,7 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
                             if ($result == false && $isEmptyFile == true) {
                                 $return['isSuccess'] = false;
                                 $return['empty_file'] = false;
-                                $return['Message'] = __('%1 - Failed to write content to 2%', $this->getData('job_number'),  $fileFullName);
+                                $return['Message'] = __('%1 - Failed to write content to 2%', $this->getData('job_number'), $fileFullName);
                                 $this->_logger->addError($return['Message']);
                             } else {
                                 $this->setData('download_url', $downloadUrl)
@@ -333,9 +332,9 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
                     $this->_logger->addError($return['Message']);
                     break;
             }
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             $return['isSuccess'] = false;
-            $return['Message'] = __(' An Error with the message "1%" occurs while processing the job with the key - 2%' , $e->getMessage(), $jobData->job_key);
+            $return['Message'] = __(' An Error with the message "1%" occurs while processing the job with the key - 2%', $e->getMessage(), $jobData->job_key);
             $this->_logger->addError($return['Message']);
         }
 
@@ -441,7 +440,7 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
 
         $statusId = $this->getJobStatusId();
 
-        foreach($jobStatus as $status) {
+        foreach ($jobStatus as $status) {
             if ($statusId > $status['job_status_id']) {
                 $statusId = $status['job_status_id'];
             }
@@ -454,18 +453,20 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
     {
         $jobsCollection = $this->_getAllRelatedJobsCollection();
 
-        foreach($jobsCollection as $job){
+        foreach ($jobsCollection as $job) {
             $job->setData('job_status_id', $statusId)->save();
         }
     }
 
-    private function _getAllRelatedJobIds(){
+    private function _getAllRelatedJobIds()
+    {
         $jobMatches = [];
         preg_match("/job_(.*?)_/", $this->getSourceFile(), $jobMatches);
         return explode('&', $jobMatches[1]);
     }
 
-    private function _getAllRelatedJobsCollection(){
+    private function _getAllRelatedJobsCollection()
+    {
         $jobIds = $this->_getAllRelatedJobIds();
         return $this->getCollection()
             ->addFieldToFilter('job_id', ['in' => $jobIds]);

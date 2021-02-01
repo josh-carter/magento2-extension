@@ -9,7 +9,6 @@ use Magento\Backend\Block\Template\Context;
 use Magento\Framework\Registry;
 use Magento\Framework\Data\FormFactory;
 
-
 class Form extends Generic
 {
     protected $_Registry;
@@ -181,13 +180,14 @@ class Form extends Generic
         return $aCountries;
     }
 
-    private function _getCompanySizeOptions() {
-        return array(
+    private function _getCompanySizeOptions()
+    {
+        return [
             ''          => '-',
             '1 - 10'    => '1 - 10',
             '11 - 50'   => '11 - 50',
             '51 - 250'  => '51 - 250',
             '250+'      => '250+'
-        );
+        ];
     }
 }

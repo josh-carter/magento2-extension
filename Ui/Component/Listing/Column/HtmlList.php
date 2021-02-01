@@ -57,26 +57,26 @@ class HtmlList extends Column
         if (isset($dataSource['data']['items'])) {
             foreach ($dataSource['data']['items'] as &$item) {
                 $data = explode(JobHelper::SEPARATOR, $item[$this->getData('name')]);
-                if(!empty($data)){
+                if (!empty($data)) {
                     $html = '<ul>';
-                    foreach($data as $v){
-                        try{
+                    foreach ($data as $v) {
+                        try {
                             $json = json_decode($v, true);
-                        }catch(\Exception $e){
+                        } catch (\Exception $e) {
                             $json = null;
                         }
 
-                        if($json === null){
+                        if ($json === null) {
                             $html .= '<li>' . __($this->getLabel($v)) . '</li>';
-                        }else{
+                        } else {
                             $productTypes = $this->getAllProductTypes();
                             $isFirst = true;
                             $counter = 1;
                             $typeLength = sizeof($productTypes);
                             $totalProducts = 0;
-                            foreach($productTypes as $name => $label){
-                                if(isset($json[$name])){
-                                    if($isFirst) {
+                            foreach ($productTypes as $name => $label) {
+                                if (isset($json[$name])) {
+                                    if ($isFirst) {
                                         $html .= '<ul><b>'. __($this->getLabel('product')) . ': PRODUCT_TOTAL' .  '</b>';
                                         $isFirst = false;
                                     }
@@ -84,7 +84,7 @@ class HtmlList extends Column
                                     $html .= '<li>&nbsp;-&nbsp;' . __($label) . ': ' . $json[$name] . '</li>';
                                     $counter++;
 
-                                    if( $typeLength === $counter ) {
+                                    if ($typeLength === $counter) {
                                         $html .= '</ul>';
                                     }
                                 }
@@ -92,15 +92,15 @@ class HtmlList extends Column
 
                             $html = str_replace('PRODUCT_TOTAL', $totalProducts, $html);
 
-                            if(isset($json['category'])){
+                            if (isset($json['category'])) {
                                 $html .= '<li><b>' . __($this->getLabel('category')) . ': '  . $json['category'] . '</b></li>';
                             }
 
-                            if(isset($json['cms_page'])){
+                            if (isset($json['cms_page'])) {
                                 $html .= '<li><b>' . __($this->getLabel('page')) . ': '  . $json['cms_page'] . '</b></li>';
                             }
 
-                            if(isset($json['cms_block'])){
+                            if (isset($json['cms_block'])) {
                                 $html .= '<li><b>' . _($this->getLabel('block')) . ': ' . $json['cms_block'] . '</b></li>';
                             }
 
@@ -115,17 +115,19 @@ class HtmlList extends Column
         return $dataSource;
     }
 
-    private function getLabel($text){
-        if(isset($this->labels[$text])){
+    private function getLabel($text)
+    {
+        if (isset($this->labels[$text])) {
             return $this->labels[$text];
         }
         return $text;
     }
 
-    private function getAllProductTypes(){
+    private function getAllProductTypes()
+    {
         $typeObjects = $this->productTypes->getTypes();
 
-        return array_reduce($typeObjects, function($carry, $item){
+        return array_reduce($typeObjects, function ($carry, $item) {
             $carry[$item['name']] = $item['label']->getText();
             return $carry;
         }, []);

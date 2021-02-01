@@ -41,7 +41,6 @@ class ViewQuote extends Container
         );
 
         parent::_construct();
-
     }
 
     protected function _prepareLayout()
@@ -50,7 +49,7 @@ class ViewQuote extends Container
         $this->addChild(
             'straker-title-job-quote',
             'Magento\Framework\View\Element\Template'
-        )->setTemplate('Straker_EasyTranslationPlatform::job/viewJobTitle.phtml')->setData('title','Manage Jobs');
+        )->setTemplate('Straker_EasyTranslationPlatform::job/viewJobTitle.phtml')->setData('title', 'Manage Jobs');
 
         $this->addChild(
             'straker-breadcrumbs',
@@ -83,12 +82,13 @@ class ViewQuote extends Container
         $this->addChild(
             'straker-title-manageJob',
             'Magento\Framework\View\Element\Template'
-        )->setTemplate('Straker_EasyTranslationPlatform::job/quote-frame.phtml')->setData('quote-url',$this->getQuoteFrameUrl());
+        )->setTemplate('Straker_EasyTranslationPlatform::job/quote-frame.phtml')->setData('quote-url', $this->getQuoteFrameUrl());
 
         return parent::_prepareLayout();
     }
 
-    public function getQuoteFrameUrl(){
+    public function getQuoteFrameUrl()
+    {
         $quoteUrl = $this->_coreRegistry->registry('quote_url');
         $this->_coreRegistry->unregister('quote_url');
         return $quoteUrl;

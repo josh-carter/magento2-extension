@@ -224,7 +224,7 @@ class Save extends Action
         $this->_jobRequest['source_file'] = $sourceFile;
         $this->_jobRequest['token']       = $strakerJobData->getId();
 
-        if(!empty($summary)){
+        if (!empty($summary)) {
             $this->_jobRequest['summary'] = $summary;
         }
 
@@ -233,7 +233,7 @@ class Save extends Action
         try {
             $response = $this->_api->callTranslate($this->_jobRequest);
 
-            if(key_exists('success', $response) && $response->success){
+            if (key_exists('success', $response) && $response->success) {
                 foreach ($job_object as $job) {
                     $job->addData(['job_key'=>$response->job_key]);
                     $job->setData('sl', $this->_api->getLanguageName($job->getData('sl')));
@@ -242,18 +242,18 @@ class Save extends Action
                     $job->save();
                 }
 
-                if(!$this->_configHelper->isSandboxMode()){
+                if (!$this->_configHelper->isSandboxMode()) {
                     $this->messageManager->addSuccess(__('Your job was successfully sent to Straker Translations to be quoted. We will analyze the content and send you a quote as soon as we have the results.'));
-                }else{
+                } else {
                     $this->messageManager->addSuccess(__('Your job was successfully sent to Straker Translations.'));
                 }
-            }else {
+            } else {
                 $message = isset($response->message) ? $response->message : (method_exists($response, 'getMessage') ? $response->getMessage() : 'Unknown networking issue.');
                 $this->messageManager->addErrorMessage(__($message));
             }
         } catch (Exception $e) {
             $this->_logger->error(__FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$response]);
-            $this->_logger->error(__FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), array($e));
+            $this->_logger->error(__FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$e]);
             $this->_api->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
             $this->messageManager->addError(__('Something went wrong while submitting your job to Straker Translations.'));
         }
@@ -262,7 +262,7 @@ class Save extends Action
     protected function mergeJobData($job_object)
     {
 
-        try{
+        try {
             $jobMergeData = [];
             $id = '';
 
@@ -283,20 +283,20 @@ class Save extends Action
 
                 //merge summary node
                 $summaryNode = $xmlData->getElementsByTagName('summary')->item(0);
-                if($summaryNode){
+                if ($summaryNode) {
                     $summaryValue = $summaryNode->nodeValue;
-                    if($summaryValue){
+                    if ($summaryValue) {
                         $summaryValue = json_decode($summaryValue);
-                        foreach($summaryValue as $key => $value){
+                        foreach ($summaryValue as $key => $value) {
                             $summary[$key] = $value;
                         }
                     }
                 }
                 $dataNodes = $xmlData->getElementsByTagName('data');
-                if(!empty($dataNodes)){
-                    for($i = 0; $i < $dataNodes->length; $i++){
+                if (!empty($dataNodes)) {
+                    for ($i = 0; $i < $dataNodes->length; $i++) {
                         $dataNode = $dataNodes->item($i);
-                        if(!empty($dataNode)){
+                        if (!empty($dataNode)) {
                             $dataNode = $this->_xmlHelper->getDom()->importNode($dataNode, true);
                             $this->_xmlHelper->getRoot()->appendChild($dataNode);
                         }
@@ -324,14 +324,14 @@ class Save extends Action
 //                }
             }
 
-            if(!empty($summary)){
+            if (!empty($summary)) {
                 $summary = $this->_xmlHelper->addContentSummary($summary, true);
             }
 
             $this->_xmlHelper->saveXmlFile();
             return ['filename' => $this->_xmlHelper->getXmlFileName(), 'summary' => json_encode($summary)];
 
-        }catch (Exception $e){
+        } catch (Exception $e) {
             $this->_logger->error('error '.__FILE__.' '.__LINE__.''.$e->getMessage(), [$e]);
             $this->_api->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
             $this->messageManager->addError(__('Something went wrong while submitting your job to Straker Translations.'));

@@ -92,18 +92,18 @@ class Index extends Action
                                 foreach ($localJobData as $key => $localJob) {
                                     array_push($localJobIds, $localJob->getId());
                                     $isUpdate = $this->_compareJobs($apiJob, $localJob);
-                                    if (isset($isUpdate['isSuccess'])&&$isUpdate['isSuccess']==true) {
+                                    if (isset($isUpdate['isSuccess']) && $isUpdate['isSuccess']==true) {
                                         $tjNumber = $localJob->getJobNumber();
                                         if (!empty($tjNumber) && !in_array($tjNumber, $updatedJobs)) {
                                             array_push($updatedJobs, $tjNumber);
                                         }
                                     }
 
-                                    if(isset($isUpdate['isSuccess'])&&$isUpdate['isSuccess']==false && isset($isUpdate['emptyTJ']) && $isUpdate['emptyTJ']==true){
+                                    if (isset($isUpdate['isSuccess']) && $isUpdate['isSuccess']==false && isset($isUpdate['emptyTJ']) && $isUpdate['emptyTJ']==true) {
                                         $emptyTj++;
                                     }
 
-                                    if(isset($isUpdate['isSuccess'])&&$isUpdate['isSuccess']==false && isset($isUpdate['empty_file']) && $isUpdate['empty_file']==true){
+                                    if (isset($isUpdate['isSuccess']) && $isUpdate['isSuccess']==false && isset($isUpdate['empty_file']) && $isUpdate['empty_file']==true) {
 
                                         $this->messageManager->addErrorMessage($isUpdate['Message']->getText());
                                     }
@@ -112,13 +112,13 @@ class Index extends Action
                         }
                     }
 
-                    if($emptyTj>0){
+                    if ($emptyTj>0) {
 
                         $this->messageManager->addNoticeMessage(self::NO_TJ_MSG);
                     }
 
                     if (count($updatedJobs) > 0) {
-                        $this->_coreRegistry->register('job_updated', true );
+                        $this->_coreRegistry->register('job_updated', true);
                         $this->messageManager->addSuccessMessage(__('%1 has been updated.', implode(', ', $updatedJobs)));
                     } elseif (count($localJobIds) <= 0) {
                         $result['status'] = false;
@@ -127,9 +127,9 @@ class Index extends Action
                         $this->messageManager->addNoticeMessage($result['message']);
                     } else {
                         $result['status'] = false;
-                        if(!$this->messageManager->getMessages()->getErrors()){
+                        if (!$this->messageManager->getMessages()->getErrors()) {
                             $result['message'] = __('All jobs are up to date.');
-                            $this->messageManager->addSuccessMessage( $result['message'] );
+                            $this->messageManager->addSuccessMessage($result['message']);
                             $this->_logger->addInfo($result['message']);
                         }
                     }
@@ -142,8 +142,8 @@ class Index extends Action
             } else {
                 $dataArray = (array)$apiData;
                 $result['status'] = false;
-                if(key_exists('message', $dataArray)){
-                    $result['message'] =  __( 'Server: 1%', $dataArray['message'] );
+                if (key_exists('message', $dataArray)) {
+                    $result['message'] =  __('Server: 1%', $dataArray['message']);
                 }
 //                $this->messageManager->addErrorMessage( $result['message'] );
                 $this->_logger->addError($result['message'], $dataArray);

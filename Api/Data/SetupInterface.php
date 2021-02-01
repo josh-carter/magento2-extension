@@ -24,5 +24,4 @@ interface SetupInterface
     public function deleteTestingStoreView($siteMode);
 
     public function createTestingStoreView($storeName = '', $siteMode = 'sandbox');
-
 }

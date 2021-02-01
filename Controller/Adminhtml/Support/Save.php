@@ -62,7 +62,7 @@ class Save extends Action
                         $this->_strakerAPI->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' Your support request could not be submitted', $oSupport->message);
                         $resultRedirect->setPath('*/*/index/', $data);
                     }
-                } else if (property_exists($oSupport, 'message')) {
+                } elseif (property_exists($oSupport, 'message')) {
                     if ($oSupport->message === 'Authentication failed') {
                         $this->messageManager->addErrorMessage(__('Since you have not registered an account, the support request could not be submitted.'));
                     } else {

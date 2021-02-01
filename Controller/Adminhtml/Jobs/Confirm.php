@@ -65,7 +65,7 @@ class Confirm extends Action
 
                 $this->messageManager->addError($e->getMessage());
                 $this->_logger->error('error'.__FILE__.' '.__LINE__, [$e]);
-                $this->_strakerApi->_callStrakerBugLog($e->getMessage(),$e->__toString());
+                $this->_strakerApi->_callStrakerBugLog($e->getMessage(), $e->__toString());
                 $this->messageManager->addError('Translated data has not been published for '.$this->_storeManager->getStore($job->getData('target_store_id'))->getName().' store');
                 $resultRedirect->setPath('*/*/index');
                 return $resultRedirect;

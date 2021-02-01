@@ -19,13 +19,13 @@ class Index extends \Magento\Backend\Block\Template
         Context $context,
         ConfigHelper $configHelper,
         array $data = []
-    )
-    {
+    ) {
         $this->_configHelper = $configHelper;
         parent::__construct($context, $data);
     }
 
-    public function getModuleVersion(){
+    public function getModuleVersion()
+    {
         return $this->_configHelper->getModuleVersion();
     }
 }

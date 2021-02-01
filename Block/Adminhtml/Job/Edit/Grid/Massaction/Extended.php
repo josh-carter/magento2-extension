@@ -1,8 +1,8 @@
 <?php
 namespace Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Massaction;
 
-
-class Extended extends \Magento\Backend\Block\Widget\Grid\Massaction\Extended {
+class Extended extends \Magento\Backend\Block\Widget\Grid\Massaction\Extended
+{
     public function getGridIdsJson()
     {
 //        code in 2.2.x

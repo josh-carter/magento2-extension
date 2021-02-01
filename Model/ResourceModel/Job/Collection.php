@@ -44,5 +44,4 @@ class Collection extends AbstractCollection
             \Straker\EasyTranslationPlatform\Model\ResourceModel\Job::class
         );
     }
-
 }

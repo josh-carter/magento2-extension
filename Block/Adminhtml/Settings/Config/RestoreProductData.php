@@ -94,7 +94,8 @@ class RestoreProductData extends Field
         return $this->_toHtml();
     }
 
-    public function getRestoreFileList(){
+    public function getRestoreFileList()
+    {
         /** @var \Magento\Backup\Model\Fs\Collection $fsCollection */
         $fsCollection = $this->_fsCollectionFactory->create();
 //        $fsCollection->setFilesFilter(
@@ -109,11 +110,13 @@ class RestoreProductData extends Field
         return $fsCollection->getItems();
     }
 
-    public function getDateFormat($date){
+    public function getDateFormat($date)
+    {
         return $this->_localeDate->formatDateTime($date, IntlDateFormatter::SHORT, IntlDateFormatter::SHORT);
     }
 
-    public function getDeleteBackupFileUrl(){
+    public function getDeleteBackupFileUrl()
+    {
         return $this->getUrl('EasyTranslationPlatform/Settings/DeleteBackup');
     }
 }

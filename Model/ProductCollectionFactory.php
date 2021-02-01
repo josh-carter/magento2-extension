@@ -36,7 +36,7 @@ class ProductCollectionFactory
      * @param array $data
      * @return \Straker\EasyTranslationPlatform\Model\ResourceModel\Products\Collection
      */
-    public function create(array $data = array())
+    public function create(array $data = [])
     {
         return $this->_objectManager->create($this->_instanceName, $data);
     }

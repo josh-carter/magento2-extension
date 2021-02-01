@@ -86,7 +86,7 @@ class RefreshJob extends \Magento\Backend\App\Action
                 $result['status'] = false;
                 $result['message'] =  __('Failed to refresh job - please check log for details');
                 $this->messageManager->addWarning($result['message']);
-                $this->_logger->addError($result['message'],['file'=>__FILE__,'line'=>__LINE__]);
+                $this->_logger->addError($result['message'], ['file'=>__FILE__,'line'=>__LINE__]);
             }
             $redirect = $this->resultRedirectFactory->create()->setPath('EasyTranslationPlatform/jobs/Index');
             return $redirect;
@@ -117,7 +117,7 @@ class RefreshJob extends \Magento\Backend\App\Action
             } catch (\Exception $e) {
                 $result['status'] = false;
                 $result['message'] =  __('Failed to refresh job - please check log for details');
-                $this->_logger->addError($result['message'],['file'=>__FILE__,'line'=>__LINE__]);
+                $this->_logger->addError($result['message'], ['file'=>__FILE__,'line'=>__LINE__]);
             }
 
             return $this->_resultJsonFactory->create()->setData($result);
@@ -134,7 +134,7 @@ class RefreshJob extends \Magento\Backend\App\Action
         $returnStatus = [];
         if ($localJob->getJobStatusId() < $this->resolveApiStatus($apiJob)) {
             $returnStatus = $localJob->updateStatus($apiJob);
-            if($returnStatus['isSuccess']==false){
+            if ($returnStatus['isSuccess']==false) {
                 $this->messageManager->addErrorMessage($returnStatus['Message']->getText());
             }
         }

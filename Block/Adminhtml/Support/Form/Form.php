@@ -204,7 +204,8 @@ class Form extends Generic
         return $options;
     }
 
-    private function getFormDesc(){
+    private function getFormDesc()
+    {
         return '<div>
                     <h2>How can we help?</h2>
                     <div>

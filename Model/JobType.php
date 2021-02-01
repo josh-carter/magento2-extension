@@ -24,7 +24,8 @@ class JobType extends AbstractModel implements JobTypeInterface, IdentityInterfa
         return [self::CACHE_TAG . '_' . $this->getId()];
     }
 
-    public static function getJobTypes(){
+    public static function getJobTypes()
+    {
         return ['product', 'category', 'attribute', 'page', 'block'];
     }
 }

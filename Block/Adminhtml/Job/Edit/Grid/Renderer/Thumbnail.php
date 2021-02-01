@@ -18,7 +18,7 @@ class Thumbnail extends AbstractRenderer
         Image $imageHelper,
         ProductRepositoryInterfaceFactory $productRepositoryInterfaceFactory,
         array $data = []
-    ){
+    ) {
         parent::__construct($context, $data);
         $this->imageHelper = $imageHelper;
         $this->productRepositoryInterfaceFactory = $productRepositoryInterfaceFactory;

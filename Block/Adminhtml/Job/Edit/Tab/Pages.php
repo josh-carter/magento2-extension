@@ -52,7 +52,7 @@ class Pages extends \Magento\Backend\Block\Widget\Grid\Extended
     protected function _prepareCollection()
     {
         $collection = $this->pageCollection;
-        if($this->sourceStoreId){
+        if ($this->sourceStoreId) {
             $collection->addStoreFilter($this->sourceStoreId);
         }
         $collection->is_translated($this->targetStoreId);
@@ -102,7 +102,7 @@ class Pages extends \Magento\Backend\Block\Widget\Grid\Extended
             [
                 'header'                    =>  __('Translated'),
                 'index'                     =>  'is_translated',
-//                'filter_index'              =>  'stTrans.translated_value',
+            //                'filter_index'              =>  'stTrans.translated_value',
                 'width'                     =>  '50px',
                 'type'                      =>  'options',
                 'options'                   =>  [0 => __('No'), 1 => __('Yes')],
@@ -169,5 +169,4 @@ class Pages extends \Magento\Backend\Block\Widget\Grid\Extended
         $serializerBlock = $this->_getSerializerBlock();
         return empty($serializerBlock) ? 'job_pages' : $serializerBlock->getReloadParamName();
     }
-
 }

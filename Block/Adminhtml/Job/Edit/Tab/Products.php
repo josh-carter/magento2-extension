@@ -21,7 +21,6 @@ use Straker\EasyTranslationPlatform\Model\ResourceModel\Job\CollectionFactory as
 
 use Magento\Catalog\Ui\Component\Listing\Attribute\RepositoryInterface;
 
-
 class Products extends \Straker\EasyTranslationPlatform\Block\Adminhtml\Widget\Grid\Extended
 {
     protected $_massactionBlockName = \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Massaction\Extended::class;
@@ -205,7 +204,7 @@ class Products extends \Straker\EasyTranslationPlatform\Block\Adminhtml\Widget\G
             ]
         );
 
-        if (!$this->_storeManager->isSingleStoreMode()){
+        if (!$this->_storeManager->isSingleStoreMode()) {
             $this->addColumn(
                 'websites',
                 [
@@ -219,21 +218,21 @@ class Products extends \Straker\EasyTranslationPlatform\Block\Adminhtml\Widget\G
         }
 
         $this->getProductFilters();
-        foreach($this->productFilters as $filter){
+        foreach ($this->productFilters as $filter) {
             $columnConfig = [];
             $columnConfig['header'] = $filter['header'];
             $columnConfig['index'] = $filter['code'];
             $columnConfig['type'] = $filter['type'];
 
-            if($filter['type'] === 'options'){
+            if ($filter['type'] === 'options') {
                 $columnConfig['options'] = $filter['options'];
             }
 
-            if($filter['frontendInput'] === 'multiselect'){
+            if ($filter['frontendInput'] === 'multiselect') {
                 $columnConfig['renderer'] = 'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Renderer\MultiSelect';
             }
 
-            $this->addColumn($filter['code'],$columnConfig);
+            $this->addColumn($filter['code'], $columnConfig);
         }
 
         $this->addColumn(
@@ -273,7 +272,8 @@ class Products extends \Straker\EasyTranslationPlatform\Block\Adminhtml\Widget\G
         return $this;
     }
 
-    protected function _addColumnFilterToCollection($column){
+    protected function _addColumnFilterToCollection($column)
+    {
         if ($this->getCollection()) {
             if ($column->getId() == 'websites') {
                 $this->getCollection()->joinField(
@@ -317,9 +317,9 @@ class Products extends \Straker\EasyTranslationPlatform\Block\Adminhtml\Widget\G
     {
         $condition = $column->getFilter()->getCondition();
         $columnId =  $column->getFilterIndex() ? $column->getFilterIndex() : $column->getIndex();
-        if(is_array($condition) && !empty(reset($condition)) && reset($condition) == '1'){
+        if (is_array($condition) && !empty(reset($condition)) && reset($condition) == '1') {
             $collection->getSelect()->where($columnId . ' IS NOT NULL');
-        }else{
+        } else {
             $collection->getSelect()->where($columnId . ' IS NULL');
         }
         return $this;
@@ -328,7 +328,8 @@ class Products extends \Straker\EasyTranslationPlatform\Block\Adminhtml\Widget\G
     //in order to sort and filter on computed columns,
     //1, rewrite _setCollectionOrder.
     //2. implement callback defined in column data, like 'order_callback' => [$this, '_orderIsTranslated'].
-    protected function _orderIsTranslated($collection, $column){
+    protected function _orderIsTranslated($collection, $column)
+    {
         $columnId =  $column->getFilterIndex() ? $column->getFilterIndex() : $column->getIndex();
         $collection->getSelect()->order($columnId . ' ' . strtoupper($column->getDir()));
     }
@@ -359,8 +360,9 @@ class Products extends \Straker\EasyTranslationPlatform\Block\Adminhtml\Widget\G
         return empty($serializerBlock) ? 'job_products' : $serializerBlock->getReloadParamName();
     }
     
-    private function getProductFilters(){
-        if(empty($this->productFilters)){
+    private function getProductFilters()
+    {
+        if (empty($this->productFilters)) {
             $this->productFilters = $this->productHelper->getSelectedProductFilters();
         }
     }

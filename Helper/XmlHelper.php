@@ -87,44 +87,46 @@ class XmlHelper extends AbstractHelper
         return true;
     }
 
-    function getAppInfo(){
+    function getAppInfo()
+    {
         $appInfo = [];
 
-        if(!empty($this->_root)){
+        if (!empty($this->_root)) {
             $appInfo['app_name'] = 'magento2';
             $appInfo['php_ver'] = phpversion();
 
             //add magento version
             $appVersion = $this->_configHelper->getMagentoVersion();
-            if($appVersion !== ''){
+            if ($appVersion !== '') {
                 $appInfo['app_ver'] = $appVersion;
             }
 
             //add module version
             $strakerModuleVersion = $this->_configHelper->getModuleVersion();
-            if($strakerModuleVersion !== ''){
+            if ($strakerModuleVersion !== '') {
                 $appInfo['straker_ver'] = $strakerModuleVersion;
             }
         }
         return $appInfo;
     }
 
-    function addContentSummary($nodeData, $showAppInfo = false){
+    function addContentSummary($nodeData, $showAppInfo = false)
+    {
         $summaryNode = $this->_dom->createElement('summary');
         $summaryValue = [];
 
-        if($showAppInfo){
+        if ($showAppInfo) {
             $summaryValue['app_info']  = $this->getAppInfo();
         }
 
         $contentData = [];
-        foreach($nodeData as $key => $value){
+        foreach ($nodeData as $key => $value) {
             $contentData[$key] = $value;
         }
 
-        if($showAppInfo){
+        if ($showAppInfo) {
             $summaryValue['content'] = $contentData;
-        }else{
+        } else {
             $summaryValue = $contentData;
         }
 
@@ -239,7 +241,8 @@ class XmlHelper extends AbstractHelper
         return $this->_root;
     }
 
-    public function getDom(){
+    public function getDom()
+    {
         return $this->_dom;
     }
 

@@ -1,7 +1,6 @@
 <?php
 namespace Straker\EasyTranslationPlatform\Model;
 
-
 class DbFactory extends \Magento\Framework\Backup\Factory
 {
 
@@ -26,5 +25,4 @@ class DbFactory extends \Magento\Framework\Backup\Factory
         $class = 'Straker\EasyTranslationPlatform\Model\\' . ucfirst($type);
         return $this->_objectManager->create($class);
     }
-
 }

@@ -14,7 +14,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     protected $_backendUrl;
 
-    protected $_magentoDataTables = array(
+    protected $_magentoDataTables = [
         'catalog_product_entity_varchar',
         'catalog_product_entity_text',
         'catalog_category_entity_varchar',
@@ -27,7 +27,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         'cms_block_store',
         'url_rewrite',
         'catalog_url_rewrite_product_category'
-    );
+    ];
 
     protected $_sandboxLanguages = [
             ['native_name' => 'Arabic','code' => 'Arabic','name' => 'Arabic','short_code' => 'sa'],
@@ -96,7 +96,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $this->_backendUrl->getUrl($path, $parameters);
     }
 
-    public function getSandboxLanguages(){
+    public function getSandboxLanguages()
+    {
         return json_decode(json_encode($this->_sandboxLanguages));
     }
 }

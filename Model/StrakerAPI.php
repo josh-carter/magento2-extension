@@ -47,7 +47,7 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
         Logger $logger,
         StoreManagerInterface $storeManagerInterface,
         ManagerInterface $messageInterface
-    ){
+    ) {
         parent::__construct($context, $registry);
         $this->_configHelper = $configHelper;
         $this->_configModel = $configModel;
@@ -57,18 +57,18 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
         $this->_messageManager = $messageInterface;
     }
 
-    protected function _call($url, $method = 'get', array $request = [], $timeout = 60 )
+    protected function _call($url, $method = 'get', array $request = [], $timeout = 60)
     {
         $httpClient = $this->_httpClient->create();
         $return = '';
 
-        try{
+        try {
 
-            switch(strtolower($method)){
+            switch (strtolower($method)) {
                 case 'post':
                     $method = Zend_Http_Client::POST;
                     $httpClient->setParameterPost($request);
-                    if(!empty($request['source_file'])){
+                    if (!empty($request['source_file'])) {
                         $httpClient->setFileUpload($request['source_file'], 'source_file');
                     }
                     break;
@@ -81,27 +81,27 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
             $httpClient->setConfig(['timeout' => $timeout, 'verifypeer' => 0]);
 //
             $headers = $this->getHeaders();
-            if (!empty($headers)){
+            if (!empty($headers)) {
                 $httpClient->setHeaders($headers);
             }
 
             $httpClient->setMethod($method);
             $response = $httpClient->request();
 
-            if(!$response->isError()){
+            if (!$response->isError()) {
                 $contentType = $response->getHeader('Content-Type');
                 $body = $response->getBody();
 
-                if(strpos($contentType,'application/json') !== false ){
+                if (strpos($contentType, 'application/json') !== false) {
                     $return = json_decode($body);
-                }else{
+                } else {
                     $return = $body;
                 }
-            }else{
+            } else {
                 $this->_messageManager->addError(__('Straker API error. Please check logs.'));
                 $return = $response;
             }
-        }catch(Exception $e){
+        } catch (Exception $e) {
             $this->_logger->error('error'.__FILE__.' '.__LINE__, [$e]);
             $this->_messageManager->addException($e, 'Straker API error. Please check logs.');
             $this->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
@@ -127,10 +127,10 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
 
     protected function _isCallSuccessful($response)
     {
-        if(isset($response->code)){
+        if (isset($response->code)) {
             return false;
         }
-        if(isset($response->success) || isset($response->languages) || isset($response->country)){
+        if (isset($response->success) || isset($response->languages) || isset($response->country)) {
             return true;
         }
         return false;
@@ -144,10 +144,10 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
      */
     protected function _handleCallErrors($response)
     {
-        if(empty($response)){
+        if (empty($response)) {
             return;
         }
-        if(isset($response->message) && strpos($response->message, 'Authentication failed') !== false){
+        if (isset($response->message) && strpos($response->message, 'Authentication failed') !== false) {
             $response->magentoMessage = $response->message;
         }
         return;
@@ -192,12 +192,12 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
     public function getHeaders()
     {
         $token = $this->_configHelper->getAccessToken();
-        if(!empty($token)){
+        if (!empty($token)) {
             $this->_headers[] = 'Authorization: Bearer ' . $token;
         }
 
         $key = $this->_configHelper->getApplicationKey();
-        if(!empty($key)){
+        if (!empty($key)) {
             $this->_headers[] = 'X-Auth-App: ' . $key;
         }
         return $this->_headers;
@@ -244,16 +244,16 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
     {
         $filePath = $this->_configHelper->getDataFilePath();
         $fileName = 'countries.json';
-        if(!file_exists($filePath)){
+        if (!file_exists($filePath)) {
             mkdir($filePath, 0777, true);
         }
         $fileFullPath = $filePath . DIRECTORY_SEPARATOR . $fileName;
-        if(file_exists($fileFullPath)){
+        if (file_exists($fileFullPath)) {
             $result = json_decode(file_get_contents($fileFullPath));
-        }else{
+        } else {
             $countriesUrl = $this->_getCountriesUrl();
             $result = $this->_call($countriesUrl);
-            if(!empty($result)){
+            if (!empty($result)) {
                 file_put_contents($fileFullPath, json_encode($result));
             }
         }
@@ -264,15 +264,15 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
     {
         $filePath = $this->_configHelper->getDataFilePath();
         $fileName = 'languages.json';
-        if(!file_exists($filePath)){
+        if (!file_exists($filePath)) {
             mkdir($filePath, 0777, true);
         }
         $fileFullPath = $filePath . DIRECTORY_SEPARATOR . $fileName;
-        if(file_exists($fileFullPath)){
+        if (file_exists($fileFullPath)) {
             $result = json_decode(file_get_contents($fileFullPath));
-        }else{
+        } else {
             $result = $this->_call($this->_getLanguagesUrl());
-            if(!empty($result)){
+            if (!empty($result)) {
                 file_put_contents($fileFullPath, json_encode($result));
             }
         }
@@ -283,9 +283,9 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
     {
         $languages = $this->getLanguages();
         $languageName = '';
-        foreach($languages as $k => $val){
-            foreach($val as $i => $langCodes){
-                if($langCodes == $code){
+        foreach ($languages as $k => $val) {
+            foreach ($val as $i => $langCodes) {
+                if ($langCodes == $code) {
                     $languageName = $val->name;
                     break;
                 }
@@ -343,14 +343,14 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
             'hostName'         => $_SERVER['HTTP_HOST']
         ];
 
-        try{
+        try {
             $httpClient->setHeaders($this->getHeaders());
             $httpClient->setConfig(['timeout' => 300, 'verifypeer' => 0]);
             $httpClient->setMethod(Zend_Http_Client::POST);
             $httpClient->setParameterPost($requestData);
             $httpClient->setUri($url);
             $httpClient->request();
-        }catch(\Zend_Http_Client_Exception $e){
+        } catch (\Zend_Http_Client_Exception $e) {
             $this->_logger->error('error'.__FILE__.' '.__LINE__, [$e]);
             $this->_messageManager->addExceptionMessage($e, __('Something went wrong while connecting Straker API.'));
         }

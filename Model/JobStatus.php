@@ -25,7 +25,8 @@ class JobStatus extends AbstractModel implements JobStatusInterface, IdentityInt
         return [self::CACHE_TAG . '_' . $this->getId()];
     }
 
-    public static function getJobStatus(){
+    public static function getJobStatus()
+    {
         return ['init', 'queued','ready','in_progress','completed','confirmed'];
     }
 }

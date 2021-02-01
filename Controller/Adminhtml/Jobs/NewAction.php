@@ -55,7 +55,7 @@ class NewAction extends \Magento\Backend\App\Action
             $this->messageManager->addNotice($this->_configHelper->getSandboxMessage());
         }
 
-        if($this->_configHelper->isSandboxMode() && !$this->_setupApi->isTestingStoreViewExist()->getId()){
+        if ($this->_configHelper->isSandboxMode() && !$this->_setupApi->isTestingStoreViewExist()->getId()) {
             $this->messageManager->addError($this->_configHelper->getCreateTestStoreViewMessage());
         }
         /** @var \Magento\Backend\Model\View\Result\Forward $resultForward */

@@ -46,16 +46,16 @@ class CreateTestStoreView extends Action
         $params = $this->getRequest()->getParams();
         $storeName = $params['storeName'];
         $siteMode = $params['siteMode'];
-        try{
+        try {
             $result = $this->_strakerSetup->createTestingStoreView($storeName, $siteMode);
-            if($result['Success']){
+            if ($result['Success']) {
                 $this->messageManager->addSuccessMessage(__('Test store view created successfully.'));
-                if($result['SiteMode'] == SetupInterface::SITE_MODE_LIVE ){
+                if ($result['SiteMode'] == SetupInterface::SITE_MODE_LIVE) {
                     $this->messageManager->addSuccessMessage(__('Live mode enabled.'));
-                }else{
+                } else {
                     $this->messageManager->addSuccessMessage(__('Sandbox mode enabled'));
                 }
-            }else{
+            } else {
                 $this->messageManager->addWarningMessage($result['Message']);
             }
         } catch (Exception $e) {

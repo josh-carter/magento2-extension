@@ -22,7 +22,7 @@ class RestoreBackup extends Action
         JsonFactory $jsonFactory,
         StrakerAPIInterface $api,
         BackupHelper $backupHelper
-    ){
+    ) {
         $this->_api = $api;
         $this->_jsonFactory = $jsonFactory;
         $this->_backupHelper = $backupHelper;

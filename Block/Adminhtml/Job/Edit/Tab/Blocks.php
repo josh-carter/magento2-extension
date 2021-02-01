@@ -54,7 +54,7 @@ class Blocks extends Extended
     protected function _prepareCollection()
     {
         $collection = $this->_blockCollectionFactory;
-        if($this->sourceStoreId){
+        if ($this->sourceStoreId) {
             $collection->addStoreFilter($this->sourceStoreId);
         }
         $collection->is_translated($this->targetStoreId);

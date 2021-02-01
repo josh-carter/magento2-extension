@@ -133,7 +133,8 @@ class Grid extends Extended
         return false;
     }
 
-    function orderLabel($collection, $column){
+    function orderLabel($collection, $column)
+    {
         $collection->getSelect()->order($column->getIndex() . ' ' . strtoupper($column->getDir()));
     }
 
@@ -145,5 +146,4 @@ class Grid extends Extended
         }
         return parent::_setCollectionOrder($column);
     }
-
 }

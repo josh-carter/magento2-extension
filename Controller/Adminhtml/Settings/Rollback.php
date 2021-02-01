@@ -88,7 +88,7 @@ class Rollback extends Action
     public function execute()
     {
         if (!$this->getRequest()->isAjax()) {
-            return $this->_redirect('adminhtml/system_config/edit',  ['section' => 'demonstration']);
+            return $this->_redirect('adminhtml/system_config/edit', ['section' => 'demonstration']);
         }
 
         /** @var \Magento\Backup\Helper\Data $helper */
@@ -103,7 +103,7 @@ class Rollback extends Action
             );
 
             if (!$backup->getTime() || !$backup->exists()) {
-                return $this->_redirect('adminhtml/system_config/edit',  ['section' => 'demonstration']);
+                return $this->_redirect('adminhtml/system_config/edit', ['section' => 'demonstration']);
             }
 
             if (!$backup->getTime()) {

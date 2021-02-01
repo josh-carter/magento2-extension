@@ -15,7 +15,6 @@ use Magento\Catalog\Model\Product\TypeFactory;
 
 use Magento\Store\Model\ResourceModel\Website\CollectionFactory as WebsiteFactory;
 
-
 class Grid extends Extended
 {
     protected $_jobFactory;
@@ -169,7 +168,7 @@ class Grid extends Extended
             ]
         );
 
-        if (!$this->_storeManager->isSingleStoreMode()){
+        if (!$this->_storeManager->isSingleStoreMode()) {
             $this->addColumn(
                 'websites',
                 [
@@ -245,7 +244,8 @@ class Grid extends Extended
         return parent::_prepareColumns();
     }
 
-    protected function _addColumnFilterToCollection($column){
+    protected function _addColumnFilterToCollection($column)
+    {
         if ($this->getCollection()) {
             if ($column->getId() == 'websites') {
                 $this->getCollection()->joinField(

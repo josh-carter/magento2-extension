@@ -80,25 +80,25 @@ class Import extends Action
 
             //check uploaded file
             $checkResult = $this->checkUploadedFile($file);
-            if ( $checkResult['success'] ) {
+            if ($checkResult['success']) {
                 try {
                     //todo: save new file with the same name stored in db
                     $renameResult = $this->renameExistingTranslatedFile($jobId);
 
-                    if ($renameResult['success']){
-                        if($renameResult['old_name']){
+                    if ($renameResult['success']) {
+                        if ($renameResult['old_name']) {
                             $translatedFullFilename = $renameResult['old_name'];
                             $translatedFilename = $this->_getFilenameFromFullName($translatedFullFilename);
 
-                            if($translatedFullFilename === '') {
+                            if ($translatedFullFilename === '') {
                                 $fileNameArray = $this->generateTranslatedFilename($jobId);
                                 $translatedFilename = $fileNameArray['name'];
                                 $translatedFullFilename = implode(DIRECTORY_SEPARATOR, $fileNameArray);
                             }
 
-                            if(move_uploaded_file($file['tmp_name'], $translatedFullFilename)){
+                            if (move_uploaded_file($file['tmp_name'], $translatedFullFilename)) {
                                 //todo: import
-                                if(file_exists($translatedFullFilename)){
+                                if (file_exists($translatedFullFilename)) {
                                     $this->_importHelper->create($jobId)
                                         ->parseTranslatedFile()
                                         ->saveData();
@@ -112,14 +112,14 @@ class Import extends Action
                                         )->getName()
                                         .' store'
                                     );
-                                }else{
+                                } else {
                                     $this->processErrorMessage('Save upload failed.', __FILE__, __METHOD__);
                                 }
-                            }else{
+                            } else {
                                 $this->processErrorMessage('File upload failed.', __FILE__, __METHOD__);
                             }
                         }
-                    }else{
+                    } else {
                         $this->processErrorMessage('Cannot generate translated file.', __FILE__, __METHOD__);
                     }
                 } catch (LocalizedException $e) {
@@ -127,7 +127,7 @@ class Import extends Action
                 } catch (Exception $e) {
                     $this->processErrorMessage('Invalid file upload attempt', __FILE__, __METHOD__, $e);
                 }
-            }else {
+            } else {
                 $this->processErrorMessage($checkResult['message'], __FILE__, __METHOD__);
             }
         } else {
@@ -141,16 +141,17 @@ class Import extends Action
      * @param $jobId
      * @return array
      */
-    private function renameExistingTranslatedFile($jobId) {
+    private function renameExistingTranslatedFile($jobId)
+    {
         $this->createJobModel($jobId);
         $oldName = $this->_jobModel->getData('translated_file');
         $success = true;
         $oldNameWithFullPath = '';
         $newNameWithFullPath = '';
 
-        if($oldName){
+        if ($oldName) {
             $oldNameWithFullPath = $this->_configHelper->getTranslatedXMLFilePath() . DIRECTORY_SEPARATOR . $oldName;
-            if(file_exists($oldNameWithFullPath)){
+            if (file_exists($oldNameWithFullPath)) {
                 $newNameWithFullPath  = $this->_configHelper->getTranslatedXMLFilePath() . DIRECTORY_SEPARATOR . 'old_' . time() . '_' . $oldName;
                 $success = rename($oldNameWithFullPath, $newNameWithFullPath);
             }
@@ -170,16 +171,16 @@ class Import extends Action
         if (!is_uploaded_file($file['tmp_name'])) {
             $result['success'] = false;
             $result['message'] = 'File must upload via http post.';
-        }else if ($file['error'] !== 0) {
+        } elseif ($file['error'] !== 0) {
             $result['success'] = false;
             $result['message'] = 'An error found while uploading (' . $file['error'] . ').';
-        }else if (empty($file['tmp_name'])){
+        } elseif (empty($file['tmp_name'])) {
             $result['success'] = false;
             $result['message'] = 'An error found while uploading.';
-        }else if ($file['type'] !== 'text/xml') {
+        } elseif ($file['type'] !== 'text/xml') {
             $result['success'] = false;
             $result['message'] = 'File type invalid.';
-        }else {
+        } else {
             $result['success'] = true;
         }
 
@@ -198,7 +199,7 @@ class Import extends Action
 
         $this->createJobModel($jobId);
 
-        if(key_exists('source_file', $this->_jobModel->getData())){
+        if (key_exists('source_file', $this->_jobModel->getData())) {
             //full path of filename
             $sourceFileName = $this->_jobModel->getData('source_file');
             //remove path and '.xml' at the end of filename
@@ -210,7 +211,8 @@ class Import extends Action
         return $nameArray;
     }
 
-    private function _getFilenameFromFullName($fullName, $suffix = true){
+    private function _getFilenameFromFullName($fullName, $suffix = true)
+    {
         return $suffix
             ?
             substr($fullName, strrpos($fullName, DIRECTORY_SEPARATOR) + 1)
@@ -218,17 +220,19 @@ class Import extends Action
             substr($fullName, strrpos($fullName, DIRECTORY_SEPARATOR) + 1, -4);
     }
 
-    private function createJobModel($jobId){
-        if($this->_jobModel === null){
+    private function createJobModel($jobId)
+    {
+        if ($this->_jobModel === null) {
             $this->_jobModel = $this->_jobFactory->create()->load($jobId);
         }
     }
 
-    private function processErrorMessage($message, $file, $method, $e = null){
-        if ($e === null){
+    private function processErrorMessage($message, $file, $method, $e = null)
+    {
+        if ($e === null) {
             $this->_logger->error($message, ['file' => $file, 'method' => $method]);
             $this->_strakerApi->_callStrakerBugLog($file . ' ' . $method . ' ' . $message);
-        }else{
+        } else {
             $this->_logger->error($message, ['file' => $file, 'method' => $method, 'e' => $e->__toString()]);
             $this->_strakerApi->_callStrakerBugLog($file . ' ' . $method . ' ' . $e->getMessage(), $e->__toString());
         }

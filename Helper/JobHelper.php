@@ -75,7 +75,7 @@ class JobHelper extends AbstractHelper
     public function createJob($data)
     {
 
-        try{
+        try {
 
             $this->jobData = $data;
 
@@ -95,20 +95,19 @@ class JobHelper extends AbstractHelper
 
             $this->jobModel->setData($jobData);
 
-        }catch (Exception $e){
-            $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), array($e));
+        } catch (Exception $e) {
+            $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$e]);
             $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
             $this->_messageManager->addError($e->getMessage());
         }
 
         return $this;
-
     }
 
     public function generateProductJob()
     {
 
-        try{
+        try {
 
             $this->jobModel->addData(['job_type_id'=> JobType::JOB_TYPE_PRODUCT]);
 
@@ -127,14 +126,13 @@ class JobHelper extends AbstractHelper
             $this->jobModel->save();
 
 
-        }catch (Exception $e){
-            $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), array($e));
+        } catch (Exception $e) {
+            $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$e]);
             $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
             $this->_messageManager->addError($e->getMessage());
         }
 
         return $this->jobModel;
-
     }
 
     /**
@@ -144,7 +142,7 @@ class JobHelper extends AbstractHelper
     public function generateCategoryJob()
     {
 
-        try{
+        try {
 
             $this->jobModel->addData(['job_type_id'=> JobType::JOB_TYPE_CATEGORY]);
 
@@ -163,8 +161,8 @@ class JobHelper extends AbstractHelper
             $this->jobModel->save();
 
 
-        }catch (Exception $e){
-            $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), array($e));
+        } catch (Exception $e) {
+            $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$e]);
             $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
             $this->_messageManager->addError($e->getMessage());
         }
@@ -176,7 +174,7 @@ class JobHelper extends AbstractHelper
     public function generatePageJob()
     {
 
-        try{
+        try {
 
             $this->jobModel->addData(['job_type_id'=> JobType::JOB_TYPE_PAGE]);
             $this->jobModel->save();
@@ -193,8 +191,8 @@ class JobHelper extends AbstractHelper
 
             $this->jobModel->save();
 
-        }catch (Exception $e){
-            $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), array($e));
+        } catch (Exception $e) {
+            $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$e]);
             $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
             $this->_messageManager->addError($e->getMessage());
         }
@@ -205,7 +203,7 @@ class JobHelper extends AbstractHelper
     public function generateBlockJob()
     {
 
-        try{
+        try {
 
             $this->jobModel->addData(['job_type_id'=> JobType::JOB_TYPE_BLOCK]);
 
@@ -223,8 +221,8 @@ class JobHelper extends AbstractHelper
 
             $this->jobModel->save();
 
-        }catch (Exception $e){
-            $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), array($e));
+        } catch (Exception $e) {
+            $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$e]);
             $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
             $this->_messageManager->addError($e->getMessage());
         }

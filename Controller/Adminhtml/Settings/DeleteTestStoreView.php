@@ -45,16 +45,16 @@ class DeleteTestStoreView extends Action
         $result = ['Success' => true];
         $params = $this->getRequest()->getParams();
         $siteMode = $params['siteMode'];
-        try{
+        try {
             $result = $this->_strakerSetup->deleteTestingStoreView($siteMode);
-            if($result['Success']){
+            if ($result['Success']) {
                 $this->messageManager->addSuccessMessage(__('Test store view deleted successfully.'));
-                if($result['SiteMode'] == SetupInterface::SITE_MODE_LIVE ){
+                if ($result['SiteMode'] == SetupInterface::SITE_MODE_LIVE) {
                     $this->messageManager->addSuccessMessage(__('Live mode enabled.'));
-                }else{
+                } else {
                     $this->messageManager->addSuccessMessage(__('Sandbox mode enabled'));
                 }
-            }else{
+            } else {
                 $this->messageManager->addWarningMessage($result['Message']);
             }
         } catch (Exception $e) {

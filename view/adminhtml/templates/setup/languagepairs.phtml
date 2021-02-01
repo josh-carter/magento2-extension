@@ -2,9 +2,9 @@
 <p>Select your Source and Destination Store Views and languages for this language pair. This is a one time setup process for each Store View.</p>
 
 <table id="language_pairs_table">
-    <?php foreach ( $block->getWebsites() as $website) {
+    <?php foreach ($block->getWebsites() as $website) {
         $groups = $website->getGroups();
-        if( count($groups) > 0 ){
+        if (count($groups) > 0) {
             foreach ($website->getGroups() as $group) { ?>
                 <tr>
                     <td colspan="2" class="site-group-name">
@@ -18,10 +18,10 @@
                     <td><h4>Source Store View</h4></td>
                 </tr>
                 <?php $stores = $group->getStores();
-                if( count( $stores ) > 0 ) {
+                if (count($stores) > 0) {
                     foreach ($stores as $store) { ?>
                         <?php $block->getStoreInfo($store->getId()) ?>
-                        <?php if($block->getMessage($store->getId())):?>
+                        <?php if ($block->getMessage($store->getId())):?>
                         <tr><td class="language-pair-message"><h4>Please Select Language Pairs for <?php echo $store->getName()?> store view:</h4></td></tr>
                         <?php endif ?>
                         <tr class="store-row">
@@ -34,7 +34,7 @@
                                             <?php foreach ($block->_getOptions() as $languages): ?>
                                                 <option value="<?php echo $languages->code ?>"
                                                         <?php if ($block->getTranslationLanguage() && $block->getTranslationLanguage() == $languages->code): ?>
-                                                        <?php echo "selected"?>
+                                                            <?php echo "selected"?>
                                                         <?php endif ?>>
                                                     <?php echo $languages->name ?>
                                                 </option>
@@ -96,7 +96,7 @@
                             </td>
                         </tr>
                     <?php }
-                }else{ ?>
+                } else { ?>
                     <tr class="store-view-list">
                         <td colspan="2">
                             <span><?php echo __("No store views for this website."); ?></span>
@@ -105,7 +105,7 @@
                     <?php
                 }
             }
-        }else{ ?>
+        } else { ?>
             <tr>
                 <td colspan="2">
                     <span class="site-group-name"> <?php echo $website->getName(); ?> </span>

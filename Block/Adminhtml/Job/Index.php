@@ -13,8 +13,7 @@ class Index extends \Magento\Backend\Block\Widget\Container
         Context $context,
         ConfigHelper $configHelper,
         array $data
-    )
-    {
+    ) {
         parent::__construct($context, $data);
         $this->_configHelper = $configHelper;
     }
@@ -46,7 +45,8 @@ class Index extends \Magento\Backend\Block\Widget\Container
     }
 
 
-    public function shouldDisable(){
+    public function shouldDisable()
+    {
         $this->_cache->clean(Config::CACHE_TAG);
         $result = empty($this->_configHelper->getAccessToken());
         return $result;
@@ -57,7 +57,8 @@ class Index extends \Magento\Backend\Block\Widget\Container
         return $this->getUrl('*/*/new');
     }
 
-    public function _getMyAccountUrl(){
+    public function _getMyAccountUrl()
+    {
         return $this->_configHelper->getMyAccountUrl();
     }
 }

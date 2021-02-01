@@ -19,7 +19,7 @@ class CreateBackup extends Action
         Action\Context $context,
         JsonFactory $jsonFactory,
         StrakerAPIInterface $api
-    ){
+    ) {
         $this->_api = $api;
         $this->_jsonFactory = $jsonFactory;
         parent::__construct($context);

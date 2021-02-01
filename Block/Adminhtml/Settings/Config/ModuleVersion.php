@@ -20,8 +20,7 @@ class ModuleVersion extends \Magento\Config\Block\System\Config\Form\Field
         Context $context,
         ConfigHelper $configHelper,
         array $data = []
-    )
-    {
+    ) {
         parent::__construct($context, $data);
         $this->_configHelper = $configHelper;
     }

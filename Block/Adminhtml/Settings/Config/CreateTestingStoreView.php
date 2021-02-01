@@ -13,8 +13,7 @@ class CreateTestingStoreView extends Field
     private $_buttonName;
     protected $_setup;
 
-    function __construct
-    (
+    function __construct(
         Context $context,
         SetupInterface $setup,
         array $data = []

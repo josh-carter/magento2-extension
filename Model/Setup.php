@@ -48,26 +48,26 @@ class Setup extends AbstractModel implements SetupInterface
     {
         $this->_configModel->saveConfig('straker/general/name', $data['first_name'] . ' ' . $data['last_name'], 'default', 0);
         $this->_configModel->saveConfig('straker/general/first_name', $data['first_name'], 'default', 0);
-        $this->_configModel->saveConfig('straker/general/last_name', $data['last_name'] , 'default', 0);
+        $this->_configModel->saveConfig('straker/general/last_name', $data['last_name'], 'default', 0);
         $this->_configModel->saveConfig('straker/general/email', $data['email'], 'default', 0);
 
-        if(!empty($data['country'])) {
+        if (!empty($data['country'])) {
             $this->_configModel->saveConfig('straker/general/country', $data['country'], 'default', 0);
         }
 
-        if(!empty($data['company_name'])) {
+        if (!empty($data['company_name'])) {
             $this->_configModel->saveConfig('straker/general/company_name', $data['company_name'], 'default', 0);
         }
 
-        if(!empty($data['company_size'])) {
+        if (!empty($data['company_size'])) {
             $this->_configModel->saveConfig('straker/general/company_size', $data['company_size'], 'default', 0);
         }
 
-        if(!empty($data['phone_number'])) {
+        if (!empty($data['phone_number'])) {
             $this->_configModel->saveConfig('straker/general/phone_number', $data['phone_number'], 'default', 0);
         }
 
-        if(!empty($data['url'])) {
+        if (!empty($data['url'])) {
             $this->_configModel->saveConfig('straker/general/url', $data['url'], 'default', 0);
         }
 
@@ -167,7 +167,7 @@ class Setup extends AbstractModel implements SetupInterface
                             $where = [ 'store_id != ?' => 1];
                             $deleteCount += $connection->delete($table, $where);
                             $urlRewriteProductCategoryTable = $this->_resourceConnection->getTableName('catalog_url_rewrite_product_category');
-                            if ($connection->isTableExists($urlRewriteProductCategoryTable)  && count($urlRewriteIds) > 0) {
+                            if ($connection->isTableExists($urlRewriteProductCategoryTable) && count($urlRewriteIds) > 0) {
                                 $where = ['url_rewrite_id IN(?)'=> $urlRewriteIds ];
                                 $deleteCount += $connection->delete($urlRewriteProductCategoryTable, $where);
                             }
@@ -256,17 +256,19 @@ class Setup extends AbstractModel implements SetupInterface
     /**
      * @param int $mode 0: sandbox, 1: live
      */
-    public function setSiteMode( $mode = 0 )
+    public function setSiteMode($mode = 0)
     {
-        $this->_configModel->saveConfig('straker_config/env/site_mode', $mode,  'default', 0);
+        $this->_configModel->saveConfig('straker_config/env/site_mode', $mode, 'default', 0);
         $this->_clean();
     }
 
-    private function _clean(){
+    private function _clean()
+    {
         $this->_cacheManager->clean(\Magento\Framework\App\Cache\Type\Config::CACHE_TAG);
     }
 
-    public function isTestingStoreViewExist(){
+    public function isTestingStoreViewExist()
+    {
         $testingStore = $this->_storeFactory->create()->load($this->_configHelper->getTestingStoreViewCode());
         return $testingStore;
     }
@@ -274,27 +276,27 @@ class Setup extends AbstractModel implements SetupInterface
     public function deleteTestingStoreView($siteMode = SetupInterface::SITE_MODE_LIVE)
     {
         $result = ['Success' => true, 'Message' => '', 'SiteMode' => SetupInterface::SITE_MODE_SANDBOX];
-        try{
+        try {
             $testingStore = $this->isTestingStoreViewExist();
-            if($testingStore->getId()){
+            if ($testingStore->getId()) {
                 $testingStore->delete();
                 $this->_eventManager->dispatch('store_delete', ['store' => $testingStore]);
                 //switch site mode
-                if( $siteMode == SetupInterface::SITE_MODE_LIVE ){
-                    if($this->_configHelper->isSandboxMode()){
+                if ($siteMode == SetupInterface::SITE_MODE_LIVE) {
+                    if ($this->_configHelper->isSandboxMode()) {
                         $this->setSiteMode(SetupInterface::SITE_MODE_LIVE);
                     }
                     $result['SiteMode'] = SetupInterface::SITE_MODE_LIVE;
-                }else{
-                    if(!$this->_configHelper->isSandboxMode()){
+                } else {
+                    if (!$this->_configHelper->isSandboxMode()) {
                         $this->setSiteMode(SetupInterface::SITE_MODE_SANDBOX);
                     }
                 }
-            }else{
+            } else {
                 $result['Success'] = false;
                 $result['Message'] = __('The testing store does not exist.');
             }
-        }catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
         return $result;
@@ -303,12 +305,12 @@ class Setup extends AbstractModel implements SetupInterface
     public function createTestingStoreView($storeName = '', $siteMode = SetupInterface::SITE_MODE_SANDBOX)
     {
         $result = ['Success' => true, 'Message' => '', 'SiteMode' => SetupInterface::SITE_MODE_LIVE];
-        try{
+        try {
             $testingStore = $this->isTestingStoreViewExist();
-            if($testingStore->getId()){
+            if ($testingStore->getId()) {
                 $result['Success'] = false;
                 $result['Message'] = __('The testing store exist.');
-            }else{
+            } else {
                 if (!empty(trim($storeName))) {
                     //create a store view
                     $testingStore->setName($storeName);
@@ -323,13 +325,13 @@ class Setup extends AbstractModel implements SetupInterface
                     $this->_storeManager->reinitStores();
                     $this->_eventManager->dispatch('store_add', ['store' => $testingStore]);
                     //switch site mode
-                    if( $siteMode == SetupInterface::SITE_MODE_SANDBOX ){
-                        if(!$this->_configHelper->isSandboxMode()){
+                    if ($siteMode == SetupInterface::SITE_MODE_SANDBOX) {
+                        if (!$this->_configHelper->isSandboxMode()) {
                             $this->setSiteMode(SetupInterface::SITE_MODE_SANDBOX);
                         }
                         $result['SiteMode'] = SetupInterface::SITE_MODE_SANDBOX;
-                    }else{
-                        if($this->_configHelper->isSandboxMode()){
+                    } else {
+                        if ($this->_configHelper->isSandboxMode()) {
                             $this->setSiteMode(SetupInterface::SITE_MODE_LIVE);
                         }
                     }

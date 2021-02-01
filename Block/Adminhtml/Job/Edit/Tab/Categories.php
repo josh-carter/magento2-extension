@@ -68,5 +68,4 @@ class Categories extends \Magento\Catalog\Block\Adminhtml\Category\Tree implemen
     {
         return false;
     }
-
 }

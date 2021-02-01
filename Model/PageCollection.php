@@ -13,7 +13,7 @@ use Magento\Framework\DB\Select;
 class PageCollection extends \Magento\Cms\Model\ResourceModel\Page\Collection
 {
 
-    public function is_translated($target_store_id=1)
+    public function is_translated($target_store_id = 1)
     {
         $strakerJobs = $this->_resource->getTable('straker_job');
         $strakerTrans = $this->_resource->getTable('straker_attribute_translation');
@@ -53,7 +53,6 @@ class PageCollection extends \Magento\Cms\Model\ResourceModel\Page\Collection
             ->columns('COUNT(DISTINCT page_id)');
 
         return $countSelect;
-
     }
 
     function getAllIds()

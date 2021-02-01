@@ -84,7 +84,6 @@ class AttributeHelper extends AbstractHelper
         }
 
         return false;
-
     }
 
     public function appendAttributeLabel(

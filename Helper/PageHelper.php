@@ -111,10 +111,9 @@ class PageHelper extends AbstractHelper
 
             $attributeData = [];
 
-            foreach ($this->_attributes as $attribute){
+            foreach ($this->_attributes as $attribute) {
 
-                if(in_array($attribute,$this->_attributes) && (!empty($data->getData($attribute))))
-                {
+                if (in_array($attribute, $this->_attributes) && (!empty($data->getData($attribute)))) {
                     array_push($attributeData, [
                         'attribute_code'=>$attribute,
                         'label'=>$attribute,
@@ -251,7 +250,8 @@ class PageHelper extends AbstractHelper
         $this->_xmlHelper->addContentSummary($summaryArray);
     }
 
-    public function getSummary(){
+    public function getSummary()
+    {
         return ['cms_page' => count($this->_pageData)];
     }
 }

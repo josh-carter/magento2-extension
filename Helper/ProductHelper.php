@@ -167,10 +167,11 @@ class ProductHelper extends AbstractHelper
      *
      * @return ProductAttributeInterface[]
      */
-    public function getProductGridAttributeList(){
+    public function getProductGridAttributeList()
+    {
         $attributes = $this->_productFilters->getList();
-        if (!empty($attributes)){
-            return array_filter($attributes, function($attrCode){
+        if (!empty($attributes)) {
+            return array_filter($attributes, function ($attrCode) {
                 $attr = $this->getProductAttribute($attrCode);
                 return !is_null($attr) && in_array($attr->getFrontendInput(), $this->_productFilterTypes);
             });
@@ -183,18 +184,19 @@ class ProductHelper extends AbstractHelper
      *
      * @return ProductAttributeInterface[]
      */
-    public function getSelectedProductFilters(){
+    public function getSelectedProductFilters()
+    {
         $productFilters = $this->_configHelper->getProductFilters();
         /** @var ProductAttributeInterface[] $attributes */
         $attributes = [];
-        if (!empty($productFilters)){
+        if (!empty($productFilters)) {
             $filterCollection = $this->_attributeCollectionFactory->create();
             $filterCollection->setEntityTypeFilter($this->_entityTypeId)
                 ->addFieldToFilter('attribute_code', ['in' => $productFilters]);
             /** @var ProductAttributeInterface $attribute */
-            foreach($filterCollection->getItems() as $attribute){
+            foreach ($filterCollection->getItems() as $attribute) {
                 $frontendInput = $attribute->getFrontendInput();
-                if (in_array($frontendInput, $this->_productFilterTypes)){
+                if (in_array($frontendInput, $this->_productFilterTypes)) {
                     $data = [];
                     $data['header'] = $attribute->getDefaultFrontendLabel();
                     $data['code'] = $attribute->getAttributeCode();
@@ -202,9 +204,9 @@ class ProductHelper extends AbstractHelper
                     $data['backendModel'] = $attribute->getBackendModel();
                     $data['type'] = $this->getFilterType($frontendInput);
 
-                    if($data['frontendInput'] === 'boolean'){
+                    if ($data['frontendInput'] === 'boolean') {
                         $data['options'] = [0 => __('No'), 1 => 'Yes'];
-                    }else{
+                    } else {
                         $data['options'] = $this->toGridOptionArray($attribute->getSource()->getAllOptions());
                     }
 
@@ -284,7 +286,8 @@ class ProductHelper extends AbstractHelper
 
                     if ($product->getResource()->getAttributeRawValue($product->getId(), $attribute_id, $this->_storeId)) {
 
-                        array_push($attributeData,
+                        array_push(
+                            $attributeData,
                             [
                                 'attribute_id'=>$attribute_id,
                                 'attribute_code'=> $product->getResource()->getAttribute($attribute_id)->getAttributeCode(),
@@ -378,11 +381,11 @@ class ProductHelper extends AbstractHelper
 
         $job_name = $job_id.'_'.$jobType_id.'_'.$target_store_id.'_'.$source_store_id;
 
-        foreach ($xmlData as $data){
+        foreach ($xmlData as $data) {
 
-            if($data['is_label']=='1'){
+            if ($data['is_label']=='1') {
 
-                if(!in_array($data['attribute_code'],$appendedAttributes)){
+                if (!in_array($data['attribute_code'], $appendedAttributes)) {
 
                     $xmlHelper->appendDataToRoot([
                         'name' => $job_name,
@@ -394,12 +397,12 @@ class ProductHelper extends AbstractHelper
                         'is_label'=>$data['is_label']
                     ]);
 
-                    array_push($appendedAttributes,$data['attribute_code']);
+                    array_push($appendedAttributes, $data['attribute_code']);
                 }
 
             }
 
-            if(!is_null($data['optionTranslationId'])){
+            if (!is_null($data['optionTranslationId'])) {
 
                 $xmlHelper->appendDataToRoot([
                     'name' => $job_name,
@@ -411,7 +414,7 @@ class ProductHelper extends AbstractHelper
                 ]);
             }
 
-            if($data['is_label']=='0'){
+            if ($data['is_label']=='0') {
 
                 $xmlHelper->appendDataToRoot([
                     'name' => $job_name,
@@ -439,25 +442,25 @@ class ProductHelper extends AbstractHelper
 
         $insertData = [];
 
-        foreach ($this->_productData as $key => $data){
+        foreach ($this->_productData as $key => $data) {
 
-            foreach ($data['attributes'] as $attribute){
+            foreach ($data['attributes'] as $attribute) {
 
-                if(is_array($attribute['value'])){
+                if (is_array($attribute['value'])) {
 
-                    if(isset($optionData[$attribute['attribute_code']])){
+                    if (isset($optionData[$attribute['attribute_code']])) {
 
                         $newValueArray = array_merge($optionData[$attribute['attribute_code']]['value'], $attribute['value']);
 
                         $optionData[$attribute['attribute_code']]['value'] = $newValueArray;
 
-                    }else{
+                    } else {
 
                         $optionData[$attribute['attribute_code']] = $attribute;
                         $optionData[$attribute['attribute_code']]['product_id'] = $data['product_id'];
                     }
 
-                }else{
+                } else {
 
                     $labelData = [
                         'job_id' => $job_id,
@@ -492,15 +495,14 @@ class ProductHelper extends AbstractHelper
 
         $table = $attributeModel->getResource()->getTable('straker_attribute_translation');
 
-        $attributeModel->getResource()->getConnection()->insertMultiple($table,$insertData);
+        $attributeModel->getResource()->getConnection()->insertMultiple($table, $insertData);
 
-        if($optionData){
+        if ($optionData) {
 
-            $this->saveOptionValues($optionData,$job_id);
+            $this->saveOptionValues($optionData, $job_id);
         }
 
         return $this;
-
     }
 
     /**
@@ -521,7 +523,7 @@ class ProductHelper extends AbstractHelper
 
         }
 
-        foreach ($optionData as $data){
+        foreach ($optionData as $data) {
 
             $attributeValue = $this->_attributeTranslationFactory->create();
 
@@ -538,7 +540,7 @@ class ProductHelper extends AbstractHelper
                 ]
             )->save();
 
-            foreach ($data['value'] as $option){
+            foreach ($data['value'] as $option) {
 
                 $insertData[] = [
                     'attribute_translation_id' => $attributeValue->getId(),
@@ -554,10 +556,9 @@ class ProductHelper extends AbstractHelper
 
         $table = $attributeTranslationOptionModel->getResource()->getTable('straker_attribute_option_translation');
 
-        $attributeTranslationOptionModel->getResource()->getConnection()->insertMultiple($table,$insertData);
+        $attributeTranslationOptionModel->getResource()->getConnection()->insertMultiple($table, $insertData);
 
         return $this;
-
     }
 
     private function _getChildrenProducts($parentIds = [])
@@ -603,19 +604,21 @@ class ProductHelper extends AbstractHelper
         $this->_xmlHelper->addContentSummary($summaryArray);
     }
 
-    public function getSummary(){
+    public function getSummary()
+    {
         $productArray = [];
-        foreach($this->_productData as $productData){
-            if(key_exists($productData['product_type'], $productArray)){
+        foreach ($this->_productData as $productData) {
+            if (key_exists($productData['product_type'], $productArray)) {
                 $productArray[$productData['product_type']] += 1;
-            }else{
+            } else {
                 $productArray[$productData['product_type']] = 1;
             }
         }
         return $productArray;
     }
 
-    public function getConfigHelper(){
+    public function getConfigHelper()
+    {
         return $this->_configHelper;
     }
 
@@ -636,25 +639,26 @@ class ProductHelper extends AbstractHelper
      * @param $attributeCode
      * @return \Magento\Eav\Api\Data\AttributeInterface|null
      */
-    public function getProductAttribute($attributeCode){
-        try{
+    public function getProductAttribute($attributeCode)
+    {
+        try {
             $attribute = $this->_attributeRepository->get(ProductAttributeInterface::ENTITY_TYPE_CODE, $attributeCode);
             return $attribute;
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return null;
         }
     }
 
-    private function toGridOptionArray($array){
+    private function toGridOptionArray($array)
+    {
         $newArray = [];
-        if(is_array($array) && sizeof($array) > 0){
-            foreach($array as $a){
-                if(isset($a['value']) && isset($a['label']) && !empty($a['value'])) {
+        if (is_array($array) && sizeof($array) > 0) {
+            foreach ($array as $a) {
+                if (isset($a['value']) && isset($a['label']) && !empty($a['value'])) {
                     $newArray[$a['value']] = $a['label'];
                 }
             }
         }
         return $newArray;
     }
-
 }

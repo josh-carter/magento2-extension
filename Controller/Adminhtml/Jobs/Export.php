@@ -10,7 +10,8 @@ use Magento\Framework\Controller\Result\RawFactory;
 use Straker\EasyTranslationPlatform\Helper\ConfigHelper;
 use Straker\EasyTranslationPlatform\Model\JobFactory;
 
-class Export extends Action {
+class Export extends Action
+{
     /**
      * @var RawFactory
      */
@@ -33,13 +34,14 @@ class Export extends Action {
         $this->resultRawFactory = $resultRawFactory;
     }
 
-    public function execute(){
+    public function execute()
+    {
         $params = $this->getRequest()->getParams();
         $jobId          = array_key_exists('job_id', $params) ? $params['job_id'] : 0;
         $jobKey         = array_key_exists('job_id', $params) ? $params['job_key'] : 0;
         $sourceStoreId  = array_key_exists('job_id', $params) ? $params['source_store_id'] : 0;
 
-        if(!empty($jobId)) {
+        if (!empty($jobId)) {
             $jobModel = $this->jobFactory->create()->load($jobId);
             $filePath = $jobModel->getData('source_file');
 
@@ -60,8 +62,8 @@ class Export extends Action {
                 $resultRaw = $this->resultRawFactory->create();
                 $resultRaw->setContents($sourceFile);
                 return $resultRaw;
-            }else{
-                $this->messageManager->addErrorMessage( __('File not found.'));
+            } else {
+                $this->messageManager->addErrorMessage(__('File not found.'));
                 $data = [
                     'job_id'            => $jobId,
                     'job_key'           => $jobKey,
@@ -70,7 +72,7 @@ class Export extends Action {
                 ];
                 $this->_redirect('*/*/ViewJob', $data);
             }
-        }else {
+        } else {
             $this->messageManager->addErrorMessage(__('Job id is required.'));
             $this->_redirect('*/*');
         }

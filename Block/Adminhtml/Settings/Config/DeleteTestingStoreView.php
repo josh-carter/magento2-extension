@@ -18,8 +18,7 @@ class DeleteTestingStoreView extends Field
     protected $_storeFactory;
     protected $_configHelper;
 
-    function __construct
-    (
+    function __construct(
         Context $context,
         SetupInterface $setup,
         StoreFactory $storeFactory,
@@ -101,7 +100,8 @@ class DeleteTestingStoreView extends Field
     /**
      * @return Store
      */
-    public function _getTestStoreView(){
+    public function _getTestStoreView()
+    {
         return $this->_storeFactory->create()->load($this->_configHelper->getTestingStoreViewCode());
     }
 }

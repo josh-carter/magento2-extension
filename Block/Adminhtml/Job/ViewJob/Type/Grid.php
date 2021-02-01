@@ -45,7 +45,7 @@ class Grid extends Extended
     {
 
         $jobCollection = $this->_jobCollectionFactory->create()->addFieldToFilter('job_key', ['eq'=>$this->_jobKey ]);
-        $jobCollection->setOrder('job_type_id','ASC');
+        $jobCollection->setOrder('job_type_id', 'ASC');
         $this->setCollection($jobCollection);
         return parent::_prepareCollection();
     }

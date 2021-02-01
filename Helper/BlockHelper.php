@@ -110,9 +110,9 @@ class BlockHelper extends AbstractHelper
 
             $attributeData = [];
 
-            foreach ($this->_attributes as $attribute){
-                if(in_array($attribute,$this->_attributes)) {
-                    if ($attribute !== 'title' || ($attribute === 'title' && $includeTitle)){
+            foreach ($this->_attributes as $attribute) {
+                if (in_array($attribute, $this->_attributes)) {
+                    if ($attribute !== 'title' || ($attribute === 'title' && $includeTitle)) {
                         array_push($attributeData, [
                             'attribute_code'=>$attribute,
                             'label'=>$attribute,
@@ -128,7 +128,7 @@ class BlockHelper extends AbstractHelper
                 'attributes'=>$attributeData
             ];
 
-            if($includeTitle){
+            if ($includeTitle) {
                 $blockInfo['page_title'] = $data->getTitle();
             }
 
@@ -258,7 +258,8 @@ class BlockHelper extends AbstractHelper
         $this->_xmlHelper->addContentSummary($summaryArray);
     }
 
-    public function getSummary(){
+    public function getSummary()
+    {
         return ['cms_block' => count($this->_blockData)];
     }
 }

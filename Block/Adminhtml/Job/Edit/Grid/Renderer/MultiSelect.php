@@ -27,20 +27,20 @@ class MultiSelect extends AbstractRenderer
         $renderValue = '';
 
         $valueArray['render'] = [];
-        if($type === 'options'){
+        if ($type === 'options') {
             $options = $this->getColumn()->getOptions();
-            if(sizeof($valueArray) > 1){
-                foreach($valueArray as $v){
-                    if(!empty($v)){
+            if (sizeof($valueArray) > 1) {
+                foreach ($valueArray as $v) {
+                    if (!empty($v)) {
                         $val = $options[$v];
                         $valueArray['render'][] = $val;
                     }
                 }
                 $renderValue = implode(',', $valueArray['render']);
-            }else{
-                if(isset($options[$value])){
+            } else {
+                if (isset($options[$value])) {
                     $renderValue = $options[$value];
-                }else{
+                } else {
                     $renderValue = $value;
                 }
             }

@@ -153,7 +153,7 @@ class MultiAction extends Action
                                             $url = $this->getUrl(PageActions::CMS_URL_PATH_EDIT, ['page_id' => $pageId]);
                                         } else {
                                             $attr .= ' title="View in Frontend"';
-                                            $url = $this->_pageUrlBuilder->getUrl($this->_pageModel->getIdentifier(), $targetStoreId, $storeCode );
+                                            $url = $this->_pageUrlBuilder->getUrl($this->_pageModel->getIdentifier(), $targetStoreId, $storeCode);
                                         }
                                         return sprintf('<a href="%s" %s>%s</a>', $url, $attr, $text);
                                     }
@@ -198,7 +198,7 @@ class MultiAction extends Action
     private function getEntityIdName($job)
     {
         $jobType = $job->getJobTypeId();
-        switch ($jobType){
+        switch ($jobType) {
             case JobModelType::JOB_TYPE_PAGE:
                 return 'page_id';
             case JobModelType::JOB_TYPE_BLOCK:
