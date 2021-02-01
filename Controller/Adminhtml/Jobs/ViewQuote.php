@@ -39,7 +39,6 @@ class ViewQuote extends \Magento\Backend\App\Action
         $this->_jobFactory = $jobFactory;
     }
 
-
     public function execute()
     {
         $jobKey = $this->getRequest()->getParam('job_key');

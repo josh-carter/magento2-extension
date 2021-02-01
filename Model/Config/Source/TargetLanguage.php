@@ -6,7 +6,7 @@ class TargetLanguage implements \Magento\Framework\Option\ArrayInterface
 {
     protected $_jobCollectionFactory;
 
-    function __construct(
+    public function __construct(
         \Straker\EasyTranslationPlatform\Model\ResourceModel\Job\CollectionFactory $jobCollectionFactory
     ) {
     

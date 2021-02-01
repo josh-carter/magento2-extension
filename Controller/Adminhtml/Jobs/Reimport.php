@@ -5,6 +5,7 @@ namespace Straker\EasyTranslationPlatform\Controller\Adminhtml\Jobs;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Filesystem\DriverInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Straker\EasyTranslationPlatform\Helper\ConfigHelper;
 use Straker\EasyTranslationPlatform\Helper\ImportHelper;
@@ -44,6 +45,10 @@ class Reimport extends Action
      * @var StrakerAPIInterface
      */
     private $_strakerApi;
+    /**
+     * @var DriverInterface
+     */
+    private $driver;
 
     public function __construct(
         Context $context,
@@ -53,7 +58,8 @@ class Reimport extends Action
         Logger $logger,
         StoreManagerInterface $storeManager,
         StrakerAPIInterface $strakerAPI,
-        CollectionFactory $collectionFactory
+        CollectionFactory $collectionFactory,
+        DriverInterface $driver
     ) {
         $this->_jobFactory = $jobFactory;
         $this->_configHelper = $configHelper;
@@ -62,6 +68,7 @@ class Reimport extends Action
         $this->_storeManager = $storeManager;
         $this->_strakerApi = $strakerAPI;
         $this->collectionFactory = $collectionFactory;
+        $this->driver = $driver;
         parent::__construct($context);
     }
 
@@ -72,12 +79,13 @@ class Reimport extends Action
                 ->getTranslatedXMLFilePath().'/'.$jobData->getData('translated_file');
         $newTranslatedFile = $this->_configHelper
                 ->getTranslatedXMLFilePath().'/old_'.time().'_'.$jobData->getData('translated_file');
-        rename($originalTranslatedFile, $newTranslatedFile);
+        
+        $this->driver->rename($originalTranslatedFile, $newTranslatedFile);
         $file_content = $this->_strakerApi->getTranslatedFile($jobData->getData('download_url'));
         $resultRedirect = $this->resultRedirectFactory->create();
 
         try {
-            file_put_contents(
+            $this->driver->filePutContents(
                 $this->_configHelper
                     ->getTranslatedXMLFilePath() .'/' . $jobData->getData('translated_file'),
                 $file_content

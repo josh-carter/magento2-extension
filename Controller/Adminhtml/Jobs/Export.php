@@ -7,6 +7,7 @@ use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\Response\Http\FileFactory;
 use Magento\Framework\Controller\Result\RawFactory;
+use Magento\Framework\Filesystem\DriverInterface;
 use Straker\EasyTranslationPlatform\Helper\ConfigHelper;
 use Straker\EasyTranslationPlatform\Model\JobFactory;
 
@@ -19,19 +20,25 @@ class Export extends Action
     protected $jobFactory;
     protected $configHelper;
     protected $fileFactory;
+    /**
+     * @var DriverInterface
+     */
+    private $driver;
 
     public function __construct(
         Context $context,
         RawFactory $resultRawFactory,
         FileFactory $fileFactory,
         JobFactory $jobFactory,
-        ConfigHelper $configHelper
+        ConfigHelper $configHelper,
+        DriverInterface $driver
     ) {
         parent::__construct($context);
         $this->fileFactory = $fileFactory;
         $this->jobFactory = $jobFactory;
         $this->configHelper = $configHelper;
         $this->resultRawFactory = $resultRawFactory;
+        $this->driver = $driver;
     }
 
     public function execute()
@@ -47,9 +54,11 @@ class Export extends Action
 
             $filename = substr($filePath, strrpos($filePath, DIRECTORY_SEPARATOR) + 1);
 
-            if (file_exists($filePath)) {
-                $sourceFile = file_get_contents($filePath);
+            if ($this->driver->isExists($filePath)) {
+                $sourceFile = $this->driver->fileGetContents($filePath);
+                //phpcs:disable
                 $contentLength = filesize($filePath);
+                //phpcs:enable
                 $this->fileFactory->create(
                     $filename,
                     null,
@@ -76,7 +85,5 @@ class Export extends Action
             $this->messageManager->addErrorMessage(__('Job id is required.'));
             $this->_redirect('*/*');
         }
-
-        return;
     }
 }

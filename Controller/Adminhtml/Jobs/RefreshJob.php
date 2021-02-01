@@ -40,14 +40,13 @@ class RefreshJob extends \Magento\Backend\App\Action
         $this->_logger = $logger;
     }
 
-
+    //phpcs:disable
     public function execute()
     {
         $jobKey = $this->getRequest()->getParam('job_key');
         $jobId = $this->getRequest()->getParam('job_id');
         $result = [ 'status' => true, 'message' => ''];
         $updatedJobs = [];
-
 
         if (empty($jobKey)) {
             //refresh all jobs
@@ -57,7 +56,10 @@ class RefreshJob extends \Magento\Backend\App\Action
                 if (!empty($apiData) && count($apiJobs) > 0) {
                     foreach ($apiJobs as $apiJob) {
                         if ($apiJob->job_key) {
-                            $localJobData = $this->_jobFactory->create()->getCollection()->addFieldToFilter('job_key', ['eq' => $apiJob->job_key ])->getItems();
+                            $localJobData = $this->_jobFactory->create()
+                                ->getCollection()
+                                ->addFieldToFilter('job_key', ['eq' => $apiJob->job_key ])
+                                ->getItems();
 
                             if (!empty($localJobData)) {
                                 $localJob = reset($localJobData);
@@ -69,7 +71,9 @@ class RefreshJob extends \Magento\Backend\App\Action
                         }
                     }
                     if (count($updatedJobs) > 0) {
-                        $this->messageManager->addSuccessMessage(__('The status of the jobs [Id: %1] has been updated.', implode(',', $updatedJobs)));
+                        $this->messageManager->addSuccessMessage(
+                            __('The status of the jobs [Id: %1] has been updated.', implode(',', $updatedJobs))
+                        );
                     } else {
                         $result['status'] = false;
                         $result['message'] = __('The Job is up to date.');
@@ -123,6 +127,7 @@ class RefreshJob extends \Magento\Backend\App\Action
             return $this->_resultJsonFactory->create()->setData($result);
         }
     }
+    //phpcs:enable
 
     /**
      * @param $apiJob

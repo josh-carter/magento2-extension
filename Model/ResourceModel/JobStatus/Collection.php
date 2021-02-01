@@ -6,7 +6,10 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
 
     protected function _construct()
     {
-        $this->_init('Straker\EasyTranslationPlatform\Model\JobStatus', 'Straker\EasyTranslationPlatform\Model\ResourceModel\JobStatus');
+        $this->_init(
+            \Straker\EasyTranslationPlatform\Model\JobStatus::class,
+            \Straker\EasyTranslationPlatform\Model\ResourceModel\JobStatus::class
+        );
     }
 
     /**

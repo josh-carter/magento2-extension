@@ -67,8 +67,11 @@ class ImportHelper extends AbstractHelper
     protected $_categoryData;
     protected $_timezoneInterface;
 
+    //phpcs:disable
     protected $_selectQuery = 'select option_id from %1$s where option_id = %2$s and store_id = %3$s';
     protected $_updateQuery = 'update %1$s set value = "%2$s" where option_id = %3$s and store_id = %4$s';
+    //phpcs:enable
+
     protected $_labelTable = 'catalog_product_super_attribute_label';
     protected $_categoryFactory;
     protected $_pageData;
@@ -241,37 +244,46 @@ class ImportHelper extends AbstractHelper
         foreach ($this->_productData as $data) {
 
             if (array_key_exists('attribute_translation_id', $data['_attribute'])) {
-
                 try {
-
-                    $att_trans_model = $this->_attributeTranslationFactory->create()->load($data['_attribute']['attribute_translation_id']);
+                    $att_trans_model = $this->_attributeTranslationFactory->create()
+                        ->load($data['_attribute']['attribute_translation_id']);
 
                     $att_trans_model->addData(['translated_value' => $data['_value']['value']]);
 
-                    $att_trans_model->addData(['is_imported' => 1, 'imported_at' => $this->_timezoneInterface->date()->format('y-m-d H:i:s')]);
+                    $att_trans_model->addData([
+                        'is_imported' => 1,
+                        'imported_at' => $this->_timezoneInterface->date()->format('y-m-d H:i:s')
+                    ]);
 
                     $att_trans_model->save();
 
-                    ($data['_attribute']['is_label']==1) ? $this->saveLabel($data['_attribute']['attribute_code'], $data['_value']['value']) : false;
+                    ($data['_attribute']['is_label'] == 1)
+                        ? $this->saveLabel($data['_attribute']['attribute_code'], $data['_value']['value'])
+                        : false;
 
                 } catch (\Exception $e) {
-
                     $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$e]);
-                    $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+                    $this->_strakerApi->_callStrakerBugLog(
+                        __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                        $e->__toString()
+                    );
                     $this->_messageManager->addError($e->getMessage());
                 }
-
             }
 
             if (array_key_exists('option_translation_id', $data['_attribute'])) {
 
                 try {
 
-                    $att_opt_model = $this->_attributeOptionTranslationFactory->create()->load($data['_attribute']['option_translation_id']);
+                    $att_opt_model = $this->_attributeOptionTranslationFactory->create()
+                        ->load($data['_attribute']['option_translation_id']);
 
                     $att_opt_model->addData(['translated_value' => $data['_value']['value']]);
 
-                    $att_opt_model->addData(['is_imported' => 1, 'imported_at' => $this->_timezoneInterface->date()->format('y-m-d H:i:s')]);
+                    $att_opt_model->addData([
+                        'is_imported' => 1,
+                        'imported_at' => $this->_timezoneInterface->date()->format('y-m-d H:i:s')
+                    ]);
 
                     $att_opt_model->save();
 
@@ -282,7 +294,11 @@ class ImportHelper extends AbstractHelper
                             ->addFieldToFilter('attribute_translation_id', ['in' => $this->_attributeTranslationIds])
                             ->addFieldToFilter('option_id', ['eq' => $att_opt_model->getData('option_id')]);
 
-                        $translatedOptions->massUpdate(['translated_value' => $att_opt_model->getData('translated_value'),'is_imported'=>1,'imported_at' => $this->_timezoneInterface->date()->format('y-m-d H:i:s')]);
+                        $translatedOptions->massUpdate([
+                            'translated_value' => $att_opt_model->getData('translated_value'),
+                            'is_imported' => 1,
+                            'imported_at' => $this->_timezoneInterface->date()->format('y-m-d H:i:s')
+                        ]);
 
                         $this->_saveOptionIds[] = $att_opt_model->getData('option_id');
 
@@ -291,7 +307,10 @@ class ImportHelper extends AbstractHelper
                 } catch (\Exception $e) {
 
                     $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$e]);
-                    $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+                    $this->_strakerApi->_callStrakerBugLog(
+                        __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                        $e->__toString()
+                    );
                     $this->_messageManager->addError($e->getMessage());
 
                 }
@@ -333,19 +352,21 @@ class ImportHelper extends AbstractHelper
 
                 $updateRow = $this->_attributeTranslationFactory->create()->load($data['attribute_translation_id']);
 
-                $updateRow->addData(['is_published' => 1, 'published_at' => $this->_timezoneInterface->date()->format('y-m-d H:i:s')]);
+                $updateRow->addData([
+                    'is_published' => 1,
+                    'published_at' => $this->_timezoneInterface->date()->format('y-m-d H:i:s')
+                ]);
 
                 try {
-
                     $updateRow->save();
-
                 } catch (\Exception $e) {
-
                     $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$e]);
-                    $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+                    $this->_strakerApi->_callStrakerBugLog(
+                        __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                        $e->__toString()
+                    );
                     $this->_messageManager->addError($e->getMessage());
                 }
-
             }
         }
 
@@ -361,10 +382,17 @@ class ImportHelper extends AbstractHelper
             ->addFieldToFilter('attribute_code', ['eq'=>$label_id]);
 
         try {
-            $labels->massUpdate(['translated_value' => $value,'is_imported'=>1,'imported_at' => $this->_timezoneInterface->date()->format('y-m-d H:i:s')]);
+            $labels->massUpdate([
+                'translated_value' => $value,
+                'is_imported'=>1,
+                'imported_at' => $this->_timezoneInterface->date()->format('y-m-d H:i:s')
+            ]);
         } catch (\Exception $e) {
             $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$e]);
-            $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+            $this->_strakerApi->_callStrakerBugLog(
+                __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                $e->__toString()
+            );
             $this->_messageManager->addError($e->getMessage());
         }
     }
@@ -382,33 +410,37 @@ class ImportHelper extends AbstractHelper
         $labelData->getSelect()->group('attribute_id');
 
         foreach ($labelData->getData() as $data) {
-
             $att = $this->_attributeRepository->get(\Magento\Catalog\Model\Product::ENTITY, $data['attribute_id']);
-
             $new_labels = $att->getStoreLabels();
-
             $new_labels[$this->_jobModel->getTargetStoreId()] = $data['translated_value'];
 
             try {
-
                 $att->setStoreLabels($new_labels)->save();
-
             } catch (\Exception $e) {
                 $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$e]);
-                $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+                $this->_strakerApi->_callStrakerBugLog(
+                    __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                    $e->__toString()
+                );
                 $this->_messageManager->addError($e->getMessage());
             }
         }
 
         foreach ($labels->getData() as $data) {
             $updateRow = $this->_attributeTranslationFactory->create()->load($data['attribute_translation_id']);
-            $updateRow->addData(['is_published' => 1, 'published_at' => $this->_timezoneInterface->date()->format('y-m-d H:i:s')]);
+            $updateRow->addData([
+                'is_published' => 1,
+                'published_at' => $this->_timezoneInterface->date()->format('y-m-d H:i:s')
+            ]);
 
             try {
                 $updateRow->save();
             } catch (\Exception $e) {
                 $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$e]);
-                $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+                $this->_strakerApi->_callStrakerBugLog(
+                    __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                    $e->__toString()
+                );
                 $this->_messageManager->addError($e->getMessage());
             }
         }
@@ -426,33 +458,39 @@ class ImportHelper extends AbstractHelper
             ->addFieldToFilter('attribute_translation_id', ['in' => $this->_attributeTranslationIds]);
 
         $translatedOptionData = clone $translatedOptions;
-
         $translatedOptionData->getSelect()->group('option_id');
-
         $connection = $this->_resourceConnection->getConnection();
-
         $table = $this->_resourceConnection->getTableName('eav_attribute_option_value');
 
         if (!empty($translatedOptionData->getData())) {
-
             foreach ($translatedOptionData as $data) {
-
-                $select_query = sprintf($this->_selectQuery, $table, $data['option_id'], $this->_jobModel->getTargetStoreId());
+                $select_query = sprintf(
+                    $this->_selectQuery,
+                    $table,
+                    $data['option_id'],
+                    $this->_jobModel->getTargetStoreId()
+                );
 
                 if ($connection->fetchOne($select_query)) {
 
-                    $update_query = sprintf($this->_updateQuery, $table, $data['translated_value'], $data['option_id'], $this->_jobModel->getTargetStoreId());
+                    $update_query = sprintf(
+                        $this->_updateQuery,
+                        $table,
+                        $data['translated_value'],
+                        $data['option_id'],
+                        $this->_jobModel->getTargetStoreId()
+                    );
 
                     try {
-
                         $connection->query($update_query);
-
                     } catch (\Exception $e) {
                         $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$e]);
-                        $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+                        $this->_strakerApi->_callStrakerBugLog(
+                            __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                            $e->__toString()
+                        );
                         $this->_messageManager->addError($e->getMessage());
                     }
-
                 } else {
                     try {
                         $connection->insertArray(
@@ -462,7 +500,10 @@ class ImportHelper extends AbstractHelper
                         );
                     } catch (\Exception $e) {
                         $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$e]);
-                        $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+                        $this->_strakerApi->_callStrakerBugLog(
+                            __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                            $e->__toString()
+                        );
                         $this->_messageManager->addError($e->getMessage());
                     }
 
@@ -471,14 +512,21 @@ class ImportHelper extends AbstractHelper
             }
 
             foreach ($translatedOptions->getData() as $data) {
-                $updateRow = $this->_attributeOptionTranslationFactory->create()->load($data['attribute_option_translation_id']);
-                $updateRow->addData(['is_published' => 1, 'published_at' => $this->_timezoneInterface->date()->format('y-m-d H:i:s')]);
+                $updateRow = $this->_attributeOptionTranslationFactory->create()
+                    ->load($data['attribute_option_translation_id']);
+                $updateRow->addData([
+                    'is_published' => 1,
+                    'published_at' => $this->_timezoneInterface->date()->format('y-m-d H:i:s')
+                ]);
 
                 try {
                     $updateRow->save();
                 } catch (\Exception $e) {
                     $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$e]);
-                    $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+                    $this->_strakerApi->_callStrakerBugLog(
+                        __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                        $e->__toString()
+                    );
                     $this->_messageManager->addError($e->getMessage());
                 }
             }
@@ -495,9 +543,7 @@ class ImportHelper extends AbstractHelper
             ->addFieldToFilter('job_id', ['eq' => $job_id]);
 
         $product_ids->getSelect()->group('entity_id');
-
         $products = $product_ids->toArray();
-
         $productIdArray = [];
 
         array_walk_recursive($products['items'], function ($value, $key) use (&$productIdArray) {
@@ -561,14 +607,18 @@ class ImportHelper extends AbstractHelper
     {
 
         foreach ($this->_categoryData as $data) {
-            $att_trans_model = $this->_attributeTranslationFactory->create()->load($data['_attribute']['attribute_translation_id']);
+            $att_trans_model = $this->_attributeTranslationFactory->create()
+                ->load($data['_attribute']['attribute_translation_id']);
             $att_trans_model->addData(['is_imported' => 1, 'translated_value' => $data['_value']['value']]);
 
             try {
                 $att_trans_model->save();
             } catch (\Exception $e) {
                 $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$e]);
-                $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+                $this->_strakerApi->_callStrakerBugLog(
+                    __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                    $e->__toString()
+                );
                 $this->_messageManager->addError($e->getMessage());
             }
 
@@ -585,14 +635,31 @@ class ImportHelper extends AbstractHelper
             ->addFieldToFilter('job_id', ['eq' => $this->_jobModel->getId()])->toArray();
 
         foreach ($translatedCategories['items'] as $data) {
-            $attribute_code = $this->_attributeRepository->get(\Magento\Catalog\Model\Category::ENTITY, $data['attribute_id'])->setStoreId($this->_jobModel->getTargetStoreId())->getAttributeCode();
-            $category = $this->_categoryFactory->create()->load($data['entity_id'])->setStoreId($this->_jobModel->getTargetStoreId());
+            $attribute_code = $this->_attributeRepository
+                ->get(
+                    \Magento\Catalog\Model\Category::ENTITY,
+                    $data['attribute_id']
+                )->setStoreId($this->_jobModel->getTargetStoreId())
+                ->getAttributeCode();
+
+            $category = $this->_categoryFactory->create()
+                ->load($data['entity_id'])
+                ->setStoreId($this->_jobModel->getTargetStoreId());
 
             try {
-                $category->setData($attribute_code, $data['translated_value'])->getResource()->saveAttribute($category, $attribute_code);
+                $category
+                    ->setData(
+                        $attribute_code,
+                        $data['translated_value']
+                    )
+                    ->getResource()
+                    ->saveAttribute($category, $attribute_code);
             } catch (\Exception $e) {
                 $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$e]);
-                $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+                $this->_strakerApi->_callStrakerBugLog(
+                    __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                    $e->__toString()
+                );
                 $this->_messageManager->addError($e->getMessage());
             }
         }
@@ -603,7 +670,8 @@ class ImportHelper extends AbstractHelper
     public function saveTranslatedPageData()
     {
         foreach ($this->_pageData as $data) {
-            $att_trans_model = $this->_attributeTranslationFactory->create()->load($data['_attribute']['attribute_translation_id']);
+            $att_trans_model = $this->_attributeTranslationFactory->create()
+                ->load($data['_attribute']['attribute_translation_id']);
             $att_trans_model->addData(['translated_value' => $data['_value']['value']]);
             $att_trans_model->addData(['is_imported' => 1]);
             $att_trans_model->addData(['imported_at' => $this->_timezoneInterface->date()->format('y-m-d H:i:s')]);
@@ -612,7 +680,10 @@ class ImportHelper extends AbstractHelper
                 $att_trans_model->save();
             } catch (\Exception $e) {
                 $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$e]);
-                $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+                $this->_strakerApi->_callStrakerBugLog(
+                    __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                    $e->__toString()
+                );
                 $this->_messageManager->addError($e->getMessage());
             }
         }
@@ -630,13 +701,19 @@ class ImportHelper extends AbstractHelper
         foreach ($translatedPageAttributes as $attData) {
             $saveData[$attData->getEntityId()][$attData->getAttributeCode()] = $attData->getTranslatedValue();
             $updateRow = $this->_attributeTranslationFactory->create()->load($attData->getAttributeTranslationId());
-            $updateRow->addData(['is_published' => 1, 'published_at' => $this->_timezoneInterface->date()->format('y-m-d H:i:s')]);
+            $updateRow->addData([
+                'is_published' => 1,
+                'published_at' => $this->_timezoneInterface->date()->format('y-m-d H:i:s')
+            ]);
 
             try {
                 $updateRow->save();
             } catch (\Exception $e) {
                 $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$e]);
-                $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+                $this->_strakerApi->_callStrakerBugLog(
+                    __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                    $e->__toString()
+                );
                 $this->_messageManager->addError($e->getMessage());
             }
         }
@@ -661,7 +738,10 @@ class ImportHelper extends AbstractHelper
                     $updateData->save();
                 } catch (\Exception $e) {
                     $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$e]);
-                    $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+                    $this->_strakerApi->_callStrakerBugLog(
+                        __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                        $e->__toString()
+                    );
                     $this->_messageManager->addError($e->getMessage());
                 }
             } else {
@@ -674,7 +754,9 @@ class ImportHelper extends AbstractHelper
 
                 $originalData['store_id'] = [$this->_jobModel->getTargetStoreId()];
 
+                //phpcs:disable
                 $dbData = array_merge($originalData, $data);
+                //phpcs:enable
 
                 $newPage = $this->_pageFactory->create();
 
@@ -682,7 +764,10 @@ class ImportHelper extends AbstractHelper
                     $newPage->setData($dbData)->save();
                 } catch (\Exception $e) {
                     $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$e]);
-                    $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+                    $this->_strakerApi->_callStrakerBugLog(
+                        __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                        $e->__toString()
+                    );
                     $this->_messageManager->addError($e->getMessage());
                 }
             }
@@ -696,19 +781,21 @@ class ImportHelper extends AbstractHelper
     {
         foreach ($this->_blockData as $data) {
 
-            $att_trans_model = $this->_attributeTranslationFactory->create()->load($data['_attribute']['attribute_translation_id']);
+            $att_trans_model = $this->_attributeTranslationFactory->create()
+                ->load($data['_attribute']['attribute_translation_id']);
 
             $att_trans_model->addData(['translated_value' => $data['_value']['value']]);
-
             $att_trans_model->addData(['is_imported' => 1]);
-
             $att_trans_model->addData(['imported_at' => $this->_timezoneInterface->date()->format('y-m-d H:i:s')]);
 
             try {
                 $att_trans_model->save();
             } catch (\Exception $e) {
                 $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$e]);
-                $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+                $this->_strakerApi->_callStrakerBugLog(
+                    __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                    $e->__toString()
+                );
                 $this->_messageManager->addError($e->getMessage());
             }
         }
@@ -727,16 +814,21 @@ class ImportHelper extends AbstractHelper
         foreach ($translatedBlockAttributes as $attData) {
 
             $saveData[$attData->getEntityId()][$attData->getAttributeCode()] = $attData->getTranslatedValue();
-
             $updateRow = $this->_attributeTranslationFactory->create()->load($attData->getAttributeTranslationId());
 
-            $updateRow->addData(['is_published' => 1, 'published_at' => $this->_timezoneInterface->date()->format('y-m-d H:i:s')]);
+            $updateRow->addData([
+                'is_published' => 1,
+                'published_at' => $this->_timezoneInterface->date()->format('y-m-d H:i:s')
+            ]);
 
             try {
                 $updateRow->save();
             } catch (\Exception $e) {
                 $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$e]);
-                $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+                $this->_strakerApi->_callStrakerBugLog(
+                    __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                    $e->__toString()
+                );
                 $this->_messageManager->addError($e->getMessage());
             }
 
@@ -764,12 +856,16 @@ class ImportHelper extends AbstractHelper
 
                 } catch (\Exception $e) {
                     $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$e]);
-                    $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+                    $this->_strakerApi->_callStrakerBugLog(
+                        __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                        $e->__toString()
+                    );
                     $this->_messageManager->addError($e->getMessage());
                 }
 
             } else {
-                //Cms blocks that link to `All default store views` (store_id: [0]) are not allowed to save with the same identifier.
+                //Cms blocks that link to `All default store views` (store_id: [0])
+                // are not allowed to save with the same identifier.
                 $this->unlinkDefaultStore($original_block, $this->_jobModel->getSourceStoreId());
 
                 $originalData = $original_block->getData();
@@ -779,7 +875,9 @@ class ImportHelper extends AbstractHelper
 
                 $originalData['stores'] = $originalData['store_id'] = [$this->_jobModel->getTargetStoreId()];
 
+                //phpcs:disable
                 $dbData = array_merge($originalData, $data);
+                //phpcs:enable
 
                 $newBlock = $this->_blockFactory->create();
 
@@ -787,7 +885,10 @@ class ImportHelper extends AbstractHelper
                     $newBlock->setData($dbData)->save();
                 } catch (\Exception $e) {
                     $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$e]);
-                    $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+                    $this->_strakerApi->_callStrakerBugLog(
+                        __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                        $e->__toString()
+                    );
                     $this->_messageManager->addError($e->getMessage());
                 }
             }

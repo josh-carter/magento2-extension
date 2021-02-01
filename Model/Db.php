@@ -19,7 +19,9 @@ class Db extends \Magento\Framework\Backup\Db
      */
     public function rollback()
     {
+        //phpcs:disable
         set_time_limit(0);
+        //phpcs:enable
         ignore_user_abort(true);
 
         $this->_lastOperationSucceed = false;
@@ -33,7 +35,6 @@ class Db extends \Magento\Framework\Backup\Db
         foreach ($file as $statement) {
             $resource->runCommand($statement);
         }
-//        @unlink($source);
 
         $this->_lastOperationSucceed = true;
 

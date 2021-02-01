@@ -15,7 +15,7 @@ class CreateBackup extends Action
     protected $_api;
     protected $_jsonFactory;
 
-    function __construct(
+    public function __construct(
         Action\Context $context,
         JsonFactory $jsonFactory,
         StrakerAPIInterface $api

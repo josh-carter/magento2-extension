@@ -1,3 +1,4 @@
+<?php /** @var \Straker\EasyTranslationPlatform\Block\Adminhtml\Settings\Config\ResetAccountButton $block */ ?>
 <script>
     require([
         'jquery',
@@ -9,12 +10,13 @@
         $resetButton.on('click', function(){
 
             confirm({
-                title: '<?php echo __("Please Confirm") ?>',
-                content: '<?php echo __("This will remove all Straker Translations data, including registration, settings, translations and jobs.") ?>',
+                title: '<?= $block->escapeHtml(__("Please Confirm")); ?>',
+                content: '<?= $block->escapeHtml(__("This will remove all Straker Translations data, 
+                including registration, settings, translations and jobs.")) ?>',
                 actions: {
                     confirm: function(){
                         $.ajax({
-                            url      : '<?php echo $block->getAjaxResetUrl(); ?>',
+                            url      : '<?= $block->escapeUrl($block->getAjaxResetUrl()); ?>',
                             method   : 'get',
                             dataType : 'json',
                             showLoader :  true,
@@ -29,6 +31,10 @@
     });
 </script>
 
-<?php
-    echo $block->getButtonHtml();
-    echo '<p class="note"><span>'.__('This will remove all of the saved data, including registration, settings, translated text and jobs.').'</span></p>';
+<?= $block->getButtonHtml(); ?>
+    <?= '<p class="note"><span>'
+            . $block->escapeHtml(
+                __('This will remove all of the saved data, including 
+                    registration, settings, translated text and jobs.')
+            )
+            . '</span></p>';

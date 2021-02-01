@@ -14,7 +14,6 @@ use Magento\Framework\Registry;
 
 class Index extends Action
 {
-
     /**
      * @var PageFactory
      */
@@ -45,7 +44,6 @@ class Index extends Action
         ConfigHelper $configHelper,
         Registry $registry
     ) {
-
         parent::__construct($context);
         $this->resultPageFactory = $resultPageFactory;
         $this->_strakerApi = $strakerAPI;
@@ -73,6 +71,7 @@ class Index extends Action
         return $resultPage;
     }
 
+    //phpcs:disable
     protected function refreshJobs()
     {
         $updatedJobs = [];
@@ -87,7 +86,10 @@ class Index extends Action
                 if (!empty($apiData) && count($apiJobs) > 0) {
                     foreach ($apiJobs as $apiJob) {
                         if ($apiJob->job_key) {
-                            $localJobData = $this->_jobFactory->create()->getCollection()->addFieldToFilter('job_key', ['eq' => $apiJob->job_key ])->getItems();
+                            $localJobData = $this->_jobFactory->create()
+                                ->getCollection()
+                                ->addFieldToFilter('job_key', ['eq' => $apiJob->job_key ])
+                                ->getItems();
                             if (!empty($localJobData)) {
                                 foreach ($localJobData as $key => $localJob) {
                                     array_push($localJobIds, $localJob->getId());
@@ -99,11 +101,19 @@ class Index extends Action
                                         }
                                     }
 
-                                    if (isset($isUpdate['isSuccess']) && $isUpdate['isSuccess']==false && isset($isUpdate['emptyTJ']) && $isUpdate['emptyTJ']==true) {
+                                    if (isset($isUpdate['isSuccess'])
+                                        && $isUpdate['isSuccess'] == false
+                                        && isset($isUpdate['emptyTJ'])
+                                        && $isUpdate['emptyTJ']==true
+                                    ) {
                                         $emptyTj++;
                                     }
 
-                                    if (isset($isUpdate['isSuccess']) && $isUpdate['isSuccess']==false && isset($isUpdate['empty_file']) && $isUpdate['empty_file']==true) {
+                                    if (isset($isUpdate['isSuccess'])
+                                        && $isUpdate['isSuccess'] == false
+                                        && isset($isUpdate['empty_file'])
+                                        && $isUpdate['empty_file'] == true
+                                    ) {
 
                                         $this->messageManager->addErrorMessage($isUpdate['Message']->getText());
                                     }
@@ -119,7 +129,12 @@ class Index extends Action
 
                     if (count($updatedJobs) > 0) {
                         $this->_coreRegistry->register('job_updated', true);
-                        $this->messageManager->addSuccessMessage(__('%1 has been updated.', implode(', ', $updatedJobs)));
+                        $this->messageManager->addSuccessMessage(
+                            __(
+                                '%1 has been updated.',
+                                implode(', ', $updatedJobs)
+                            )
+                        );
                     } elseif (count($localJobIds) <= 0) {
                         $result['status'] = false;
                         $result['message'] = __('You have not created any job.');
@@ -145,7 +160,6 @@ class Index extends Action
                 if (key_exists('message', $dataArray)) {
                     $result['message'] =  __('Server: 1%', $dataArray['message']);
                 }
-//                $this->messageManager->addErrorMessage( $result['message'] );
                 $this->_logger->addError($result['message'], $dataArray);
             }
         } catch (\Exception $e) {
@@ -155,6 +169,7 @@ class Index extends Action
             $this->_logger->addError($result['message'], [ 'exception' => $e->getMessage() ]);
         }
     }
+    //phpcs:enable
 
     protected function resolveApiStatus($apiJob)
     {
@@ -178,7 +193,6 @@ class Index extends Action
 
         return $status;
     }
-
 
     /**
      * @param $apiJob

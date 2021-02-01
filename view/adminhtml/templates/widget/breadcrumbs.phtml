@@ -19,12 +19,12 @@ if (!empty($data)): ?>
                 <li class="item">
                     <?php if (empty($_link['url'])): ?>
                         <?php if ($_index != $_size-1): ?>
-                            <span><?php echo __( $block->escapeHtml($_link['label']) ); ?></span>
+                            <span><?= __( $block->escapeHtml($_link['label']) ); ?></span>
                         <?php else: ?>
-                            <strong><?php echo __( $block->escapeHtml($_link['label']) ); ?></strong>
+                            <strong><?= __( $block->escapeHtml($_link['label']) ); ?></strong>
                         <?php endif; ?>
                     <?php else: ?>
-                        <a href="<?php /* @escapeNotVerified */ echo $_link['url'] ?>" title="<?php echo $block->escapeHtml($_link['title']) ?>"><?php echo __( $block->escapeHtml($_link['label']) ); ?></a>
+                        <a href="<?php /* @escapeNotVerified */ echo $_link['url'] ?>" title="<?= $block->escapeHtml($_link['title']) ?>"><?= __( $block->escapeHtml($_link['label']) ); ?></a>
                     <?php endif; ?>
                 </li>
             <?php endif; ?>

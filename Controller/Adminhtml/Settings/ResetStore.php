@@ -45,7 +45,6 @@ class ResetStore extends Action
         return parent::__construct($context);
     }
 
-
     public function execute()
     {
         $storeId = $this->getRequest()->getParam('store');
@@ -80,7 +79,5 @@ class ResetStore extends Action
             $this->_logger->error($message);
             $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $message);
         }
-
-        return;
     }
 }

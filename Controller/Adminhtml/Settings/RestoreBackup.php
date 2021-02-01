@@ -17,7 +17,7 @@ class RestoreBackup extends Action
     protected $_jsonFactory;
     protected $_backupHelper;
 
-    function __construct(
+    public function __construct(
         Action\Context $context,
         JsonFactory $jsonFactory,
         StrakerAPIInterface $api,
@@ -31,7 +31,9 @@ class RestoreBackup extends Action
 
     public function execute()
     {
-        set_time_limit(0);
+        //phpcs:disable
+         set_time_limit(0);
+        //phpcs:enable
         ignore_user_abort(true);
         $response = $this->_api->dbRestore();
         $this->_backupHelper->invalidateCache();

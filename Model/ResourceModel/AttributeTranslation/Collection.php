@@ -20,7 +20,7 @@ class Collection extends AbstractCollection
      */
     protected $metadataPool;
 
-    function __construct(
+    public function __construct(
         EntityFactoryInterface $entityFactory,
         LoggerInterface $logger,
         FetchStrategyInterface $fetchStrategy,
@@ -36,8 +36,8 @@ class Collection extends AbstractCollection
     protected function _construct()
     {
         $this->_init(
-            'Straker\EasyTranslationPlatform\Model\AttributeTranslation',
-            'Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeTranslation'
+            \Straker\EasyTranslationPlatform\Model\AttributeTranslation::class,
+            \Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeTranslation::class
         );
     }
 
@@ -45,8 +45,12 @@ class Collection extends AbstractCollection
     {
         if (!empty($this->getData())) {
 
-            $this->getConnection()->update($this->getResource()->getMainTable(), $data, $this->getResource()->getIdFieldName() . ' IN(' . implode(',', $this->getAllIds()) . ')');
-
+            $this->getConnection()
+                ->update(
+                    $this->getResource()->getMainTable(),
+                    $data,
+                    $this->getResource()->getIdFieldName() . ' IN(' . implode(',', $this->getAllIds()) . ')'
+                );
         }
 
         return $this;
@@ -57,7 +61,7 @@ class Collection extends AbstractCollection
      * @return $this
      * @internal param int $attrId
      */
-    function addCategoryName($sourceStoreId = 0)
+    public function addCategoryName($sourceStoreId = 0)
     {
         $categoryTable = $this->getTable('catalog_category_entity_varchar');
         $nameAttribute = $this->_attributeRepository->get(CategoryAttributeInterface::ENTITY_TYPE_CODE, 'name');
@@ -77,11 +81,14 @@ class Collection extends AbstractCollection
                     'if(cn_store.value IS NOT NULL, cn_store.value, cn_default.value) AS name'
                 )->joinLeft(
                     ['cn_store'=> $categoryTable],
-                    'main_table.entity_id = cn_store.' . $linkField . ' AND cn_store.store_id = ' .$sourceStoreId . ' AND cn_store.attribute_id = ' . $attrId,
+                    'main_table.entity_id = cn_store.'
+                    . $linkField
+                    . ' AND cn_store.store_id = ' .$sourceStoreId . ' AND cn_store.attribute_id = ' . $attrId,
                     []
                 )->joinLeft(
                     ['cn_default'=> $categoryTable],
-                    'main_table.entity_id = cn_default.' . $linkField . ' AND cn_default.store_id = 0 AND cn_default.attribute_id = ' . $attrId,
+                    'main_table.entity_id = cn_default.'
+                    . $linkField . ' AND cn_default.store_id = 0 AND cn_default.attribute_id = ' . $attrId,
                     []
                 );
         }
@@ -89,8 +96,7 @@ class Collection extends AbstractCollection
         return $this;
     }
 
-
-    function getSelectCountSql()
+    public function getSelectCountSql()
     {
         $this->_renderFilters();
         $countSelect = clone $this->getSelect();

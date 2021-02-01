@@ -235,7 +235,10 @@ class PageHelper extends AbstractHelper
 
 
                 } catch (Exception $e) {
-                    $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+                    $this->_strakerApi->_callStrakerBugLog(
+                __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                $e->__toString()
+            );
                     $this->_logger->error('error '.__FILE__.' '.__LINE__.''.$e->getMessage(), [$e]);
                 }
             }

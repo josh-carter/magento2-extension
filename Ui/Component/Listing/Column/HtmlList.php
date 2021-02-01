@@ -45,7 +45,7 @@ class HtmlList extends Column
         parent::__construct($context, $uiComponentFactory, $components, $data);
     }
 
-
+    // phpcs:disable
     /**
      * Prepare Data Source
      *
@@ -72,12 +72,14 @@ class HtmlList extends Column
                             $productTypes = $this->getAllProductTypes();
                             $isFirst = true;
                             $counter = 1;
-                            $typeLength = sizeof($productTypes);
+                            $typeLength = count($productTypes);
                             $totalProducts = 0;
                             foreach ($productTypes as $name => $label) {
                                 if (isset($json[$name])) {
                                     if ($isFirst) {
-                                        $html .= '<ul><b>'. __($this->getLabel('product')) . ': PRODUCT_TOTAL' .  '</b>';
+                                        $html .= '<ul><b>';
+                                        $html .= __($this->getLabel('product'));
+                                        $html .= ': PRODUCT_TOTAL' .  '</b>';
                                         $isFirst = false;
                                     }
                                     $totalProducts += $json[$name];
@@ -93,15 +95,21 @@ class HtmlList extends Column
                             $html = str_replace('PRODUCT_TOTAL', $totalProducts, $html);
 
                             if (isset($json['category'])) {
-                                $html .= '<li><b>' . __($this->getLabel('category')) . ': '  . $json['category'] . '</b></li>';
+                                $html .= '<li><b>';
+                                $html .= __($this->getLabel('category'));
+                                $html .= ': '  . $json['category'] . '</b></li>';
                             }
 
                             if (isset($json['cms_page'])) {
-                                $html .= '<li><b>' . __($this->getLabel('page')) . ': '  . $json['cms_page'] . '</b></li>';
+                                $html .= '<li><b>';
+                                $html .= __($this->getLabel('page'));
+                                $html .= ': '  . $json['cms_page'] . '</b></li>';
                             }
 
                             if (isset($json['cms_block'])) {
-                                $html .= '<li><b>' . _($this->getLabel('block')) . ': ' . $json['cms_block'] . '</b></li>';
+                                $html .= '<li><b>';
+                                $html .= __($this->getLabel('block'));
+                                $html .= ': ' . $json['cms_block'] . '</b></li>';
                             }
 
                         }
@@ -114,6 +122,7 @@ class HtmlList extends Column
 
         return $dataSource;
     }
+    // phpcs:enable
 
     private function getLabel($text)
     {

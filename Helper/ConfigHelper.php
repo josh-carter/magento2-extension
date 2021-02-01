@@ -58,16 +58,33 @@ class ConfigHelper extends AbstractHelper
 
     public function getAccessToken()
     {
-        return $this->scopeConfig->getValue('straker/general/access_token', 'default', '') ? $this->scopeConfig->getValue('straker/general/access_token', 'default', '') : false ;
+        return $this->scopeConfig->getValue(
+            'straker/general/access_token',
+            'default',
+            ''
+        ) ? $this->scopeConfig->getValue(
+            'straker/general/access_token',
+            'default',
+            ''
+        ) : false ;
     }
 
     public function getApplicationKey()
     {
-        return $this->scopeConfig->getValue('straker/general/application_key', 'default', '') ? $this->scopeConfig->getValue('straker/general/application_key', 'default', '') : false ;
+        return $this->scopeConfig->getValue(
+            'straker/general/application_key',
+            'default',
+            ''
+        ) ? $this->scopeConfig->getValue(
+            'straker/general/application_key',
+            'default',
+            ''
+        ) : false ;
     }
 
     /**
-     * @return string or null  current version of the website hard-coded in config.xml (value would be uat, dev, live ...)
+     * @return string or null  current version of the website
+     * hard-coded in config.xml (value would be uat, dev, live ...)
      */
     public function getVersion()
     {
@@ -97,7 +114,7 @@ class ConfigHelper extends AbstractHelper
         if ($moduleInfoArray) {
             $env['active_plugins'] = $moduleInfoArray;
         }
-
+        //phpcs:disable
         $env['server_information']['php_version']       = phpversion();
         $env['server_information']['server_protocol']   = empty($_SERVER['SERVER_PROTOCOL']) ? '' : $_SERVER['SERVER_PROTOCOL'];
         $env['server_information']['user_agent']        = empty($_SERVER['HTTP_USER_AGENT']) ? '' : $_SERVER['HTTP_USER_AGENT'];
@@ -105,7 +122,7 @@ class ConfigHelper extends AbstractHelper
         $env['server_information']['server_host']       = empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME'];
         $env['server_information']['https']             = isset($_SERVER['HTTPS']);
         $env['server_information']['app_name']          = 'magento2';
-
+        //phpcs:enable
         $magentoVersion = $this->getMagentoVersion();
         $env['server_information']['app_version']       = empty($magentoVersion) ? '' : $magentoVersion;
 
@@ -209,7 +226,9 @@ class ConfigHelper extends AbstractHelper
 
     public function getDbRestoreUrl()
     {
-        return $this->_getSiteDomain('', 'uat', 'restore') . '/' . $this->scopeConfig->getValue('straker/general/api_url/restore');
+        return $this->_getSiteDomain('', 'uat')
+            . '/'
+            . $this->scopeConfig->getValue('straker/general/api_url/restore');
     }
 
     public function getStoreSetup($storeId)
@@ -223,11 +242,17 @@ class ConfigHelper extends AbstractHelper
             $dbStoreConfig[$item->getPath()] = $item->getValue();
         }
 
-        $source_store = array_key_exists('straker/general/source_store', $dbStoreConfig) ? $dbStoreConfig['straker/general/source_store'] : false;
-        $source_language = array_key_exists('straker/general/source_language', $dbStoreConfig) ? $dbStoreConfig['straker/general/source_language'] :  false;
-        $destination_language = array_key_exists('straker/general/destination_language', $dbStoreConfig) ? $dbStoreConfig['straker/general/destination_language'] :  false;
+        $source_store = array_key_exists('straker/general/source_store', $dbStoreConfig)
+            ? $dbStoreConfig['straker/general/source_store']
+            : false;
+        $source_language = array_key_exists('straker/general/source_language', $dbStoreConfig)
+            ? $dbStoreConfig['straker/general/source_language']
+            : false;
+        $destination_language = array_key_exists('straker/general/destination_language', $dbStoreConfig)
+            ? $dbStoreConfig['straker/general/destination_language']
+            :  false;
 
-        return ($source_store && $source_language && $destination_language) ? true : false;
+        return $source_store && $source_language && $destination_language;
     }
 
     public function getDefaultAttributes()
@@ -287,7 +312,11 @@ class ConfigHelper extends AbstractHelper
     public function getStoreViewLanguage($storeId = null)
     {
         if (!empty($storeId)) {
-            return $this->scopeConfig->getValue('straker/general/source_language', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $storeId);
+            return $this->scopeConfig->getValue(
+                'straker/general/source_language',
+                \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+                $storeId
+            );
         } else {
             return $this->scopeConfig->getValue('general/locale/code');
         }
@@ -295,7 +324,11 @@ class ConfigHelper extends AbstractHelper
 
     public function getSourceStore($storeId = null)
     {
-        return $this->scopeConfig->getValue('straker/general/source_store', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $storeId);
+        return $this->scopeConfig->getValue(
+            'straker/general/source_store',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
     }
 
     public function getOriginalXMLFilePath()
@@ -333,8 +366,10 @@ class ConfigHelper extends AbstractHelper
         return
             '<p><b>' . __('Sandbox Mode Enabled') . '</b></p><p>'
             . __(
-                'Thank you for installing our plugin. We have enabled the Sandbox testing mode for you. Jobs you create while this is enabled will not be received by Straker Translations, 
-                and content will not be translated by a human - rather it will only be sample text. To change the Sandbox Mode, go to <a href="'
+                'Thank you for installing our plugin. We have enabled the Sandbox testing mode for you. 
+                Jobs you create while this is enabled will not be received by Straker Translations, 
+                and content will not be translated by a human - rather it will only be sample text.
+                 To change the Sandbox Mode, go to <a href="'
                 . $this->_urlFactory->create()->getUrl('adminhtml/system_config/edit', ['section' => 'straker_config'])
                 . '">Configuration</a>'
             )

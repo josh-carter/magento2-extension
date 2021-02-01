@@ -1,6 +1,7 @@
 <?php
 namespace Straker\EasyTranslationPlatform\Model;
 
+use Magento\Framework\Filesystem\DriverInterface;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Registry;
@@ -37,6 +38,10 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
     protected $_httpClient;
     protected $_storeManager;
     protected $_messageManager;
+    /**
+     * @var DriverInterface
+     */
+    private $driver;
 
     public function __construct(
         Context $context,
@@ -46,7 +51,8 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
         ZendClientFactory $httpClient,
         Logger $logger,
         StoreManagerInterface $storeManagerInterface,
-        ManagerInterface $messageInterface
+        ManagerInterface $messageInterface,
+        DriverInterface $driver
     ) {
         parent::__construct($context, $registry);
         $this->_configHelper = $configHelper;
@@ -55,6 +61,7 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
         $this->_logger = $logger;
         $this->_storeManager = $storeManagerInterface;
         $this->_messageManager = $messageInterface;
+        $this->driver = $driver;
     }
 
     protected function _call($url, $method = 'get', array $request = [], $timeout = 60)
@@ -244,17 +251,17 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
     {
         $filePath = $this->_configHelper->getDataFilePath();
         $fileName = 'countries.json';
-        if (!file_exists($filePath)) {
-            mkdir($filePath, 0777, true);
+        if (!$this->driver->isExists($filePath)) {
+            $this->driver->createDirectory($filePath);
         }
         $fileFullPath = $filePath . DIRECTORY_SEPARATOR . $fileName;
-        if (file_exists($fileFullPath)) {
-            $result = json_decode(file_get_contents($fileFullPath));
+        if ($this->driver->isExists($fileFullPath)) {
+            $result = json_decode($this->driver->fileGetContents($fileFullPath));
         } else {
             $countriesUrl = $this->_getCountriesUrl();
             $result = $this->_call($countriesUrl);
             if (!empty($result)) {
-                file_put_contents($fileFullPath, json_encode($result));
+                $this->driver->filePutContents($fileFullPath, json_encode($result));
             }
         }
         return isset($result->country) ? $result->country : [];
@@ -264,16 +271,16 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
     {
         $filePath = $this->_configHelper->getDataFilePath();
         $fileName = 'languages.json';
-        if (!file_exists($filePath)) {
-            mkdir($filePath, 0777, true);
+        if (!$this->driver->isExists($filePath)) {
+            $this->driver->createDirectory($filePath);
         }
         $fileFullPath = $filePath . DIRECTORY_SEPARATOR . $fileName;
-        if (file_exists($fileFullPath)) {
-            $result = json_decode(file_get_contents($fileFullPath));
+        if ($this->driver->isExists($fileFullPath)) {
+            $result = json_decode($this->driver->fileGetContents($fileFullPath));
         } else {
             $result = $this->_call($this->_getLanguagesUrl());
             if (!empty($result)) {
-                file_put_contents($fileFullPath, json_encode($result));
+                $this->driver->filePutContents($fileFullPath, json_encode($result));
             }
         }
         return isset($result->languages) ? $result->languages : [];
@@ -324,6 +331,7 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
         );
     }
 
+    //phpcs:disable
     public function _callStrakerBugLog($msg, $e = '')
     {
         $httpClient = $this->_httpClient->create();
@@ -355,4 +363,5 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
             $this->_messageManager->addExceptionMessage($e, __('Something went wrong while connecting Straker API.'));
         }
     }
+    //phpcs:enable
 }

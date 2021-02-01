@@ -29,7 +29,7 @@ class MultiSelect extends AbstractRenderer
         $valueArray['render'] = [];
         if ($type === 'options') {
             $options = $this->getColumn()->getOptions();
-            if (sizeof($valueArray) > 1) {
+            if (count($valueArray) > 1) {
                 foreach ($valueArray as $v) {
                     if (!empty($v)) {
                         $val = $options[$v];

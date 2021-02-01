@@ -5,10 +5,9 @@
  */
 namespace Straker\EasyTranslationPlatform\Model;
 
-/**
- * Class DataProvider
- */
-class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
+use Magento\Ui\DataProvider\AbstractDataProvider;
+
+class DataProvider extends AbstractDataProvider
 {
     /**
      * Get data

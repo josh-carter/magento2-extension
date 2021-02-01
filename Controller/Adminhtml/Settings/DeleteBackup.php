@@ -34,7 +34,6 @@ class DeleteBackup extends Action
         parent::__construct($context);
     }
 
-
     public function execute()
     {
         $result = ['Success' => false, 'Message' => __('We can\'t delete one or more backups.')];

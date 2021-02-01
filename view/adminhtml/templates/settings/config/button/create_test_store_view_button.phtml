@@ -1,11 +1,28 @@
 <?php
 /**  @var $block \Straker\EasyTranslationPlatform\Block\Adminhtml\Settings\Config\CreateTestingStoreView */
-echo $block->getButtonHtml();
-echo '<p class="note"><span>'. __('This will create a Testing Store View to be used in Sandbox Mode for testing purposes.') .'</span>';
+
+use Straker\EasyTranslationPlatform\Api\Data\SetupInterface;
+
+?>
+<?= $block->getButtonHtml(); ?>
+<?= '<p class="note"><span>'
+    . $block->escapeHtml(
+        __('This will create a Testing Store View to be used in Sandbox Mode for testing purposes.')
+    )
+    .'</span>';
 ?>
 
 <div id="create-test-store-modal" style="display: none;">
-    <p><?php echo __('Here you can create a Testing Store View to enable Sandbox Mode for testing purposes. Jobs you create while this is enabled will not be received by Straker Translations, and content will not be translated by a human - rather it will only be sample text. If you prefer to go to Live Mode straight away, please leave the Name field empty. You can switch between Sandbox and Live Modes at any point at Straker Translations/Settings/Configuration/Environment.') ?></p>
+    <p>
+        <?= $block->escapeHtml(
+            __('Here you can create a Testing Store View to enable Sandbox Mode for testing purposes. 
+    Jobs you create while this is enabled will not be received by Straker Translations, 
+    and content will not be translated by a human - rather it will only be sample text. 
+    If you prefer to go to Live Mode straight away, please leave the Name field empty. You can switch between
+     Sandbox and Live Modes at any point at Straker Translations/Settings/Configuration/Environment.')
+        )
+?>
+    </p>
     <fieldset class="fieldset admin__fieldset fieldset-wide">
         <legend class="admin__legend legend">
             <span></span>
@@ -18,22 +35,32 @@ echo '<p class="note"><span>'. __('This will create a Testing Store View to be u
 
         <div class="admin__field field field-store_view_name required">
             <label class="label admin__field-label" for="item_store_view_name">
-                <span><?php echo __('Name'); ?></span>
+                <span><?= $block->escapeHtml(__('Name')); ?></span>
             </label>
             <div class="admin__field-control control">
-                <input id="item_store_view_name" name="store_view_name" value="" title="Name of Store View" type="text" class=" input-text admin__control-text">
+                <input id="item_store_view_name"
+                       name="store_view_name"
+                       value=""
+                       title="Name of Store View"
+                       type="text"
+                       class=" input-text admin__control-text">
                 <div class="straker_store_error_msg"><span></span></div>
             </div>
         </div>
 
         <div class="admin__field field field-site_mode ">
             <label class="label admin__field-label" for="item_site_mode">
-                <span><?php echo __('Switch Site Mode'); ?>:&nbsp;</span>
+                <span><?= $block->escapeHtml(__('Switch Site Mode')); ?>:&nbsp;</span>
             </label>
             <div class="admin__field-control control">
                 <select id="item_site_mode_sandbox" name="site_mode" class=" select admin__control-select">
-                    <option value="<?php echo \Straker\EasyTranslationPlatform\Api\Data\SetupInterface::SITE_MODE_SANDBOX; ?>" selected="selected">Sandbox</option>
-                    <option value="<?php echo \Straker\EasyTranslationPlatform\Api\Data\SetupInterface::SITE_MODE_LIVE; ?>">Live</option>
+                    <option value="<?= $block->escapeHtml(SetupInterface::SITE_MODE_SANDBOX); ?>"
+                            selected="selected">
+                        <?= $block->escapeHtml(__('Sandbox')) ?>
+                    </option>
+                    <option value="<?= $block->escapeHtml(SetupInterface::SITE_MODE_LIVE); ?>">
+                        <?= $block->escapeHtml(__('Live')) ?>
+                    </option>
                 </select>
             </div>
         </div>
@@ -80,7 +107,7 @@ echo '<p class="note"><span>'. __('This will create a Testing Store View to be u
 
         function createTestStore(storeName, siteMode) {
             $.ajax({
-                url: '<?php echo $block->getAjaxResetUrl(); ?>',
+                url: '<?= $block->escapeHtml($block->getAjaxResetUrl()); ?>',
                 data: {storeName: storeName, siteMode: siteMode },
                 method: 'get',
                 dataType: 'json',
@@ -89,7 +116,8 @@ echo '<p class="note"><span>'. __('This will create a Testing Store View to be u
                 if( data.Success ){
                     alert({
                         title: '',
-                        content: $.mage.__('Test store view created successfully. Click <b>OK</b> to reload this page.'),
+                        content: $.mage.__('Test store view created successfully. ' +
+                            'Click <b>OK</b> to reload this page.'),
                         actions: {
                             always: function () {
                                 location.reload();
@@ -98,7 +126,9 @@ echo '<p class="note"><span>'. __('This will create a Testing Store View to be u
                     });
                 }else{
                     var msg = 'Something went wrong while creating test store view. <br/>';
-                    msg += (typeof data.Message != 'undefined') ? '<p><b>Message: </b><i>' + data.Message + '</i></p>' : '';
+                    msg += (typeof data.Message != 'undefined')
+                        ? '<p><b>Message: </b><i>' + data.Message + '</i></p>'
+                        : '';
                     alert({
                         title: '',
                         content: $.mage.__( msg + ' Please try again.')

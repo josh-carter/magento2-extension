@@ -43,7 +43,6 @@ class ResetAccount extends Action
         return parent::__construct($context);
     }
 
-
     public function execute()
     {
         $result['Success'] = true;
@@ -70,7 +69,10 @@ class ResetAccount extends Action
             $message = __($e->getMessage());
             $this->messageManager->addError($message);
             $this->_logger->error($message);
-            $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+            $this->_strakerApi->_callStrakerBugLog(
+                __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                $e->__toString()
+            );
             $result['Success'] = false;
         }
 

@@ -11,16 +11,18 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy,
         \Magento\Framework\Event\ManagerInterface $eventManager,
-        \Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeOptionTranslation\CollectionFactory $optionCollection
+        CollectionFactory $optionCollection
     ) {
         parent::__construct($entityFactory, $logger, $fetchStrategy, $eventManager);
         $this->_optionCollection = $optionCollection;
     }
 
-
     protected function _construct()
     {
-        $this->_init('Straker\EasyTranslationPlatform\Model\AttributeOptionTranslation', 'Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeOptionTranslation');
+        $this->_init(
+            \Straker\EasyTranslationPlatform\Model\AttributeOptionTranslation::class,
+            \Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeOptionTranslation::class
+        );
     }
 
     public function addOptionFilter($attributeTranslationId)
@@ -32,7 +34,12 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     {
         if (!empty($this->getData())) {
 
-            $this->getConnection()->update($this->getResource()->getMainTable(), $data, $this->getResource()->getIdFieldName() . ' IN(' . implode(',', $this->getAllIds()) . ')');
+            $this->getConnection()
+                ->update(
+                    $this->getResource()->getMainTable(),
+                    $data,
+                    $this->getResource()->getIdFieldName() . ' IN(' . implode(',', $this->getAllIds()) . ')'
+                );
 
         }
         return $this;

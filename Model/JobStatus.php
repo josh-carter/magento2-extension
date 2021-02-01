@@ -14,19 +14,15 @@ class JobStatus extends AbstractModel implements JobStatusInterface, IdentityInt
     const JOB_STATUS_INPROGRESS     = 4;
     const JOB_STATUS_COMPLETED      = 5;
     const JOB_STATUS_CONFIRMED      = 6;
+    const JOB_STATUS                = ['init', 'queued','ready','in_progress','completed','confirmed'];
 
     protected function _construct()
     {
-        $this->_init('Straker\EasyTranslationPlatform\Model\ResourceModel\JobStatus');
+        $this->_init(\Straker\EasyTranslationPlatform\Model\ResourceModel\JobStatus::class);
     }
 
     public function getIdentities()
     {
         return [self::CACHE_TAG . '_' . $this->getId()];
-    }
-
-    public static function getJobStatus()
-    {
-        return ['init', 'queued','ready','in_progress','completed','confirmed'];
     }
 }

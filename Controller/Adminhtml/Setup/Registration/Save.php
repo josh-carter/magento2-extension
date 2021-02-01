@@ -54,11 +54,17 @@ class Save extends Action
                 $this->_reinitConfig->reinit();
             } catch (\RuntimeException $e) {
                 $this->_logger->error('error'.__FILE__.' '.__LINE__, [$e]);
-                $this->_strakerAPI->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+                $this->_strakerAPI->_callStrakerBugLog(
+                    __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                    $e->__toString()
+                );
                 $this->messageManager->addError($e->getMessage());
             } catch (\Exception $e) {
                 $this->_logger->error('error'.__FILE__.' '.__LINE__, [$e]);
-                $this->_strakerAPI->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+                $this->_strakerAPI->_callStrakerBugLog(
+                    __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                    $e->__toString()
+                );
                 $this->messageManager->addException($e, __('There was an error registering your details'));
             }
         }

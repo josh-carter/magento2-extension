@@ -41,7 +41,6 @@ class Save extends Action
         parent::__construct($context);
     }
 
-
     public function execute()
     {
         $data = $this->getRequest()->getParams();
@@ -53,18 +52,25 @@ class Save extends Action
 
                 if (property_exists($oSupport, 'success')) {
                     if ($oSupport->success) {
-                        $this->messageManager->addSuccessMessage(__('Your support request was submitted successfully.'));
+                        $this->messageManager->addSuccessMessage(
+                            __('Your support request was submitted successfully.')
+                        );
                         $resultRedirect->setPath('*/Jobs/index/');
                         return $resultRedirect;
                     } else {
                         $this->messageManager->addError(__('Your support request could not be submitted'));
                         $this->_logger->error('error'.__FILE__.' '.__LINE__.$oSupport->message, []);
-                        $this->_strakerAPI->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' Your support request could not be submitted', $oSupport->message);
+                        $this->_strakerAPI->_callStrakerBugLog(
+                            __FILE__ . ' ' . __METHOD__ . ' Your support request could not be submitted',
+                            $oSupport->message
+                        );
                         $resultRedirect->setPath('*/*/index/', $data);
                     }
                 } elseif (property_exists($oSupport, 'message')) {
                     if ($oSupport->message === 'Authentication failed') {
-                        $this->messageManager->addErrorMessage(__('Since you have not registered an account, the support request could not be submitted.'));
+                        $this->messageManager->addErrorMessage(
+                            __('Since you have not registered an account, the support request could not be submitted.')
+                        );
                     } else {
                         $this->messageManager->addErrorMessage(__($oSupport->message));
                     }
@@ -72,11 +78,17 @@ class Save extends Action
                 }
             } catch (RuntimeException $e) {
                 $this->_logger->error('error'.__FILE__.' '.__LINE__, [$e]);
-                $this->_strakerAPI->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+                $this->_strakerAPI->_callStrakerBugLog(
+                    __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                    $e->__toString()
+                );
                 $this->messageManager->addError($e->getMessage());
             } catch (Exception $e) {
                 $this->_logger->error('error'.__FILE__.' '.__LINE__, [$e]);
-                $this->_strakerAPI->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+                $this->_strakerAPI->_callStrakerBugLog(
+                    __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                    $e->__toString()
+                );
                 $this->messageManager->addException($e, __('Something went wrong while saving your support request.'));
             }
 

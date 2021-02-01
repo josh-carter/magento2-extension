@@ -25,17 +25,17 @@ $files = $block->getRestoreFileList();
                 $datetime       = $block->getDateFormat($dateTimeObject);
             ?>
             <tr>
-                <td class="straker-backup-list filename" title="<?php echo $filename; ?>"> <?php echo $name; ?> </td>
-                <td class="straker-backup-list create-date"><?php echo $datetime; ?></td>
+                <td class="straker-backup-list filename" title="<?= $filename; ?>"> <?= $name; ?> </td>
+                <td class="straker-backup-list create-date"><?= $datetime; ?></td>
                 <td class="straker-backup-list file-actions">
                     <a href="#"
                        title="Rollback"
                        class="rollback-backup-anchor"
-                       data-backup-id="<?php echo $id; ?>"
-                       data-backup-name="<?php echo $name; ?>"
-                       data-backup-datetime="<?php echo $datetime; ?>"
-                       data-backup-type="<?php echo $type; ?>"
-                       data-backup-time="<?php echo $time; ?>"
+                       data-backup-id="<?= $id; ?>"
+                       data-backup-name="<?= $name; ?>"
+                       data-backup-datetime="<?= $datetime; ?>"
+                       data-backup-type="<?= $type; ?>"
+                       data-backup-time="<?= $time; ?>"
                     >
                         <i class="fa fa-history" aria-hidden="true"></i>
                     </a>
@@ -44,9 +44,9 @@ $files = $block->getRestoreFileList();
                    <a href="#"
                       title="Delete"
                       class="delete-backup-anchor"
-                      data-backup-id="<?php echo $id; ?>"
-                      data-backup-name="<?php echo $name; ?>"
-                      data-backup-datetime="<?php echo $datetime; ?>"
+                      data-backup-id="<?= $id; ?>"
+                      data-backup-name="<?= $name; ?>"
+                      data-backup-datetime="<?= $datetime; ?>"
                    >
                        <i class="fa fa-trash" aria-hidden="true"></i>
                    </a>
@@ -67,15 +67,15 @@ $files = $block->getRestoreFileList();
                 var fileId = $(this).data('backupId');
                 var backupName = $(this).data('backupName');
                 var backupDateTime = $(this).data('backupDatetime');
-                var confirmContent = '<?php echo __('Do you want to delete this backup file') ?>: ' + backupName +  ' [' + backupDateTime + ']?';
+                var confirmContent = '<?= __('Do you want to delete this backup file') ?>: ' + backupName +  ' [' + backupDateTime + ']?';
                 console.log(confirmContent);
                 confirm({
-                    title: '<?php echo __("Please Confirm") ?>',
+                    title: '<?= __("Please Confirm") ?>',
                     content: confirmContent,
                     actions: {
                         confirm: function(){
                             $.ajax({
-                                url      : '<?php echo $block->getDeleteBackupFileUrl(); ?>',
+                                url      : '<?= $block->getDeleteBackupFileUrl(); ?>',
                                 method   : 'get',
                                 data        : {id: fileId },
                                 showLoader :  true,

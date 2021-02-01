@@ -373,7 +373,7 @@
 
             if (destinationStoreId !== '') {
                 $.ajax({
-                    url: '<?php echo $block->getUrl('EasyTranslationPlatform/Jobs/CheckLanguagePairs') ?>',
+                    url: '<?= $block->getUrl('EasyTranslationPlatform/Jobs/CheckLanguagePairs') ?>',
                     data: {
                         form_key: window.FORM_KEY,
                         target_store_id: destinationStoreId

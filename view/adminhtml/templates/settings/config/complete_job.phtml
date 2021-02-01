@@ -19,7 +19,7 @@
             var tjNumberInput = $('#demonstration_complete_job_tj_number');
             var tjNumber = tjNumberInput.val();
             $.ajax({
-                url: '<?php echo $this->getUrl('EasyTranslationPlatform/Jobs/CompleteJob'); ?>',
+                url: '<?= $this->getUrl('EasyTranslationPlatform/Jobs/CompleteJob'); ?>',
                 method: 'get',
                 data: { job_id: tjNumber },
                 dataType: 'json',
@@ -29,14 +29,14 @@
                 if( textStatus == 'success' && data.success ) {
                     alert({
                         title: '',
-                        content: '<?php echo __('Job completed successfully.'); ?>'
+                        content: '<?= __('Job completed successfully.'); ?>'
                     });
                     tjNumberInput.val('');
-                    location.href = "<?php echo $this->getUrl('EasyTranslationPlatform/Jobs/Index'); ?>";
+                    location.href = "<?= $this->getUrl('EasyTranslationPlatform/Jobs/Index'); ?>";
                 }else{
                     alert({
                         title: '',
-                        content: '<?php echo __('Failed to complete the job.'); ?>'
+                        content: '<?= __('Failed to complete the job.'); ?>'
                     });
                 }
             });

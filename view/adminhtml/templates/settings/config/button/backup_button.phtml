@@ -20,7 +20,7 @@ echo '<p class="note"><span>'. __('This will backup database.') .'</span>';
                     actions: {
                         confirm:  function () {
                             $.ajax({
-                                url         : '<?php echo $block->getAjaxRequestUrl(); ?>',
+                                url         : '<?= $block->getAjaxRequestUrl(); ?>',
                                 showLoader  : true,
                                 type        : 'get'
                             }).always(function ( data ) {

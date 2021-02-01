@@ -9,12 +9,12 @@ $typeBlock = $block->getChildBlock('view_job_type_grid');
 <?php if ($typeBlock !== false): ?>
 
 <div id="import-translation-modal" style="display: none;">
-    <form id="import-translation-form" class="admin__fileldset" action="<?php echo $typeBlock->getImportUrl(); ?>" method="post" enctype="multipart/form-data">
-        <?php echo $block->getBlockHtml('formkey')?>
-        <input type="hidden" name="job_id" value="<?php echo $typeBlock->getJobId();?>" />
-        <input type="hidden" name="job_key" value="<?php echo $typeBlock->getJobKey();?>" />
-        <input type="hidden" name="source_store_id" value="<?php echo $typeBlock->getSourceStoreId();?>" />
-        <p><?php echo __('This will import translation by uploading translated file.') ?></p>
+    <form id="import-translation-form" class="admin__fileldset" action="<?= $typeBlock->getImportUrl(); ?>" method="post" enctype="multipart/form-data">
+        <?= $block->getBlockHtml('formkey')?>
+        <input type="hidden" name="job_id" value="<?= $typeBlock->getJobId();?>" />
+        <input type="hidden" name="job_key" value="<?= $typeBlock->getJobKey();?>" />
+        <input type="hidden" name="source_store_id" value="<?= $typeBlock->getSourceStoreId();?>" />
+        <p><?= __('This will import translation by uploading translated file.') ?></p>
         <fieldset class="fieldset admin__fieldset fieldset-wide">
             <legend class="admin__legend legend">
                 <span></span>
@@ -148,7 +148,7 @@ $typeBlock = $block->getChildBlock('view_job_type_grid');
                     if( typeof attrOptions.get(0) === 'undefined' ){
                        // loadingMask.show();
                         $.ajax({
-                            url: '<?php echo $this->getUrl('EasyTranslationPlatform/Jobs/AttributeOption'); ?>',
+                            url: '<?= $this->getUrl('EasyTranslationPlatform/Jobs/AttributeOption'); ?>',
                             data: {attributeTranslationId: attrTranslationId},
                             dataType: 'json',
                             showLoader :  true,

@@ -7,8 +7,10 @@
 namespace Straker\EasyTranslationPlatform\Controller\Adminhtml\Settings;
 
 use Magento\Backend\App\Action;
+use Magento\Backup\Helper\Data;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem;
+use Straker\EasyTranslationPlatform\Model\Db;
 
 /*
  * This class preform Magento database rollback. Since restore functionality has been
@@ -77,26 +79,23 @@ class Rollback extends Action
         $this->maintenanceMode = $maintenanceMode;
         parent::__construct($context);
     }
-    /**
-     * Rollback Action
-     *
-     * @return void|\Magento\Backend\App\Action
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     */
+
     public function execute()
     {
         if (!$this->getRequest()->isAjax()) {
-            return $this->_redirect('adminhtml/system_config/edit', ['section' => 'demonstration']);
+            return $this->_redirect(
+                'adminhtml/system_config/edit',
+                ['section' => 'demonstration']
+            );
         }
 
-        /** @var \Magento\Backup\Helper\Data $helper */
-        $helper = $this->_objectManager->get('Magento\Backup\Helper\Data');
+        $dbBackupManager = null;
+
+        /** @var Data $helper */
+        $helper = $this->_objectManager->get(Data::class);
         $response = new \Magento\Framework\DataObject();
 
         try {
-            /* @var $backup \Magento\Backup\Model\Backup */
             $backup = $this->_backupModelFactory->create(
                 $this->getRequest()->getParam('time'),
                 $this->getRequest()->getParam('type')
@@ -112,7 +111,7 @@ class Rollback extends Action
 
             $type = $backup->getType();
 
-            /** @var \Straker\EasyTranslationPlatform\Model\Db $dbBackupManager */
+            /** @var Db $dbBackupManager */
             $dbBackupManager = $this->_dbFactory->create(
                 $type
             )->setBackupExtension(
@@ -125,7 +124,7 @@ class Rollback extends Action
                 $backup->getName(),
                 false
             )->setResourceModel(
-                $this->_objectManager->create('Magento\Backup\Model\ResourceModel\Db')
+                $this->_objectManager->create(\Magento\Backup\Model\ResourceModel\Db::class)
             );
 
             $this->_coreRegistry->register('backup_manager', $dbBackupManager);
@@ -141,10 +140,10 @@ class Rollback extends Action
         } catch (\Magento\Framework\Backup\Exception\FtpValidationFailed $e) {
             $errorMsg = __('Failed to validate FTP.');
         } catch (\Magento\Framework\Backup\Exception\NotEnoughPermissions $e) {
-            $this->_objectManager->get('Psr\Log\LoggerInterface')->info($e->getMessage());
+            $this->_objectManager->get(\Psr\Log\LoggerInterface::class)->info($e->getMessage());
             $errorMsg = __('You need more permissions to perform a rollback.');
         } catch (\Exception $e) {
-            $this->_objectManager->get('Psr\Log\LoggerInterface')->info($e->getMessage());
+            $this->_objectManager->get(\Psr\Log\LoggerInterface::class)->info($e->getMessage());
             $errorMsg = __('Failed to rollback.');
         }
 

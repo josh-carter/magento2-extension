@@ -296,7 +296,10 @@ class CategoryHelper extends AbstractHelper
                         $this->_categoryData[$cat_key]['attributes'][$att_key]['value_translation_id'] = $attributeTranslationModel->getId();
                     } catch (Exception $e) {
                         $this->_logger->error('error '.__FILE__.' '.__LINE__.''.$e->getMessage(), [$e]);
-                        $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+                        $this->_strakerApi->_callStrakerBugLog(
+                __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                $e->__toString()
+            );
                     }
                 }
             }

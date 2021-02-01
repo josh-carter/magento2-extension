@@ -26,8 +26,10 @@ class ProductCollectionFactory
      * @param \Magento\Framework\ObjectManagerInterface $objectManager
      * @param string $instanceName
      */
-    public function __construct(\Magento\Framework\ObjectManagerInterface $objectManager, $instanceName = '\\Straker\\EasyTranslationPlatform\\Model\\ResourceModel\\Products\\Collection')
-    {
+    public function __construct(
+        \Magento\Framework\ObjectManagerInterface $objectManager,
+        $instanceName = \Straker\EasyTranslationPlatform\Model\ResourceModel\Products\Collection::class
+    ) {
         $this->_objectManager = $objectManager;
         $this->_instanceName = $instanceName;
     }

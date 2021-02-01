@@ -12,7 +12,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 {
     protected $targetStoreId;
 
-    public function is_translated($targetStoreId)
+    public function isTranslated($targetStoreId)
     {
         $this->targetStoreId = $targetStoreId;
 
@@ -47,7 +47,9 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             []
         )->join(
             ['stTrans' => $strakerTrans],
-            'stTrans.job_id=stJob.job_id and stJob.target_store_id=' . (empty($this->targetStoreId) ? 0 : $this->targetStoreId) . ' and stJob.job_type_id='. JobType::JOB_TYPE_PRODUCT,
+            'stTrans.job_id=stJob.job_id and stJob.target_store_id='
+            . (empty($this->targetStoreId) ? 0 : $this->targetStoreId)
+            . ' and stJob.job_type_id='. JobType::JOB_TYPE_PRODUCT,
             ['entity_id', 'MAX(IF((stTrans.is_published AND stJob.job_id) IS NULL, 0, 1)) as is_translated']
         )->group('stTrans.entity_id');
 
@@ -68,11 +70,10 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             )->reset(Select::COLUMNS)
             ->columns('COUNT(DISTINCT e.entity_id)');
 
-
         return $parentSelect;
     }
 
-    function getAllIds($limit = null, $offset = null)
+    public function getAllIds($limit = null, $offset = null)
     {
         $idsSelect = $this->_getClearSelect();
         $idsSelect->columns('e.' . $this->getEntity()->getIdFieldName());
@@ -87,10 +88,4 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         );
         return $this->getConnection()->fetchCol($idsSelect, $this->_bindParams);
     }
-
-//    protected function _afterLoad()
-//    {
-//        var_dump($this->getSelect()->assemble());
-//        return parent::_afterLoad();
-//    }
 }

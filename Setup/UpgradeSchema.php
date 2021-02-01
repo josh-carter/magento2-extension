@@ -133,7 +133,12 @@ class UpgradeSchema implements UpgradeSchemaInterface
         );
 
         $connection->addForeignKey(
-            $setup->getFkName($setup->getTable('straker_attribute_option_translation'), 'attribute_translation_id', $setup->getTable('straker_attribute_translation'), 'attribute_translation_id'),
+            $setup->getFkName(
+                $setup->getTable('straker_attribute_option_translation'),
+                'attribute_translation_id',
+                $setup->getTable('straker_attribute_translation'),
+                'attribute_translation_id'
+            ),
             $setup->getTable('straker_attribute_option_translation'),
             'attribute_translation_id',
             $setup->getTable('straker_attribute_translation'),
@@ -141,14 +146,18 @@ class UpgradeSchema implements UpgradeSchemaInterface
         );
 
         $connection->addForeignKey(
-            $setup->getFkName($setup->getTable('straker_attribute_option_translation'), 'option_id', 'eav_attribute_option', 'option_id'),
+            $setup->getFkName(
+                $setup->getTable('straker_attribute_option_translation'),
+                'option_id',
+                'eav_attribute_option',
+                'option_id'
+            ),
             $setup->getTable('straker_attribute_option_translation'),
             'option_id',
             $setup->getTable('eav_attribute_option'),
             'option_id'
         );
     }
-
 
     private function addSummaryColumn(SchemaSetupInterface $setup)
     {

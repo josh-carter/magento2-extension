@@ -54,7 +54,7 @@ class Collection extends JobCollection implements SearchResultInterface
         $eventPrefix,
         $eventObject,
         $resourceModel,
-        $model = 'Magento\Framework\View\Element\UiComponent\DataProvider\Document'
+        $model = \Magento\Framework\View\Element\UiComponent\DataProvider\Document::class
     ) {
         parent::__construct(
             $entityFactory,
@@ -188,7 +188,8 @@ class Collection extends JobCollection implements SearchResultInterface
                     'is_test_job'
                 ])->joinLeft(
                     [ 'st_type' => $strakerJobTypeTable ],
-                    'st_type.type_id=main_table.job_type_id AND main_table.job_key IS NOT NULL AND main_table.job_key <> \'\'',
+                    'st_type.type_id=main_table.job_type_id'
+                    . ' AND main_table.job_key IS NOT NULL AND main_table.job_key <> \'\'',
                     'GROUP_CONCAT(st_type.type_name SEPARATOR \''. JobHelper::SEPARATOR . '\') AS job_types'
                 )
                 ->where('is_test_job = ?', $this->_configHelper->isSandboxMode())

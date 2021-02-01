@@ -1,8 +1,9 @@
 <?php
 /** @var $block \Straker\EasyTranslationPlatform\Block\Adminhtml\Settings\Config\RestoreButton */
-echo $block->getButtonHtml();
-echo '<p class="note"><span>'. __('This will restore database from the last backup.') .'</span>';
 ?>
+
+<?= $block->getButtonHtml(); ?>
+<?= '<p class="note"><span>'. $block->escapeHtml(__('This will restore database from the last backup.')) .'</span>';?>
 
 <script>
     require([
@@ -15,22 +16,24 @@ echo '<p class="note"><span>'. __('This will restore database from the last back
 
         if( typeof backupButton != 'undefined'){
             backupButton.on('click', function (e) {
-                console.log('<?php echo $block->getAjaxRequestUrl(); ?>');
+                console.log('<?= $block->escapeHtml($block->getAjaxRequestUrl()); ?>');
                 console.log(FORM_KEY);
                 e.preventDefault();
                 confirm({
-                    content: $.mage.__('Are you going to restore Magento database, this process usually takes 3-4 minutes to complete?'),
+                    content: $.mage.__('Are you going to restore Magento database, ' +
+                        'this process usually takes 3-4 minutes to complete?'),
                     actions: {
                         confirm:  function () {
                             $.ajax({
-                                url         : '<?php echo $block->getAjaxRequestUrl(); ?>',
+                                url         : '<?= $block->escapeHtml($block->getAjaxRequestUrl()); ?>',
                                 showLoader  : true,
                                 type        : 'get'
                             }).always(function ( data ) {
                                 if(data.success){
                                     alert({
                                         title   : '',
-                                        content : $.mage.__('Restore finished successfully. Please login again and flush Magento caches.'),
+                                        content : $.mage.__('Restore finished successfully. ' +
+                                            'Please login again and flush Magento caches.'),
                                         actions: {
                                             always: function () {
                                                 location.reload();
@@ -41,12 +44,8 @@ echo '<p class="note"><span>'. __('This will restore database from the last back
                                     var msg = (typeof data.message != 'undefined') ? data.message : 'unknown';
                                     alert({
                                         title   : '',
-                                        content : $.mage.__('Restore failed. Please try again. <p><b>Reason: </b>' + msg + '</p>')
-//                                        actions: {
-//                                            always: function () {
-//                                                location.reload();
-//                                            }
-//                                        }
+                                        content : $.mage.__('Restore failed. Please try again. ' +
+                                            '<p><b>Reason: </b>' + msg + '</p>')
                                     });
                                 }
                             });

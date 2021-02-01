@@ -57,7 +57,7 @@ class Blocks extends Extended
         if ($this->sourceStoreId) {
             $collection->addStoreFilter($this->sourceStoreId);
         }
-        $collection->is_translated($this->targetStoreId);
+        $collection->isTranslated($this->targetStoreId);
         $this->setCollection($collection);
         return parent::_prepareCollection();
     }

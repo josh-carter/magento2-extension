@@ -44,7 +44,6 @@ class CompleteJob extends Action
         $this->_strakerAPI = $strakerAPI;
     }
 
-
     public function execute()
     {
         $url = 'https://uat-app.strakertranslations.com/v1/ta2wo/test/complete';
@@ -52,16 +51,6 @@ class CompleteJob extends Action
         $result = $this->_strakerAPI->completeJob($tjNumber, $url);
         return $this->_resultJsonFactory->create()->setData($result);
     }
-
-    /**
-     * Is the user allowed to view the attachment grid.
-     *
-     * @return bool
-     */
-//    protected function _isAllowed()
-//    {
-//        return $this->_authorization->isAllowed('Straker_EasyTranslationPlatform::jobs');
-//    }
 
     protected function _isAllowed()
     {

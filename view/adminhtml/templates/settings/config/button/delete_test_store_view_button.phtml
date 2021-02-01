@@ -1,12 +1,17 @@
 <?php
 /**  @var $block \Straker\EasyTranslationPlatform\Block\Adminhtml\Settings\Config\DeleteTestingStoreView */
+
+use Straker\EasyTranslationPlatform\Api\Data\SetupInterface;
+
 echo $block->getButtonHtml();
-echo '<p class="note"><span>'. __('This will delete your Testing Store View and all test jobs created for it.') .'</span>';
+echo '<p class="note"><span>'
+    . $block->escapeHtml(__('This will delete your Testing Store View and all test jobs created for it.'))
+    .'</span>';
 $testStoreView = $block->_getTestStoreView();
 ?>
 
 <div id="delete-test-store-modal" style="display: none;">
-    <p><?php echo __('This will delete your Testing Store View and all test jobs created for it.') ?></p>
+    <p><?= $block->escapeHtml(__('This will delete your Testing Store View and all test jobs created for it.')) ?></p>
     <fieldset class="fieldset admin__fieldset fieldset-wide">
         <legend class="admin__legend legend">
             <span></span>
@@ -19,12 +24,17 @@ $testStoreView = $block->_getTestStoreView();
 
         <div class="admin__field field field-site_mode ">
             <label class="label admin__field-label" for="item_site_mode">
-                <span><?php echo __('Switch Site Mode'); ?>:&nbsp;</span>
+                <span><?= $block->escapeHtml(__('Switch Site Mode')); ?>:&nbsp;</span>
             </label>
             <div class="admin__field-control control">
                 <select id="item_site_mode_live" name="site_mode" class=" select admin__control-select">
-                    <option value="<?php echo \Straker\EasyTranslationPlatform\Api\Data\SetupInterface::SITE_MODE_LIVE; ?>" selected="selected">Live</option>
-                    <option value="<?php echo \Straker\EasyTranslationPlatform\Api\Data\SetupInterface::SITE_MODE_SANDBOX; ?>">Sandbox</option>
+                    <option value="<?= $block->escapeHtml(SetupInterface::SITE_MODE_LIVE); ?>"
+                            selected="selected">
+                        <?= $block->escapeHtml(__('Live'));?>
+                    </option>
+                    <option value="<?= $block->escapeHtml(SetupInterface::SITE_MODE_SANDBOX); ?>">
+                        <?= $block->escapeHtml(__('Sandbox'));?>
+                    </option>
                 </select>
             </div>
         </div>
@@ -43,7 +53,7 @@ $testStoreView = $block->_getTestStoreView();
             type: 'popup',
             responsive: true,
             innerScroll: true,
-            title: $.mage.__('Delete Testing Store View: <?php echo $testStoreView->getName(); ?>'),
+            title: $.mage.__('Delete Testing Store View: <?= $block->escapeHtml($testStoreView->getName()); ?>'),
             buttons: [
                 {
                     text: $.mage.__('Cancel'),
@@ -67,7 +77,7 @@ $testStoreView = $block->_getTestStoreView();
 
         function deleteTestStore(siteMode) {
             $.ajax({
-                url: '<?php echo $block->getAjaxResetUrl(); ?>',
+                url: '<?= $block->escapeHtml($block->getAjaxResetUrl()); ?>',
                 data: {siteMode: siteMode},
                 method: 'get',
                 dataType: 'json',
@@ -76,7 +86,8 @@ $testStoreView = $block->_getTestStoreView();
                 if( data.Success ){
                     alert({
                         title: '',
-                        content: $.mage.__('Test store view deleted successfully. Click <b>OK</b> to reload this page.'),
+                        content: $.mage.__('Test store view deleted successfully. ' +
+                            'Click <b>OK</b> to reload this page.'),
                         actions: {
                             always: function () {
                                 location.reload();
@@ -85,7 +96,9 @@ $testStoreView = $block->_getTestStoreView();
                     });
                 }else{
                     var msg = 'Something went wrong while deleting test store view. <br/>';
-                    msg += (typeof data.Message != 'undefined') ? '<p><b>Message: </b><i>' + data.Message + '</i></p>' : '';
+                    msg += (typeof data.Message != 'undefined')
+                        ? '<p><b>Message: </b><i>' + data.Message + '</i></p>'
+                        : '';
                     alert({
                         title: '',
                         content: $.mage.__( msg + ' Please try again.')

@@ -3,6 +3,7 @@
 namespace Straker\EasyTranslationPlatform\Model;
 
 use Magento\Framework\DataObject\IdentityInterface;
+use Magento\Framework\Filesystem\DriverInterface;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Registry;
@@ -12,6 +13,7 @@ use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as MagentoProd
 use Magento\Catalog\Model\ResourceModel\Category\Collection\Factory as CategoryCollectionFactory;
 use Magento\Cms\Model\ResourceModel\Page\CollectionFactory as MagentoPageCollectionFactory;
 use Magento\Cms\Model\ResourceModel\Block\CollectionFactory as MagentoBlockCollectionFactory;
+use Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeTranslation\Collection;
 use Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeTranslation\CollectionFactory as AttributeTranslationCollectionFactory;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
@@ -57,6 +59,10 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
     protected $_importHelper;
     protected $_strakerApi;
     protected $_logger;
+    /**
+     * @var DriverInterface
+     */
+    private $driver;
 
     public function __construct(
         Context $context,
@@ -74,7 +80,8 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
         JobTypeFactory $jobTypeFactory,
         ImportHelper $importHelper,
         StrakerAPI $strakerAPI,
-        Logger $logger
+        Logger $logger,
+        DriverInterface $driver
     ) {
         $this->_productCollectionFactory = $productCollectionFactory;
         $this->_categoryCollectionFactory = $categoryCollectionFactory;
@@ -90,6 +97,7 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
         $this->_categoryRepository = $categoryRepository;
         $this->_pageRepository = $pageRepository;
         $this->_blockRepository = $blockRepository;
+        $this->driver = $driver;
         parent::__construct($context, $registry);
     }
 
@@ -101,11 +109,10 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
     public function generateTranslatedFilename($sourceFilename)
     {
         $filePath = $this->_importHelper->configHelper->getTranslatedXMLFilePath();
-        if (!file_exists($filePath)) {
-            mkdir($filePath, 0777, true);
+        if (!$this->driver->isExists($filePath)) {
+            $this->driver->createDirectory($filePath);
         }
-        $fileNameArray = $this->_renameTranslatedFileName($filePath, $sourceFilename);
-        return $fileNameArray;
+        return $this->_renameTranslatedFileName($filePath, $sourceFilename);
     }
 
     /**
@@ -140,7 +147,7 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
     protected function _construct()
     {
 
-        $this->_init('Straker\EasyTranslationPlatform\Model\ResourceModel\Job');
+        $this->_init(\Straker\EasyTranslationPlatform\Model\ResourceModel\Job::class);
     }
 
     /**
@@ -169,13 +176,9 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
     public function getProductCollection()
     {
         $this->getAttributeTranslationEntityArray();
-        $collection = $this->_productCollectionFactory->create()
+        return $this->_productCollectionFactory->create()
             ->addFieldToFilter('entity_id', ['in' => $this->_entityIds]);
-
-//        var_dump($collection->getData());exit();
-        return $collection;
     }
-
 
     /**
      * @return \Magento\Cms\Model\ResourceModel\Page\Collection
@@ -200,19 +203,15 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
     }
 
     /**
-     * @return \Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeTranslation\Collection $collection
+     * @return Collection $collection
      */
     public function getCategoryCollection()
     {
-        $collection = $this->_getAttributeTranslationEntityCollection();
-//        $collection = $this->_categoryCollectionFactory->create()
-//            ->addFieldToFilter('entity_id', ['in'=> $this->_entityIds]);
-        return $collection;
+        return $this->_getAttributeTranslationEntityCollection();
     }
 
     public function getAttributeTranslationEntityArray()
     {
-        /** @var \Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeTranslation\Collection $collection */
         $collection = $this->_getAttributeTranslationEntityCollection();
         foreach ($collection->getData() as $item) {
             array_push($this->_entityIds, $item['entity_id']);
@@ -222,7 +221,7 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
 
     private function _getAttributeTranslationEntityCollection()
     {
-        /** @var \Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeTranslation\Collection $collection */
+        /** @var Collection $collection */
         $collection = $this->_attributeTranslationCollectionFactory->create()
             ->distinct(true)
             ->addFieldToSelect('entity_id')
@@ -248,6 +247,7 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
         }
     }
 
+    //phpcs:disable
     public function updateStatus($jobData)
     {
         $return = ['isSuccess' => true, 'Message' => ''];
@@ -290,11 +290,11 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
                             $fileFullName = implode(DIRECTORY_SEPARATOR, $fileNameArray);
                             $result = true;
 
-                            if (!file_exists($fileFullName)) {
-                                $result = file_put_contents($fileFullName, $fileContent);
+                            if (!$this->driver->isExists($fileFullName)) {
+                                $result = $this->driver->filePutContents($fileFullName, $fileContent);
                             }
 
-                            $firstLine = fgets(fopen($fileFullName, 'r'));
+                            $firstLine = fgets($this->driver->fileOpen($fileFullName, 'r'));
 
                             if (preg_match('/^[<?xml]+/', $firstLine)==0) {
                                 $result = false;
@@ -304,7 +304,11 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
                             if ($result == false && $isEmptyFile == true) {
                                 $return['isSuccess'] = false;
                                 $return['empty_file'] = false;
-                                $return['Message'] = __('%1 - Failed to write content to 2%', $this->getData('job_number'), $fileFullName);
+                                $return['Message'] = __(
+                                    '%1 - Failed to write content to 2%',
+                                    $this->getData('job_number'),
+                                    $fileFullName
+                                );
                                 $this->_logger->addError($return['Message']);
                             } else {
                                 $this->setData('download_url', $downloadUrl)
@@ -317,12 +321,18 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
                             }
                         } else {
                             $return['isSuccess'] = false;
-                            $return['Message'] = __('Download url is not found for the job (job_key: 1%)', $jobData->job_key);
+                            $return['Message'] = __(
+                                'Download url is not found for the job (job_key: 1%)',
+                                $jobData->job_key
+                            );
                             $this->_logger->addError($return['Message']);
                         }
                     } else {
                         $return['isSuccess'] = false;
-                        $return['Message'] = __('Download file is not found for the job (job_key: 1%)', $jobData->job_key);
+                        $return['Message'] = __(
+                            'Download file is not found for the job (job_key: 1%)',
+                            $jobData->job_key
+                        );
                         $this->_logger->addError($return['Message']);
                     }
                     break;
@@ -334,12 +344,17 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
             }
         } catch (\Exception $e) {
             $return['isSuccess'] = false;
-            $return['Message'] = __(' An Error with the message "1%" occurs while processing the job with the key - 2%', $e->getMessage(), $jobData->job_key);
+            $return['Message'] = __(
+                'An Error with the message "1%" occurs while processing the job with the key - 2%',
+                $e->getMessage(),
+                $jobData->job_key
+            );
             $this->_logger->addError($return['Message']);
         }
 
         return $return;
     }
+    //phpcs:enable
 
     public function getJobStatus()
     {

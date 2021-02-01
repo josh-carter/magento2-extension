@@ -1,8 +1,8 @@
 <?php
 namespace Straker\EasyTranslationPlatform\Model;
 
-use Straker\EasyTranslationPlatform\Api\AttributeTranslationRepositoryInterface;
-use Straker\EasyTranslationPlatform\Model\AttributeTranslationInterface;
+use Exception;
+use Magento\Framework\Api\SortOrder;
 use Straker\EasyTranslationPlatform\Model\AttributeTranslationFactory;
 use Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeTranslation\CollectionFactory;
 
@@ -16,6 +16,11 @@ class AttributeTranslationRepository implements \Straker\EasyTranslationPlatform
 {
     protected $objectFactory;
     protected $collectionFactory;
+    /**
+     * @var SearchResultsInterfaceFactory
+     */
+    private $searchResultsFactory;
+
     public function __construct(
         AttributeTranslationFactory $objectFactory,
         CollectionFactory $collectionFactory,
@@ -82,7 +87,6 @@ class AttributeTranslationRepository implements \Straker\EasyTranslationPlatform
         $searchResults->setTotalCount($collection->getSize());
         $sortOrders = $criteria->getSortOrders();
         if ($sortOrders) {
-            /** @var SortOrder $sortOrder */
             foreach ($sortOrders as $sortOrder) {
                 $collection->addOrder(
                     $sortOrder->getField(),

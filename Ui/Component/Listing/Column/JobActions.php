@@ -90,14 +90,6 @@ class JobActions extends Column
                             'label' => __('Re-Import')
                         ];
                     }
-
-//                    if ($statusId == Model\JobStatus::JOB_STATUS_CONFIRMED){
-//                        $item[$name]['publish'] = [
-//                            'href' => $this->getContext()->getUrl('EasyTranslationPlatform/Jobs/Publish',
-//                                ['job_id' => $item['job_id'], 'job_key' => $item['job_key'], 'job_type_id' => $item['job_type_id']]),
-//                            'label' => __('Publish')
-//                        ];
-//                    }
                 }
             }
         }

@@ -6,8 +6,9 @@ class DbFactory extends \Magento\Framework\Backup\Factory
 
     private $_objectManager;
 
-    function __construct(\Magento\Framework\ObjectManagerInterface $objectManager)
-    {
+    public function __construct(
+        \Magento\Framework\ObjectManagerInterface $objectManager
+    ) {
         $this->_objectManager = $objectManager;
         parent::__construct($objectManager);
     }

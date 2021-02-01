@@ -8,11 +8,10 @@ use Straker\EasyTranslationPlatform\Model\JobType as JobTypeModel;
 
 class JobType extends AbstractRenderer
 {
-
-    function render(DataObject $row)
+    public function render(DataObject $row)
     {
         $jobTypeId = $row->getData('job_type_id');
-        $jobTypes = JobTypeModel::getJobTypes();
+        $jobTypes = JobTypeModel::JOB_TYPES;
         $row->setData('job_type', ucwords($jobTypes[$jobTypeId-1]));
         return parent::render($row);
     }

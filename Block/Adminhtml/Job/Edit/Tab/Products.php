@@ -98,7 +98,7 @@ class Products extends \Straker\EasyTranslationPlatform\Block\Adminhtml\Widget\G
 
         $collection->setStore(
             $this->sourceStoreId
-        )->is_translated(
+        )->isTranslated(
             $this->targetStoreId
         )->addWebsiteNamesToResult();
 

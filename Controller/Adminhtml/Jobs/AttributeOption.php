@@ -41,7 +41,6 @@ class AttributeOption extends \Magento\Backend\App\Action
         $this->_logger = $logger;
     }
 
-
     public function execute()
     {
         $attributeTranslationId = $this->getRequest()->getParam('attributeTranslationId');
@@ -49,13 +48,16 @@ class AttributeOption extends \Magento\Backend\App\Action
         $result = [ 'status' => true, 'message' => '', 'option_data' => []];
         $options = [];
 
-        $optionCollectionData = $this->_attributeOptionTranslationCollectionFactory->create()->addFieldToFilter('attribute_translation_id', ['eq' => $attributeTranslationId]);
+        $optionCollectionData = $this->_attributeOptionTranslationCollectionFactory
+            ->create()
+            ->addFieldToFilter('attribute_translation_id', ['eq' => $attributeTranslationId]);
 
         foreach ($optionCollectionData as $option) {
+            $translatedValue = $option->getData('translated_value');
             array_push($options, [
-                'attribute_option_translation_id'   => $option->getData('attribute_option_translation_id'),
-                'original_value'                    => $option->getData('original_value'),
-                'translated_value'                  => empty($option->getData('translated_value')) ? '':$option->getData('translated_value')
+                'attribute_option_translation_id' => $option->getData('attribute_option_translation_id'),
+                'original_value'                  => $option->getData('original_value'),
+                'translated_value'                => empty($translatedValue) ? '' : $option->getData('translated_value')
             ]);
         }
 
@@ -70,12 +72,6 @@ class AttributeOption extends \Magento\Backend\App\Action
      */
     protected function _compareJobs($apiJob, $localJob)
     {
-//        if( strcasecmp($apiJob->status, $localJob->getJobStatus() ) !== 0
-//            || (strcasecmp($apiJob->status, $localJob->getJobStatus() ) === 0 &&
-//                strcasecmp($apiJob->status, 'queued') === 0 &&
-//                strcasecmp($apiJob->quotation, 'ready') === 0))
-//        {
-
         if ($localJob->getJobStatusId() < $this->resolveApiStatus($apiJob)) {
             return $localJob->updateStatus($apiJob);
         }

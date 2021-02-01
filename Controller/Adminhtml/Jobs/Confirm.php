@@ -59,14 +59,24 @@ class Confirm extends Action
                 $this->_importHelper->create($job_id)->publishTranslatedData();
                 $currentJob->addData(['job_status_id' => JobStatus::JOB_STATUS_CONFIRMED]);
                 $currentJob->save();
-                $this->messageManager->addSuccess('Translated '.$jobType.' data has been published for '.$this->_storeManager->getStore($job->getData('target_store_id'))->getName().' store');
+                $this->messageManager->addSuccessMessage(
+                    'Translated '
+                    . $jobType
+                    . ' data has been published for '
+                    . $this->_storeManager->getStore($job->getData('target_store_id'))->getName()
+                    . ' store'
+                );
 
             } catch (LocalizedException $e) {
 
                 $this->messageManager->addError($e->getMessage());
                 $this->_logger->error('error'.__FILE__.' '.__LINE__, [$e]);
                 $this->_strakerApi->_callStrakerBugLog($e->getMessage(), $e->__toString());
-                $this->messageManager->addError('Translated data has not been published for '.$this->_storeManager->getStore($job->getData('target_store_id'))->getName().' store');
+                $this->messageManager->addErrorMessage(
+                    'Translated data has not been published for '
+                    . $this->_storeManager->getStore($job->getData('target_store_id'))->getName()
+                    .' store'
+                );
                 $resultRedirect->setPath('*/*/index');
                 return $resultRedirect;
             }

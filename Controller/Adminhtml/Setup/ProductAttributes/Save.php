@@ -41,10 +41,8 @@ class Save extends \Magento\Backend\App\Action
         parent::__construct($context);
     }
 
-
     public function execute()
     {
-
         $data = $this->getRequest()->getParams();
 
         $resultRedirect = $this->resultRedirectFactory->create();
@@ -55,16 +53,28 @@ class Save extends \Magento\Backend\App\Action
                 $this->_setup->saveAttributes($attributes);
             } catch (LocalizedException $e) {
                 $this->_logger->error('error'.__FILE__.' '.__LINE__, [$e]);
-                $this->_strakerAPI->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+                $this->_strakerAPI->_callStrakerBugLog(
+                    __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                    $e->__toString()
+                );
                 $this->messageManager->addError('There was an error saving Product Attributes');
             } catch (RuntimeException $e) {
                 $this->_logger->error('error'.__FILE__.' '.__LINE__, [$e]);
-                $this->_strakerAPI->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+                $this->_strakerAPI->_callStrakerBugLog(
+                    __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                    $e->__toString()
+                );
                 $this->messageManager->addError($e->getMessage());
             } catch (Exception $e) {
                 $this->_logger->error('error'.__FILE__.' '.__LINE__, [$e]);
-                $this->_strakerAPI->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
-                $this->messageManager->addException($e, __('Something went wrong while saving the product attributes.'));
+                $this->_strakerAPI->_callStrakerBugLog(
+                    __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                    $e->__toString()
+                );
+                $this->messageManager->addExceptionMessage(
+                    $e,
+                    __('Something went wrong while saving the product attributes.')
+                );
             }
         }
 

@@ -1,7 +1,7 @@
 <div class="fieldset-wrapper">
     <div class="fieldset-wrapper-title" data-role="title" aria-controls="super_config-content" role="tab" aria-selected="true" aria-expanded="true">
         <strong class="admin__collapsible-title">
-            <span><?php echo __('Destination Store') ?></span>
+            <span><?= __('Destination Store') ?></span>
         </strong>
     </div>
     <div class="fieldset-wrapper-content" aria-hidden="false" style="display: block;">
@@ -9,7 +9,7 @@
             <div class="product-create-configuration">
                 <div class="product-create-configuration-info">
                     <div class="note" data-role="product-create-configuration-info">
-                        <?php echo __('Where would you like us to put the translated content?')?>
+                        <?= __('Where would you like us to put the translated content?')?>
                     </div>
                 </div>
             </div>
@@ -17,10 +17,10 @@
     </div>
 
     <div id="attribute-tax_class_id-container" class="field field-tax_class_id" data-ui-id="product-tabs-attributes-tab-fieldset-element-form-field-tax-class-id" data-attribute-code="tax_class_id">
-        <label class="label" for="tax_class_id" data-ui-id="product-tabs-attributes-tab-fieldset-element-select-product-tax-class-id-label"><span><?php echo __('Destination Store')?></span></label>
+        <label class="label" for="tax_class_id" data-ui-id="product-tabs-attributes-tab-fieldset-element-select-product-tax-class-id-label"><span><?= __('Destination Store')?></span></label>
         <div class="control">
             <select name="magento_destination_store" class="required-entry _required select admin__control-select">
-                <option value=""><?php echo __('Pick a store view') ?></option>
+                <option value=""><?= __('Pick a store view') ?></option>
                 <?php foreach ($block->getWebsites() as $website): ?>
                     <?php $showWebsite = false; ?>
                     <?php foreach ($website->getGroups() as $group): ?>
@@ -28,15 +28,15 @@
                         <?php foreach ($group->getStores() as $store): ?>
                             <?php if ($showWebsite == false): ?>
                                 <?php $showWebsite = true; ?>
-                                <optgroup label="<?php echo $this->escapeHtml($website->getName()) ?>"></optgroup>
+                                <optgroup label="<?= $this->escapeHtml($website->getName()) ?>"></optgroup>
                             <?php endif; ?>
                             <?php if ($showGroup == false): ?>
                                 <?php $showGroup = true; ?>
-                                <optgroup label="<?php echo $this->escapeHtml($group->getName()) ?>">
+                                <optgroup label="<?= $this->escapeHtml($group->getName()) ?>">
                             <?php endif; ?>
                             <option
-                                value="<?php echo $this->escapeHtml($store->getId()) ?>"<?php if ($this->getStoreId() == $store->getId()): ?> selected="selected"<?php endif; ?>>
-                                <?php echo $this->escapeHtml($store->getName()) ?></option>
+                                value="<?= $this->escapeHtml($store->getId()) ?>"<?php if ($this->getStoreId() == $store->getId()): ?> selected="selected"<?php endif; ?>>
+                                <?= $this->escapeHtml($store->getName()) ?></option>
                         <?php endforeach; ?>
                         <?php if ($showGroup): ?>
                             </optgroup>
@@ -54,10 +54,10 @@
         </label>
         <div class="control">
             <select name="straker_destination_language" id="source-language" class="select admin__control-select" style="display:none">
-                <option value=""><?php echo __('Select target language') ?></option>
+                <option value=""><?= __('Select target language') ?></option>
                 <?php foreach ($block->getOptions() as $languages): ?>
-                    <option value="<?php echo $languages->code ?>">
-                        <?php echo $languages->name ?>
+                    <option value="<?= $languages->code ?>">
+                        <?= $languages->name ?>
                     </option>
                 <?php endforeach; ?>
             </select>
@@ -70,7 +70,7 @@
     <div id="source_content" class="fieldset-wrapper" style="display:none">
         <div class="fieldset-wrapper-title" data-role="title" aria-controls="super_config-content" role="tab" aria-selected="true" aria-expanded="true">
             <strong class="admin__collapsible-title" data-role="trigger" tabindex="0">
-                <span><?php echo __('Source Content') ?></span>
+                <span><?= __('Source Content') ?></span>
             </strong>
         </div>
 
@@ -79,7 +79,7 @@
                 <div class="product-create-configuration">
                     <div class="product-create-configuration-info">
                         <div class="note" data-role="product-create-configuration-info">
-                            <?php echo __('Where would you like us to take your content from?')?>
+                            <?= __('Where would you like us to take your content from?')?>
                         </div>
                     </div>
                 </div>
@@ -92,7 +92,7 @@
             </label>
             <div class="control">
                 <select name="magento_source_store" class="select admin__control-select">
-                    <option value=""><?php echo __('Pick a source store view') ?></option>
+                    <option value=""><?= __('Pick a source store view') ?></option>
                     <?php foreach ($block->getWebsites() as $website): ?>
                         <?php $showWebsite = false; ?>
                         <?php foreach ($website->getGroups() as $group): ?>
@@ -100,14 +100,14 @@
                             <?php foreach ($group->getStores() as $store): ?>
                                 <?php if ($showWebsite == false): ?>
                                     <?php $showWebsite = true; ?>
-                                    <optgroup label="<?php echo $this->escapeHtml($website->getName()) ?>"></optgroup>
+                                    <optgroup label="<?= $this->escapeHtml($website->getName()) ?>"></optgroup>
                                 <?php endif; ?>
                                 <?php if ($showGroup == false): ?>
                                     <?php $showGroup = true; ?>
-                                    <optgroup label="&nbsp;&nbsp;&nbsp;<?php echo $this->escapeHtml($group->getName()) ?>">
+                                    <optgroup label="&nbsp;&nbsp;&nbsp;<?= $this->escapeHtml($group->getName()) ?>">
                                 <?php endif; ?>
-                                <option value="<?php echo $this->escapeHtml($store->getId()) ?>"<?php if ($this->getStoreId() == $store->getId()): ?> selected="selected"<?php endif; ?>>
-                                    &nbsp;&nbsp;&nbsp;&nbsp;<?php echo $this->escapeHtml($store->getName()) ?></option>
+                                <option value="<?= $this->escapeHtml($store->getId()) ?>"<?php if ($this->getStoreId() == $store->getId()): ?> selected="selected"<?php endif; ?>>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;<?= $this->escapeHtml($store->getName()) ?></option>
                             <?php endforeach; ?>
                             <?php if ($showGroup): ?>
                                 </optgroup>
@@ -124,10 +124,10 @@
             </label>
             <div class="control">
                 <select name="straker_source_language" id="source-language" class="select admin__control-select">
-                    <option value=""><?php echo __('Select source language') ?></option>
+                    <option value=""><?= __('Select source language') ?></option>
                     <?php foreach ($block->getOptions() as $languages): ?>
-                        <option value="<?php echo $languages->code ?>">
-                            <?php echo $languages->name ?>
+                        <option value="<?= $languages->code ?>">
+                            <?= $languages->name ?>
                         </option>
                     <?php endforeach; ?>
                 </select>

@@ -39,7 +39,6 @@ class DeleteTestStoreView extends Action
         return parent::__construct($context);
     }
 
-
     public function execute()
     {
         $result = ['Success' => true];
@@ -62,7 +61,10 @@ class DeleteTestStoreView extends Action
             $message = __($e->getMessage());
             $result['Message'] = $message;
             $this->_logger->error($message);
-            $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+            $this->_strakerApi->_callStrakerBugLog(
+                __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                $e->__toString()
+            );
         }
         $jsonResult = $this->_resultJsonFactory->create();
         return $jsonResult->setData($result);

@@ -46,7 +46,12 @@ class Setup extends AbstractModel implements SetupInterface
 
     public function saveClientData($data)
     {
-        $this->_configModel->saveConfig('straker/general/name', $data['first_name'] . ' ' . $data['last_name'], 'default', 0);
+        $this->_configModel->saveConfig(
+            'straker/general/name',
+            $data['first_name'] . ' ' . $data['last_name'],
+            'default',
+            0
+        );
         $this->_configModel->saveConfig('straker/general/first_name', $data['first_name'], 'default', 0);
         $this->_configModel->saveConfig('straker/general/last_name', $data['last_name'], 'default', 0);
         $this->_configModel->saveConfig('straker/general/email', $data['email'], 'default', 0);
@@ -93,9 +98,24 @@ class Setup extends AbstractModel implements SetupInterface
     public function saveStoreSetup($scopeId, $source_store = '', $source_language = '', $destination_language = '')
     {
 
-        $this->_configModel->saveConfig('straker/general/source_store', $source_store, ScopeInterface::SCOPE_STORES, $scopeId);
-        $this->_configModel->saveConfig('straker/general/source_language', $source_language, ScopeInterface::SCOPE_STORES, $scopeId);
-        $this->_configModel->saveConfig('straker/general/destination_language', $destination_language, ScopeInterface::SCOPE_STORES, $scopeId);
+        $this->_configModel->saveConfig(
+            'straker/general/source_store',
+            $source_store,
+            ScopeInterface::SCOPE_STORES,
+            $scopeId
+        );
+        $this->_configModel->saveConfig(
+            'straker/general/source_language',
+            $source_language,
+            ScopeInterface::SCOPE_STORES,
+            $scopeId
+        );
+        $this->_configModel->saveConfig(
+            'straker/general/destination_language',
+            $destination_language,
+            ScopeInterface::SCOPE_STORES,
+            $scopeId
+        );
 
         return $this->_configModel;
     }
@@ -104,21 +124,30 @@ class Setup extends AbstractModel implements SetupInterface
     {
 
         if (!empty($attributes['custom'])) {
-            $this->_configModel->saveConfig('straker_config/attribute/product_custom', $attributes['custom'], 'default', 0);
+            $this->_configModel->saveConfig(
+                'straker_config/attribute/product_custom',
+                $attributes['custom'],
+                'default'
+            );
         }
 
         if (!empty($attributes['default'])) {
-            $this->_configModel->saveConfig('straker_config/attribute/product_default', $attributes['default'], 'default', 0);
+            $this->_configModel->saveConfig(
+                'straker_config/attribute/product_default',
+                $attributes['default'],
+                'default'
+            );
         }
 
         if (!empty($attributes['category'])) {
-            $this->_configModel->saveConfig('straker_config/attribute/category', $attributes['category'], 'default', 0);
+            $this->_configModel->saveConfig('straker_config/attribute/category', $attributes['category'], 'default');
         }
 
         $this->_cacheManager->clean(\Magento\Framework\App\Cache\Type\Config::CACHE_TAG);
         return $this->_configModel;
     }
 
+    //phpcs:disable
     public function clearTranslations($storeId = null)
     {
         $result = ['Success' => false, 'Message' => '', 'Count' => 0];
@@ -136,7 +165,9 @@ class Setup extends AbstractModel implements SetupInterface
                 }
 
                 if ($connection->isTableExists($table)) {
-                    if (strcasecmp($rawTableName, 'cms_page_store') === 0 || strcasecmp($rawTableName, 'cms_block_store') === 0) {
+                    if (strcasecmp($rawTableName, 'cms_page_store') === 0
+                        || strcasecmp($rawTableName, 'cms_block_store') === 0
+                    ) {
                         $idField = ( strcasecmp($rawTableName, 'cms_page_store') === 0 ) ? 'page_id' : 'block_id';
 
                         $select = $connection
@@ -155,10 +186,12 @@ class Setup extends AbstractModel implements SetupInterface
                         }
                     }
 
-                    if (is_null($storeId)) {
+                    if ($storeId === null) {
                         //CLEAR FOR ALL STORES
                         if (strcasecmp($rawTableName, 'url_rewrite') === 0) {
-                            $select = $connection->select()->from($table, ['url_rewrite_id'])->where('store_id != ?', 1);
+                            $select = $connection->select()
+                                ->from($table, ['url_rewrite_id'])
+                                ->where('store_id != ?', 1);
                             $urlRewriteIds = [];
                             $return = $select->query()->fetchAll();
                             if (count($return) > 0) {
@@ -166,8 +199,11 @@ class Setup extends AbstractModel implements SetupInterface
                             }
                             $where = [ 'store_id != ?' => 1];
                             $deleteCount += $connection->delete($table, $where);
-                            $urlRewriteProductCategoryTable = $this->_resourceConnection->getTableName('catalog_url_rewrite_product_category');
-                            if ($connection->isTableExists($urlRewriteProductCategoryTable) && count($urlRewriteIds) > 0) {
+                            $urlRewriteProductCategoryTable = $this->_resourceConnection
+                                ->getTableName('catalog_url_rewrite_product_category');
+                            if ($connection->isTableExists($urlRewriteProductCategoryTable)
+                                && count($urlRewriteIds) > 0
+                            ) {
                                 $where = ['url_rewrite_id IN(?)'=> $urlRewriteIds ];
                                 $deleteCount += $connection->delete($urlRewriteProductCategoryTable, $where);
                             }
@@ -193,6 +229,7 @@ class Setup extends AbstractModel implements SetupInterface
 
         return $result;
     }
+    //phpcs:enable
 
     public function clearStrakerData()
     {
@@ -223,7 +260,9 @@ class Setup extends AbstractModel implements SetupInterface
         } catch (Exception $e) {
             $connection->rollBack();
             $result['Message'] = $e->getMessage();
+            //phpcs:disable
             throw new Exception($result['Message']);
+            //phpcs:enable
         }
 
         return $result;

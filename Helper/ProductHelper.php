@@ -652,7 +652,7 @@ class ProductHelper extends AbstractHelper
     private function toGridOptionArray($array)
     {
         $newArray = [];
-        if (is_array($array) && sizeof($array) > 0) {
+        if (is_array($array) && count($array) > 0) {
             foreach ($array as $a) {
                 if (isset($a['value']) && isset($a['label']) && !empty($a['value'])) {
                     $newArray[$a['value']] = $a['label'];

@@ -24,7 +24,7 @@ class AttributeTranslation extends \Magento\Framework\Model\AbstractModel implem
 
     protected function _construct()
     {
-        $this->_init('Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeTranslation');
+        $this->_init(\Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeTranslation::class);
     }
 
     public function getIdentities()

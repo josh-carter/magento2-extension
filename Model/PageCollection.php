@@ -13,7 +13,7 @@ use Magento\Framework\DB\Select;
 class PageCollection extends \Magento\Cms\Model\ResourceModel\Page\Collection
 {
 
-    public function is_translated($target_store_id = 1)
+    public function isTranslated($target_store_id = 1)
     {
         $strakerJobs = $this->_resource->getTable('straker_job');
         $strakerTrans = $this->_resource->getTable('straker_attribute_translation');
@@ -21,14 +21,20 @@ class PageCollection extends \Magento\Cms\Model\ResourceModel\Page\Collection
         $this->getSelect()
             ->reset(Select::COLUMNS)
             ->columns(
-                ['main_table.page_id', 'main_table.title', 'MAX(IF((stTrans.is_published AND stJob.job_id) IS NULL, 0, 1)) AS is_translated']
+                [
+                    'main_table.page_id',
+                    'main_table.title',
+                    'MAX(IF((stTrans.is_published AND stJob.job_id) IS NULL, 0, 1)) AS is_translated'
+                ]
             )->joinLeft(
                 ['stTrans' => $strakerTrans],
                 'main_table.page_id=stTrans.entity_id',
                 []
             )->joinLeft(
                 ['stJob' => $strakerJobs],
-                'stTrans.job_id=stJob.job_id and stJob.target_store_id='.$target_store_id.' and stJob.job_type_id='. JobType::JOB_TYPE_PAGE,
+                'stTrans.job_id=stJob.job_id and stJob.target_store_id='
+                . $target_store_id
+                . ' and stJob.job_type_id='. JobType::JOB_TYPE_PAGE,
                 []
             );
 
@@ -55,13 +61,12 @@ class PageCollection extends \Magento\Cms\Model\ResourceModel\Page\Collection
         return $countSelect;
     }
 
-    function getAllIds()
+    public function getAllIds()
     {
         $idsSelect = clone $this->getSelect();
         $idsSelect->reset(\Magento\Framework\DB\Select::ORDER);
         $idsSelect->reset(\Magento\Framework\DB\Select::LIMIT_COUNT);
         $idsSelect->reset(\Magento\Framework\DB\Select::LIMIT_OFFSET);
-//        $idsSelect->reset(\Magento\Framework\DB\Select::COLUMNS);
 
         $idsSelect->columns($this->getResource()->getIdFieldName(), 'main_table');
         return $this->getConnection()->fetchCol($idsSelect, $this->_bindParams);

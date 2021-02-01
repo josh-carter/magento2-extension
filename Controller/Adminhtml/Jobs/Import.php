@@ -6,6 +6,7 @@ use Exception;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Filesystem\DriverInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Xml\Parser;
 
@@ -30,6 +31,10 @@ class Import extends Action
 
     /** @var  \Straker\EasyTranslationPlatform\Model\Job */
     protected $_jobModel;
+    /**
+     * @var DriverInterface
+     */
+    private $driver;
 
     public function __construct(
         Context $context,
@@ -39,7 +44,8 @@ class Import extends Action
         Logger $logger,
         StoreManagerInterface $storeManager,
         StrakerAPIInterface $strakerAPI,
-        Parser $xmlParser
+        Parser $xmlParser,
+        DriverInterface $driver
     ) {
         $this->_jobFactory      = $jobFactory;
         $this->_configHelper    = $configHelper;
@@ -48,9 +54,11 @@ class Import extends Action
         $this->_storeManager    = $storeManager;
         $this->_strakerApi      = $strakerAPI;
         $this->_xmlParser       = $xmlParser;
+        $this->driver           = $driver;
         parent::__construct($context);
     }
 
+    //phpcs:disable
     public function execute()
     {
         //      'name' => string '-straker_job_18_1509478347.xml' (length=30)
@@ -96,9 +104,9 @@ class Import extends Action
                                 $translatedFullFilename = implode(DIRECTORY_SEPARATOR, $fileNameArray);
                             }
 
+                            //phpcs:disable
                             if (move_uploaded_file($file['tmp_name'], $translatedFullFilename)) {
-                                //todo: import
-                                if (file_exists($translatedFullFilename)) {
+                                if ($this->driver->isExists($translatedFullFilename)) {
                                     $this->_importHelper->create($jobId)
                                         ->parseTranslatedFile()
                                         ->saveData();
@@ -118,6 +126,7 @@ class Import extends Action
                             } else {
                                 $this->processErrorMessage('File upload failed.', __FILE__, __METHOD__);
                             }
+                            //phpcs:enable
                         }
                     } else {
                         $this->processErrorMessage('Cannot generate translated file.', __FILE__, __METHOD__);
@@ -136,6 +145,7 @@ class Import extends Action
 
         return $resultRedirect;
     }
+    //phpcs:enable
 
     /**
      * @param $jobId
@@ -151,9 +161,14 @@ class Import extends Action
 
         if ($oldName) {
             $oldNameWithFullPath = $this->_configHelper->getTranslatedXMLFilePath() . DIRECTORY_SEPARATOR . $oldName;
-            if (file_exists($oldNameWithFullPath)) {
-                $newNameWithFullPath  = $this->_configHelper->getTranslatedXMLFilePath() . DIRECTORY_SEPARATOR . 'old_' . time() . '_' . $oldName;
-                $success = rename($oldNameWithFullPath, $newNameWithFullPath);
+            if ($this->driver->isExists($oldNameWithFullPath)) {
+                $newNameWithFullPath  = $this->_configHelper->getTranslatedXMLFilePath()
+                    . DIRECTORY_SEPARATOR
+                    . 'old_'
+                    . time()
+                    . '_'
+                    . $oldName;
+                $success = $this->driver->rename($oldNameWithFullPath, $newNameWithFullPath);
             }
         }
 
@@ -168,6 +183,7 @@ class Import extends Action
     {
         $result = ['success'   => true, 'message'   => ''];
 
+        //phpcs:disable
         if (!is_uploaded_file($file['tmp_name'])) {
             $result['success'] = false;
             $result['message'] = 'File must upload via http post.';
@@ -187,6 +203,7 @@ class Import extends Action
         $result['message'] = __($result['message']);
 
         return $result;
+        //phpcs:enable
     }
 
     /**

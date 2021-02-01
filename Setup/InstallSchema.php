@@ -336,16 +336,8 @@ class InstallSchema implements InstallSchemaInterface
                 $installer->getTable(Model\Job::ENTITY),
                 'job_id',
                 Table::ACTION_CASCADE
-            )
-//                ->addForeignKey(
-//                $installer->getFkName(Model\AttributeTranslation::ENTITY, 'attribute_id', 'eav_attribute',
-//                    'attribute_id'),
-//                'attribute_id',
-//                'eav_attribute',
-//                'attribute_id',
-//                Table::ACTION_CASCADE
-//            )
-            ;
+            );
+
             $installer->getConnection()->createTable($table);
         }
         //END   table setup
@@ -423,13 +415,23 @@ class InstallSchema implements InstallSchemaInterface
                 'attribute_option_translation_id',
                 ['type' => AdapterInterface::INDEX_TYPE_UNIQUE]
             )->addForeignKey(
-                $installer->getFkName(Model\AttributeOptionTranslation::ENTITY, 'attribute_translation_id', Model\AttributeTranslation::ENTITY, 'attribute_translation_id'),
+                $installer->getFkName(
+                    Model\AttributeOptionTranslation::ENTITY,
+                    'attribute_translation_id',
+                    Model\AttributeTranslation::ENTITY,
+                    'attribute_translation_id'
+                ),
                 'attribute_translation_id',
                 $installer->getTable(Model\AttributeTranslation::ENTITY),
                 'attribute_translation_id',
                 Table::ACTION_CASCADE
             )->addForeignKey(
-                $installer->getFkName(Model\AttributeOptionTranslation::ENTITY, 'option_id', 'eav_attribute_option', 'option_id'),
+                $installer->getFkName(
+                    Model\AttributeOptionTranslation::ENTITY,
+                    'option_id',
+                    'eav_attribute_option',
+                    'option_id'
+                ),
                 'option_id',
                 $installer->getTable('eav_attribute_option'),
                 'option_id',
