@@ -54,7 +54,6 @@ class Rollback extends Action
      */
     protected $maintenanceMode;
 
-
     /**
      * Rollback constructor.
      * @param \Magento\Backend\App\Action\Context $context

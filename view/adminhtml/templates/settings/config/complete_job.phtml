@@ -1,5 +1,8 @@
 <?php
-    echo $block->getButtonHtml();
+use \Straker\EasyTranslationPlatform\Block\Adminhtml\Settings\Config\CompleteJob;
+
+/** @var CompleteJob $block */
+echo $block->getButtonHtml();
 ?>
 <script>
     require([
@@ -19,59 +22,26 @@
             var tjNumberInput = $('#demonstration_complete_job_tj_number');
             var tjNumber = tjNumberInput.val();
             $.ajax({
-                url: '<?= $this->getUrl('EasyTranslationPlatform/Jobs/CompleteJob'); ?>',
+                url: '<?= $block->escapeUrl($block->getUrl('EasyTranslationPlatform/Jobs/CompleteJob')); ?>',
                 method: 'get',
                 data: { job_id: tjNumber },
                 dataType: 'json',
                 showLoader: true
             }).done(function (data, textStatus ) {
-//                console.log(textStatus);
-                if( textStatus == 'success' && data.success ) {
+                if( textStatus === 'success' && data.success ) {
                     alert({
                         title: '',
-                        content: '<?= __('Job completed successfully.'); ?>'
+                        content: '<?= $block->escapeHtml(__('Job completed successfully.')); ?>'
                     });
                     tjNumberInput.val('');
-                    location.href = "<?= $this->getUrl('EasyTranslationPlatform/Jobs/Index'); ?>";
+                    location.href = "<?= $block->escapeUrl($block->getUrl('EasyTranslationPlatform/Jobs/Index')); ?>";
                 }else{
                     alert({
                         title: '',
-                        content: '<?= __('Failed to complete the job.'); ?>'
+                        content: '<?= $block->escapeHtml(__('Failed to complete the job.')); ?>'
                     });
                 }
             });
         });
-
-//        $resetButton.on('click', function( e ){
-//            e.preventDefault();
-//
-//            var iStoreId = $(this).siblings('input[name=store-id]').val();
-//
-//            if( $.isNumeric( iStoreId ) && iStoreId > 0 ){
-//
-//                confirm({
-//                    title: '<?php //echo __("Please Confirm") ?>//',
-//                    content: '<?php //echo __('Do you want to reset settings for this store view?') ?>//',
-//                    actions: {
-//                        confirm: function(){
-//                            $.ajax({
-//                                url      : '<?php //echo $block->getAjaxResetUrl(); ?>//',
-//                                data     : { 'store' : iStoreId },
-//                                method   : 'get',
-//                                complete : function(){
-//                                    location.reload();
-//                                }
-//                            });
-//                        }
-//                    }
-//                });
-//
-//            }else{
-//                alert({
-//                    content: '<?php //echo __('Store code is not valid.'); ?>//',
-//                });
-//            }
-//
-//        });
     });
 </script>

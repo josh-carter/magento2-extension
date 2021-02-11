@@ -44,7 +44,6 @@ class JobDestination extends Element implements RendererInterface
 
     public function getWebsites()
     {
-
         return $this->_storeManager->getWebsites();
     }
 
@@ -94,16 +93,14 @@ class JobDestination extends Element implements RendererInterface
                         || ($this->isSandboxModeEnabled()
                             && strcasecmp($store->getCode(), $this->getTestingStoreCode()) == 0)):
 
-                            $options .= '<option value="' . $this->escapeHtml($store->getId()) . '">' . $this->escapeHtml($store->getName()) . '</option>';
+                            $options .= '<option value="'
+                                . $this->escapeHtml($store->getId())
+                                . '">'
+                                . $this->escapeHtml($store->getName())
+                                . '</option>';
                         endif;
                     } else {
                         $options .= '<option value="' . $this->escapeHtml($store->getId()) . '">';
-
-//                            if ($this->getStoreId() == $store->getId()):
-//                                $options .= 'selected="selected"';
-//                            endif;
-//                            $options .= '>';
-
                         $options .= $this->escapeHtml($store->getName());
                         $options .= '</option>';
                     }

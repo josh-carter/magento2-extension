@@ -8,13 +8,10 @@ use Magento\Framework\App\Helper\Context;
 use Magento\Eav\Model\AttributeRepository;
 use Straker\EasyTranslationPlatform\Api\Data\StrakerAPIInterface;
 use Straker\EasyTranslationPlatform\Logger\Logger;
-use Straker\EasyTranslationPlatform\Model\Job;
 use Straker\EasyTranslationPlatform\Model\JobFactory;
-use Straker\EasyTranslationPlatform\Model\JobType;
 
 class AttributeHelper extends AbstractHelper
 {
-
     protected $_translatedAttributeLabels = [];
     protected $_attributeRepository;
     protected $_jobFactory;
@@ -77,7 +74,10 @@ class AttributeHelper extends AbstractHelper
             $options = explode(',', $options);
 
             foreach ($options as $option_id) {
-                $values['value'][] = ['option_id' => $option_id, 'value' => $attribute->getSource()->getOptionText($option_id)];
+                $values['value'][] = [
+                    'option_id' => $option_id,
+                    'value' => $attribute->getSource()->getOptionText($option_id)
+                ];
             }
 
             return $values;
@@ -93,11 +93,8 @@ class AttributeHelper extends AbstractHelper
         $source_store_id,
         $xmlHelper
     ) {
-
         if ($productData) {
-
             try {
-
                 $xmlHelper->appendDataToRoot([
                     'name' => $jobName,
                     'content_context' => 'product_attribute_label',
@@ -110,15 +107,13 @@ class AttributeHelper extends AbstractHelper
                     'value' => $attribute['label'],
                     'translate' => in_array($attribute['label'], $this->_translatedAttributeLabels) ? 'false' : 'true'
                 ]);
-
                 array_push($this->_translatedAttributeLabels, $attribute['label']);
-
             } catch (\Exception $e) {
                 $this->_strakerApi->_callStrakerBugLog(
-                __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
-                $e->__toString()
-            );
-                $this->_logger->error('error', __FILE__ . ' ' . __LINE__ . '' . $e->getMessage(), $e);
+                    __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                    $e->__toString()
+                );
+                $this->_logger->error($e->getMessage(), [ 'location' => __FILE__ . ' ' . __LINE__]);
             }
         }
     }

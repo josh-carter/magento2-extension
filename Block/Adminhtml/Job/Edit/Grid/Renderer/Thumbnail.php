@@ -24,7 +24,7 @@ class Thumbnail extends AbstractRenderer
         $this->productRepositoryInterfaceFactory = $productRepositoryInterfaceFactory;
     }
 
-    function render(DataObject $row)
+    public function render(DataObject $row)
     {
         $index = $this->getColumn()->getIndex();
         $product = $this->productRepositoryInterfaceFactory->create()->getById($row->getData('entity_id'));

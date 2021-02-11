@@ -23,7 +23,8 @@ use Magento\Catalog\Ui\Component\Listing\Attribute\RepositoryInterface;
 
 class Products extends \Straker\EasyTranslationPlatform\Block\Adminhtml\Widget\Grid\Extended
 {
-    protected $_massactionBlockName = \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Massaction\Extended::class;
+    protected $_massactionBlockName
+        = \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Massaction\Extended::class;
     protected $productCollectionFactory;
     protected $jobFactory;
     protected $sourceStoreId;
@@ -38,8 +39,6 @@ class Products extends \Straker\EasyTranslationPlatform\Block\Adminhtml\Widget\G
     protected $productModel;
     protected $websitesModel;
     protected $productFilters;
-
-
     protected $repositoryInterface;
 
     public function __construct(
@@ -132,7 +131,7 @@ class Products extends \Straker\EasyTranslationPlatform\Block\Adminhtml\Widget\G
                 'width'     => '97',
                 'filter'    => false,
                 'sortable'  => false,
-                'renderer'  => 'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Renderer\Thumbnail'
+                'renderer'  => \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Renderer\Thumbnail::class
             ]
         );
 
@@ -229,7 +228,8 @@ class Products extends \Straker\EasyTranslationPlatform\Block\Adminhtml\Widget\G
             }
 
             if ($filter['frontendInput'] === 'multiselect') {
-                $columnConfig['renderer'] = 'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Renderer\MultiSelect';
+                $columnConfig['renderer']
+                    = \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Renderer\MultiSelect::class;
             }
 
             $this->addColumn($filter['code'], $columnConfig);
@@ -262,7 +262,7 @@ class Products extends \Straker\EasyTranslationPlatform\Block\Adminhtml\Widget\G
         return [];
     }
 
-    function _prepareMassaction()
+    protected function _prepareMassaction()
     {
         $this->setMassactionIdField('entity_id');
         $this->setFormFieldName('products');
@@ -337,7 +337,9 @@ class Products extends \Straker\EasyTranslationPlatform\Block\Adminhtml\Widget\G
     protected function _setCollectionOrder($column)
     {
         if ($column->getOrderCallback()) {
+            //phpcs:disable
             call_user_func($column->getOrderCallback(), $this->getCollection(), $column);
+            //phpcs:enable
             return $this;
         }
         return parent::_setCollectionOrder($column);

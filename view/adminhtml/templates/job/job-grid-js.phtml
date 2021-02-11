@@ -11,7 +11,7 @@
         var myAccountButton = $('.straker-my-account-button');
 
         if( typeof myAccountButton.get(0) !== 'undefined' ){
-            var url = '<?= $block->_getMyAccountUrl(); ?>';
+            var url = '<?= $block->escapeUrl($block->_getMyAccountUrl()); ?>';
             myAccountButton.on('click', function (e) {
                 e.preventDefault();
                 window.open(url, '_blank');

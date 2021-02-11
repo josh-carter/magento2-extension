@@ -15,14 +15,10 @@ use Straker\EasyTranslationPlatform\Api\Data\StrakerAPIInterface;
 use Straker\EasyTranslationPlatform\Model\AttributeTranslationFactory;
 use Straker\EasyTranslationPlatform\Model\AttributeOptionTranslationFactory;
 use Straker\EasyTranslationPlatform\Logger\Logger;
-use Straker\EasyTranslationPlatform\Model\JobType;
 
 class BlockHelper extends AbstractHelper
 {
-
     protected $_blockCollectionFactory;
-    protected $_attributeTranslationModel;
-    protected $_attributeOptionTranslationModel;
     protected $_attributeCollectionFactory;
     protected $_storeManager;
     protected $_attributeTranslationFactory;
@@ -63,13 +59,13 @@ class BlockHelper extends AbstractHelper
         $this->_attributeHelper = $attributeHelper;
         $this->_xmlHelper = $xmlHelper;
         $this->_logger = $logger;
-        $this->_entityTypeId =  $eavConfig->getEntityType(CategoryAttributeInterface::ENTITY_TYPE_CODE)->getEntityTypeId();
+        $this->_entityTypeId =  $eavConfig->getEntityType(CategoryAttributeInterface::ENTITY_TYPE_CODE)
+            ->getEntityTypeId();
         $this->_storeManager = $storeManager;
         $this->_strakerApi = $strakerApi;
 
         parent::__construct($context);
     }
-
 
     /**
      * @param $block_ids
@@ -86,7 +82,6 @@ class BlockHelper extends AbstractHelper
         }
 
         $this->_storeId = $source_store_id;
-
 
         $blocks = $this->_blockCollectionFactory->create()
             ->addStoreFilter($source_store_id)
@@ -107,12 +102,10 @@ class BlockHelper extends AbstractHelper
         $includeTitle = $this->_configHelper->shouldTranslateBlockTitle();
 
         foreach ($this->_blockData as $data) {
-
             $attributeData = [];
-
             foreach ($this->_attributes as $attribute) {
                 if (in_array($attribute, $this->_attributes)) {
-                    if ($attribute !== 'title' || ($attribute === 'title' && $includeTitle)) {
+                    if ($attribute !== 'title' || $includeTitle) {
                         array_push($attributeData, [
                             'attribute_code'=>$attribute,
                             'label'=>$attribute,
@@ -124,7 +117,9 @@ class BlockHelper extends AbstractHelper
 
             $blockInfo = [
                 'block_id'=>$data->getId(),
-                'page_url'=>$this->_storeManager->getStore($this->_storeId)->getBaseUrl().$data->getIdentifier().'.html',//check
+                'page_url'=>$this->_storeManager
+                        ->getStore($this->_storeId)
+                        ->getBaseUrl() . $data->getIdentifier() . '.html',//check
                 'attributes'=>$attributeData
             ];
 
@@ -136,7 +131,6 @@ class BlockHelper extends AbstractHelper
         }
 
         $this->_blockData = $blockData;
-
         return $this;
     }
 
@@ -147,7 +141,6 @@ class BlockHelper extends AbstractHelper
     public function generateBlockXML($jobModel)
     {
         $this->_xmlHelper->create('_'.$jobModel->getId().'_'.time());
-
         $this->addSummaryNode();
 
         $this->appendBlockAttributes(
@@ -160,10 +153,8 @@ class BlockHelper extends AbstractHelper
         );
 
         $this->_xmlHelper->saveXmlFile();
-
         return $this->_xmlHelper->getXmlFileName();
     }
-
 
     /**
      * @param $pageData
@@ -182,34 +173,30 @@ class BlockHelper extends AbstractHelper
         $target_store_id,
         $xmlHelper
     ) {
-
-    
         if ($blockData) {
-
             foreach ($blockData as $data) {
-
                 foreach ($data['attributes'] as $attribute) {
+                    $job_name = $job_id . '_'
+                        . $jobType_id . '_'
+                        . $target_store_id . '_'
+                        . $data['block_id'] . '_'
+                        . $attribute['attribute_code'];
 
-                        $job_name = $job_id.'_'.$jobType_id.'_'.$target_store_id.'_'.$data['block_id'].'_'.$attribute['attribute_code'];
-
-                        $xmlHelper->appendDataToRoot([
-                            'name' => $job_name,
-                            'content_context' => 'block_attribute_value',
-                            'content_context_url' => $data['page_url'],
-                            'source_store_id'=> $source_store_id,
-                            'block_id' => $data['block_id'],
-//                            'attribute_id'=>$attribute['attribute_id'],
-                            'attribute_translation_id'=>$attribute['value_translation_id'],
-                            'attribute_code'=>$attribute['attribute_code'],
-                            'attribute_label'=>$attribute['label'],
-                            'value' => $attribute['value']
-                        ]);
+                    $xmlHelper->appendDataToRoot([
+                        'name' => $job_name,
+                        'content_context' => 'block_attribute_value',
+                        'content_context_url' => $data['page_url'],
+                        'source_store_id'=> $source_store_id,
+                        'block_id' => $data['block_id'],
+                        'attribute_translation_id'=>$attribute['value_translation_id'],
+                        'attribute_code'=>$attribute['attribute_code'],
+                        'attribute_label'=>$attribute['label'],
+                        'value' => $attribute['value']
+                    ]);
                 }
             }
-
             return $this;
         }
-
         return false;
     }
 
@@ -219,14 +206,9 @@ class BlockHelper extends AbstractHelper
      */
     public function saveBlockData($job_id)
     {
-
         foreach ($this->_blockData as $blockKey => $data) {
-
             foreach ($data['attributes'] as $attKey => $attribute) {
-
                 $attributeTranslationModel = $this->_attributeTranslationFactory->create();
-
-
                 try {
                     $attributeTranslationModel->setData(
                         [
@@ -239,15 +221,15 @@ class BlockHelper extends AbstractHelper
                         ]
                     )->save();
 
-                    $this->_blockData[$blockKey]['attributes'][$attKey]['value_translation_id'] = $attributeTranslationModel->getId();
-
+                    $this->_blockData[$blockKey]['attributes'][$attKey]['value_translation_id']
+                        = $attributeTranslationModel->getId();
 
                 } catch (Exception $e) {
                     $this->_logger->error('error '.__FILE__.' '.__LINE__.''.$e->getMessage(), [$e]);
                     $this->_strakerApi->_callStrakerBugLog(
-                __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
-                $e->__toString()
-            );
+                        __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                        $e->__toString()
+                    );
                 }
             }
         }

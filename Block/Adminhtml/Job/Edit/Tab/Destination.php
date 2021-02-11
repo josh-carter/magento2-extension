@@ -23,17 +23,9 @@ class Destination extends Generic implements TabInterface
         parent::__construct($context, $registry, $formFactory);
     }
 
-
-    protected function _construct()
-    {
-        parent::_construct();
-    }
-
     protected function _prepareForm()
     {
-
         $form = $this->_formFactory->create();
-
         $form->setHtmlIdPrefix('job_');
 
         $fieldset = $form->addFieldset(
@@ -42,11 +34,10 @@ class Destination extends Generic implements TabInterface
         );
 
         $renderer = $this->getLayout()->createBlock(
-            'Straker\EasyTranslationPlatform\Block\Adminhtml\Form\Renderer\JobDestination'
+            \Straker\EasyTranslationPlatform\Block\Adminhtml\Form\Renderer\JobDestination::class
         );
 
         $fieldset->setRenderer($renderer);
-
         $this->setForm($form);
 
         return parent::_prepareForm();
@@ -54,10 +45,8 @@ class Destination extends Generic implements TabInterface
 
     public function getWebsites()
     {
-
         return $this->_storeManager->getWebsites();
     }
-
 
     /**
      * Prepare label for tab

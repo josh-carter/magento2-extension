@@ -64,12 +64,13 @@ class PageHelper extends AbstractHelper
         $this->_attributeHelper = $attributeHelper;
         $this->_xmlHelper = $xmlHelper;
         $this->_logger = $logger;
-        $this->_entityTypeId =  $eavConfig->getEntityType(CategoryAttributeInterface::ENTITY_TYPE_CODE)->getEntityTypeId();
+        $this->_entityTypeId =  $eavConfig
+            ->getEntityType(CategoryAttributeInterface::ENTITY_TYPE_CODE)
+            ->getEntityTypeId();
         $this->_storeManager = $storeManager;
         $this->_strakerApi = $strakerAPI;
         parent::__construct($context);
     }
-
 
     /**
      * @param $page_ids
@@ -123,9 +124,12 @@ class PageHelper extends AbstractHelper
             }
 
             $pageData[] = [
-                'page_id'=>$data->getId(),
-                'page_title'=>$data->getTitle(),
-                'page_url'=>$this->_storeManager->getStore($this->_storeId)->getBaseUrl().$data->getIdentifier().'.html',//check
+                'page_id' => $data->getId(),
+                'page_title' => $data->getTitle(),
+                'page_url' => $this->_storeManager->getStore($this->_storeId)
+                        ->getBaseUrl()
+                    . $data->getIdentifier()
+                    . '.html',//check
                 'attributes'=>$attributeData
             ];
         }
@@ -159,7 +163,6 @@ class PageHelper extends AbstractHelper
         return $this->_xmlHelper->getXmlFileName();
     }
 
-
     /**
      * @param $pageData
      * @param $job_id
@@ -184,7 +187,8 @@ class PageHelper extends AbstractHelper
 
                 foreach ($data['attributes'] as $attribute) {
 
-                        $job_name = $job_id.'_'.$jobType_id.'_'.$target_store_id.'_'.$data['page_id'].'_'.$attribute['attribute_code'];
+                        $job_name = $job_id . '_' .$jobType_id . '_' . $target_store_id
+                            . '_' .$data['page_id'] . '_' . $attribute['attribute_code'];
 
                         $xmlHelper->appendDataToRoot([
                             'name' => $job_name,
@@ -193,7 +197,6 @@ class PageHelper extends AbstractHelper
                             'attribute_translation_id'=>$attribute['value_translation_id'],
                             'source_store_id'=> $source_store_id,
                             'page_id' => $data['page_id'],
-                            //'attribute_id'=>$attribute['attribute_id'],
                             'attribute_code'=>$attribute['attribute_code'],
                             'attribute_label'=>$attribute['label'],
                             'value' => $attribute['value']
@@ -213,9 +216,7 @@ class PageHelper extends AbstractHelper
     {
 
         foreach ($this->_pageData as $pageKey => $data) {
-
             foreach ($data['attributes'] as $attKey => $attribute) {
-
                 $attributeTranslationModel = $this->_attributeTranslationFactory->create();
 
                 try {
@@ -230,15 +231,13 @@ class PageHelper extends AbstractHelper
                         ]
                     )->save();
 
-
-                    $this->_pageData[$pageKey]['attributes'][$attKey]['value_translation_id'] = $attributeTranslationModel->getId();
-
-
+                    $this->_pageData[$pageKey]['attributes'][$attKey]['value_translation_id']
+                        = $attributeTranslationModel->getId();
                 } catch (Exception $e) {
                     $this->_strakerApi->_callStrakerBugLog(
-                __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
-                $e->__toString()
-            );
+                        __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                        $e->__toString()
+                    );
                     $this->_logger->error('error '.__FILE__.' '.__LINE__.''.$e->getMessage(), [$e]);
                 }
             }

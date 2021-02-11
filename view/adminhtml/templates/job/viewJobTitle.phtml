@@ -1,1 +1,2 @@
-<h1> <?= $block->getData('title')?> </h1>
+<?php /* @var \Magento\Framework\View\Element\Template $block */ ?>
+<h1><?= $block->escapeHtml($block->getData('title')) ?></h1>

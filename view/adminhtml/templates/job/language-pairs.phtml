@@ -1,3 +1,5 @@
+<?php /* @var \Magento\Framework\View\Element\Template $block */ ?>
+
 <script>
     require([
         'jquery',
@@ -14,11 +16,10 @@
         var destinationLanguageElement  = $('select[name="straker_destination_language"]');
         var sourceStoreElement          = $('select[name="magento_source_store"]');
         var sourceLanguageElement       = $('select[name="straker_source_language"]');
-        var contentTabs                 = $('#job_tabs_attachment_products,#job_tabs_categories,#job_tabs_cms_pages,#job_tabs_cms_blocks,#job-summary');
+        var contentTabs                 = $('#job_tabs_attachment_products,' +
+            '#job_tabs_categories,#job_tabs_cms_pages,#job_tabs_cms_blocks,#job-summary');
         var editForm                    = $('form#edit_form');
         var languagePairSetting         = {};
-        // var tabs                        = $('li[role="tab"]');
-        // var hiddenInputs                = ['products','pages','blocks']; //not include 'categories', it is not a mass action
 
         //========= functions ==========
         function isEmpty(object) {
@@ -220,7 +221,8 @@
         }
 
         function showConfirm() {
-            var content = $.mage.__('Your current language selection is different than the default language pair you had previously set up. Do you really want to override the previous setting?');
+            var content = $.mage.__('Your current language selection is different than the default language pair ' +
+                'you had previously set up. Do you really want to override the previous setting?');
             confirm({
                 title: 'Please confirm',
                 content: content,
@@ -337,7 +339,10 @@
             if(typeof data !== 'undefined'){
                 $.each(data, function (item) {
                     var dataItem = data[item];
-                    if (typeof dataItem !== 'undefined' && typeof dataItem.val() !== 'undefined' && dataItem.val() !== ''){
+                    if (typeof dataItem !== 'undefined'
+                        && typeof dataItem.val() !== 'undefined'
+                        && dataItem.val() !== ''
+                    ){
                         var delimiter = item.indexOf('category') === -1 ? '&' : ',';
                         var currentValues = data[item].val().split(delimiter);
                         var newValues = dataItem.val().split(delimiter);
@@ -373,7 +378,7 @@
 
             if (destinationStoreId !== '') {
                 $.ajax({
-                    url: '<?= $block->getUrl('EasyTranslationPlatform/Jobs/CheckLanguagePairs') ?>',
+                    url: '<?= $block->escapeUrl($block->getUrl('EasyTranslationPlatform/Jobs/CheckLanguagePairs')) ?>',
                     data: {
                         form_key: window.FORM_KEY,
                         target_store_id: destinationStoreId
@@ -467,7 +472,10 @@
             });
 
             //when job content (products, categories, cms pages and cms blocks) checked
-            editForm.on('click', 'input, #job_tabs_categories_content a, #job_tabs_categories_content img.x-tree-node-icon', function () {
+            editForm.on(
+                'click',
+                'input, #job_tabs_categories_content a, #job_tabs_categories_content img.x-tree-node-icon',
+                function () {
 //                checkStoreData();
                 $('input[type="hidden"]').trigger('change');
 
@@ -508,16 +516,19 @@
             }
 
             if (settings.url.toLowerCase().search('easytranslationplatform/jobs/products') > -1) {
-                settings.data = settings.data + '&source_store_id=' + source_store_id + '&target_store_id=' + destination_store_id;
+                settings.data = settings.data
+                    + '&source_store_id=' + source_store_id + '&target_store_id=' + destination_store_id;
 //                window.products_ajax_url = settings.url;
             }
 
             if (settings.url.toLowerCase().search('easytranslationplatform/jobs/pages') > -1) {
-                settings.data = settings.data + '&source_store_id=' + source_store_id + '&target_store_id=' + destination_store_id;
+                settings.data = settings.data
+                    + '&source_store_id=' + source_store_id + '&target_store_id=' + destination_store_id;
             }
 
             if (settings.url.toLowerCase().search('easytranslationplatform/jobs/blocks') > -1) {
-                settings.data = settings.data + '&source_store_id=' + source_store_id + '&target_store_id=' + destination_store_id;
+                settings.data = settings.data
+                    + '&source_store_id=' + source_store_id + '&target_store_id=' + destination_store_id;
             }
         });
     });

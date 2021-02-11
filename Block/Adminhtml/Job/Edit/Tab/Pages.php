@@ -11,7 +11,8 @@ use Straker\EasyTranslationPlatform\Model\JobFactory;
 
 class Pages extends \Magento\Backend\Block\Widget\Grid\Extended
 {
-    protected $_massactionBlockName = \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Massaction\Extended::class;
+    protected $_massactionBlockName
+        = \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Massaction\Extended::class;
     protected $pageCollection;
     protected $jobFactory;
     protected $sourceStoreId;
@@ -47,7 +48,6 @@ class Pages extends \Magento\Backend\Block\Widget\Grid\Extended
         $this->sourceStoreId = $this->getRequest()->getParam('source_store_id');
         $this->targetStoreId = $this->getRequest()->getParam('target_store_id');
     }
-
 
     protected function _prepareCollection()
     {
@@ -113,7 +113,7 @@ class Pages extends \Magento\Backend\Block\Widget\Grid\Extended
         return parent::_prepareColumns();
     }
 
-    function _prepareMassaction()
+    protected function _prepareMassaction()
     {
         $this->setMassactionIdField('page_id');
         $this->getMassactionBlock()->setTemplate('Straker_EasyTranslationPlatform::job/massaction_extended.phtml');
@@ -146,7 +146,7 @@ class Pages extends \Magento\Backend\Block\Widget\Grid\Extended
         return true;
     }
 
-    function filterIsTranslated($collection, $column)
+    public function filterIsTranslated($collection, $column)
     {
         $condition = $column->getFilter()->getCondition();
         $collection->getSelect()->having('`is_translated` = ? ', reset($condition));

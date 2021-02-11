@@ -56,7 +56,6 @@ class Grid extends Extended
         return parent::_prepareCollection();
     }
 
-
     /**
      * @return $this
      */
@@ -94,6 +93,7 @@ class Grid extends Extended
             ]
         );
 
+        //phpcs:disable
         $this->addColumn(
             'view',
             [
@@ -148,14 +148,14 @@ class Grid extends Extended
                 ],
                 'filter' => false,
                 'sortable' => false,
-                'renderer' => 'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Renderer\MultiAction',
+                'renderer' => \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Renderer\MultiAction::class,
                 'header_css_class' => 'col-action',
                 'column_css_class' => 'col-action'
             ]
         );
+        //phpcs:enable
         return parent::_prepareColumns();
     }
-
 
     /**
      * @param \Magento\Catalog\Model\Product|\Magento\Framework\DataObject $row
@@ -176,7 +176,7 @@ class Grid extends Extended
         );
     }
 
-    function filterName($collection, $column)
+    public function filterName($collection, $column)
     {
         $condition = $column->getFilter()->getCondition();
         $collection->getSelect()->having('`name` LIKE ' . reset($condition));

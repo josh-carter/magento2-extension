@@ -3,7 +3,7 @@
 namespace Straker\EasyTranslationPlatform\Model;
 
 use Magento\Framework\DataObject\IdentityInterface;
-use Magento\Framework\Filesystem\DriverInterface;
+use \Magento\Framework\Filesystem\Driver\File as FileDriver;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Registry;
@@ -14,7 +14,8 @@ use Magento\Catalog\Model\ResourceModel\Category\Collection\Factory as CategoryC
 use Magento\Cms\Model\ResourceModel\Page\CollectionFactory as MagentoPageCollectionFactory;
 use Magento\Cms\Model\ResourceModel\Block\CollectionFactory as MagentoBlockCollectionFactory;
 use Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeTranslation\Collection;
-use Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeTranslation\CollectionFactory as AttributeTranslationCollectionFactory;
+use Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeTranslation\CollectionFactory
+    as AttributeTranslationCollectionFactory;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Cms\Api\PageRepositoryInterface;
@@ -60,7 +61,7 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
     protected $_strakerApi;
     protected $_logger;
     /**
-     * @var DriverInterface
+     * @var FileDriver
      */
     private $driver;
 
@@ -81,7 +82,7 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
         ImportHelper $importHelper,
         StrakerAPI $strakerAPI,
         Logger $logger,
-        DriverInterface $driver
+        FileDriver $driver
     ) {
         $this->_productCollectionFactory = $productCollectionFactory;
         $this->_categoryCollectionFactory = $categoryCollectionFactory;
@@ -146,7 +147,6 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
 
     protected function _construct()
     {
-
         $this->_init(\Straker\EasyTranslationPlatform\Model\ResourceModel\Job::class);
     }
 
@@ -186,9 +186,8 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
     public function getPageCollection()
     {
         $this->getAttributeTranslationEntityArray();
-        $collection = $this->_pageCollectionFactory->create()
+        return $this->_pageCollectionFactory->create()
             ->addFieldToFilter('page_id', ['in' => $this->_entityIds]);
-        return $collection;
     }
 
     /**

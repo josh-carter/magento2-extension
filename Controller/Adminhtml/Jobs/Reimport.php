@@ -5,7 +5,7 @@ namespace Straker\EasyTranslationPlatform\Controller\Adminhtml\Jobs;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Filesystem\DriverInterface;
+use \Magento\Framework\Filesystem\Driver\File as FileDriver;
 use Magento\Store\Model\StoreManagerInterface;
 use Straker\EasyTranslationPlatform\Helper\ConfigHelper;
 use Straker\EasyTranslationPlatform\Helper\ImportHelper;
@@ -46,7 +46,7 @@ class Reimport extends Action
      */
     private $_strakerApi;
     /**
-     * @var DriverInterface
+     * @var FileDriver
      */
     private $driver;
 
@@ -59,7 +59,7 @@ class Reimport extends Action
         StoreManagerInterface $storeManager,
         StrakerAPIInterface $strakerAPI,
         CollectionFactory $collectionFactory,
-        DriverInterface $driver
+        FileDriver $driver
     ) {
         $this->_jobFactory = $jobFactory;
         $this->_configHelper = $configHelper;

@@ -3,18 +3,11 @@
 namespace Straker\EasyTranslationPlatform\Helper;
 
 use Exception;
-use Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Category;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
-use Magento\Framework\Data\Collection;
 
 use Magento\Framework\Message\ManagerInterface;
 use Straker\EasyTranslationPlatform\Api\Data\StrakerAPIInterface;
-use Straker\EasyTranslationPlatform\Helper\ConfigHelper;
-use Straker\EasyTranslationPlatform\Helper\ProductHelper;
-use Straker\EasyTranslationPlatform\Helper\CategoryHelper;
-use Straker\EasyTranslationPlatform\Helper\PageHelper;
-use Straker\EasyTranslationPlatform\Helper\BlockHelper;
 use Straker\EasyTranslationPlatform\Model\JobFactory;
 use Straker\EasyTranslationPlatform\Model\JobType;
 use Straker\EasyTranslationPlatform\Model\JobStatus;
@@ -74,19 +67,18 @@ class JobHelper extends AbstractHelper
      */
     public function createJob($data)
     {
-
         try {
-
             $this->jobData = $data;
-
             $this->jobModel = $this->_jobFactory->create();
-
             $jobData = [
-                'job_status_id'=> JobStatus::JOB_STATUS_INIT,
-                'source_store_id'=>$this->_configHelper->getStoreInfo($this->jobData['magento_destination_store'])['straker/general/source_store'],
-                'target_store_id'=>$this->jobData['magento_destination_store'],
-                'sl'=>$this->_configHelper->getStoreInfo($this->jobData['magento_destination_store'])['straker/general/source_language'],
-                'tl'=>$this->_configHelper->getStoreInfo($this->jobData['magento_destination_store'])['straker/general/destination_language']
+                'job_status_id' => JobStatus::JOB_STATUS_INIT,
+                'source_store_id' => $this->_configHelper
+                    ->getStoreInfo($this->jobData['magento_destination_store'])['straker/general/source_store'],
+                'target_store_id' => $this->jobData['magento_destination_store'],
+                'sl' => $this->_configHelper
+                    ->getStoreInfo($this->jobData['magento_destination_store'])['straker/general/source_language'],
+                'tl' => $this->_configHelper
+                    ->getStoreInfo($this->jobData['magento_destination_store'])['straker/general/destination_language']
             ];
 
             if ($this->_configHelper->isSandboxMode()) {
@@ -109,14 +101,11 @@ class JobHelper extends AbstractHelper
 
     public function generateProductJob()
     {
-
         try {
-
             $this->jobModel->addData(['job_type_id'=> JobType::JOB_TYPE_PRODUCT]);
-
             $this->jobModel->save();
-
-            $jobFile = $this->_productHelper->getProducts($this->jobData['products'], $this->jobModel->getData('source_store_id'))
+            $jobFile = $this->_productHelper
+                ->getProducts($this->jobData['products'], $this->jobModel->getData('source_store_id'))
                 ->getSelectedProductAttributes()
                 ->saveProductData($this->jobModel->getId())
                 ->generateProductXML($this->jobModel);
@@ -127,8 +116,6 @@ class JobHelper extends AbstractHelper
             ]);
 
             $this->jobModel->save();
-
-
         } catch (Exception $e) {
             $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$e]);
             $this->_strakerApi->_callStrakerBugLog(
@@ -147,14 +134,11 @@ class JobHelper extends AbstractHelper
 
     public function generateCategoryJob()
     {
-
         try {
-
             $this->jobModel->addData(['job_type_id'=> JobType::JOB_TYPE_CATEGORY]);
-
             $this->jobModel->save();
-
-            $jobFile = $this->_categoryHelper->getCategories($this->jobData['categories'], $this->jobModel->getData('source_store_id'))
+            $jobFile = $this->_categoryHelper
+                ->getCategories($this->jobData['categories'], $this->jobModel->getData('source_store_id'))
                 ->getSelectedCategoryAttributes()
                 ->saveCategoryData($this->jobModel->getId())
                 ->generateCategoryXML($this->jobModel);
@@ -165,8 +149,6 @@ class JobHelper extends AbstractHelper
             ]);
 
             $this->jobModel->save();
-
-
         } catch (Exception $e) {
             $this->_logger->error('error' . __FILE__ . ' ' . __LINE__ . ' ' . $e->getMessage(), [$e]);
             $this->_strakerApi->_callStrakerBugLog(
@@ -176,19 +158,17 @@ class JobHelper extends AbstractHelper
             $this->_messageManager->addError($e->getMessage());
         }
 
-
         return $this->jobModel;
     }
 
     public function generatePageJob()
     {
-
         try {
-
             $this->jobModel->addData(['job_type_id'=> JobType::JOB_TYPE_PAGE]);
             $this->jobModel->save();
 
-            $jobFile = $this->_pageHelper->getPages($this->jobData['pages'], $this->jobModel->getData('source_store_id'))
+            $jobFile = $this->_pageHelper
+                ->getPages($this->jobData['pages'], $this->jobModel->getData('source_store_id'))
                 ->getSelectedPageAttributes()
                 ->savePageData($this->jobModel->getId())
                 ->generatePageXML($this->jobModel);
@@ -214,14 +194,12 @@ class JobHelper extends AbstractHelper
 
     public function generateBlockJob()
     {
-
         try {
-
             $this->jobModel->addData(['job_type_id'=> JobType::JOB_TYPE_BLOCK]);
-
             $this->jobModel->save();
 
-            $jobFile = $this->_blockHelper->getBlocks($this->jobData['blocks'], $this->jobModel->getData('source_store_id'))
+            $jobFile = $this->_blockHelper
+                ->getBlocks($this->jobData['blocks'], $this->jobModel->getData('source_store_id'))
                 ->getSelectedBlockAttributes()
                 ->saveBlockData($this->jobModel->getId())
                 ->generateBlockXML($this->jobModel);
@@ -250,7 +228,6 @@ class JobHelper extends AbstractHelper
      */
     public function getJobInfo()
     {
-
         return $this->jobModel->getData();
     }
 
@@ -259,7 +236,6 @@ class JobHelper extends AbstractHelper
      */
     public function getJob()
     {
-
         return $this->jobModel;
     }
 
@@ -269,33 +245,6 @@ class JobHelper extends AbstractHelper
     public function save()
     {
         $this->jobModel->save();
-
         return $this;
     }
-
-//    /**
-//     * @param $jobType
-//     * @return mixed
-//     */
-//    protected function getJobTypeId($jobType){
-//
-//        $collection = $this->_jobTypeCollection->create()
-//            ->addFieldToFilter('type_name',array('eq'=>$jobType))
-//            ->getFirstItem();
-//
-//        return $collection->getData('type_id');
-//    }
-
-//    /**
-//     * @param $jobStatus
-//     * @return mixed
-//     */
-//    protected function getJobStatusId($jobStatus){
-//
-//        $collection = $this->_jobStatusCollection->create()
-//            ->addFieldToFilter('status_name',array('eq'=>$jobStatus))
-//            ->getFirstItem();
-//
-//        return $collection->getData('status_id');
-//    }
 }

@@ -9,7 +9,6 @@ use Magento\Framework\Xml\Parser;
 use Magento\Eav\Api\AttributeRepositoryInterface;
 use Magento\Catalog\Model\Product\Action as ProductAction;
 use Magento\Framework\App\ResourceConnection;
-use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
 use Magento\Framework\Message\ManagerInterface;
@@ -31,8 +30,10 @@ use Straker\EasyTranslationPlatform\Model\BlockCollection;
 use Straker\EasyTranslationPlatform\Model\JobFactory;
 use Straker\EasyTranslationPlatform\Model\AttributeTranslationFactory;
 use Straker\EasyTranslationPlatform\Model\AttributeOptionTranslationFactory;
-use Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeTranslation\CollectionFactory as AttributeTranslationCollection;
-use Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeOptionTranslation\CollectionFactory as AttributeOptionTranslationCollection;
+use Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeTranslation\CollectionFactory
+    as AttributeTranslationCollection;
+use Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeOptionTranslation\CollectionFactory
+    as AttributeOptionTranslationCollection;
 
 class ImportHelper extends AbstractHelper
 {

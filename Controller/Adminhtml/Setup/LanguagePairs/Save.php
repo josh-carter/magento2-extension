@@ -4,7 +4,6 @@ namespace Straker\EasyTranslationPlatform\Controller\Adminhtml\Setup\LanguagePai
 
 use Exception;
 use Magento\Backend\App\Action;
-use Magento\Framework\Exception\LocalizedException;
 use RuntimeException;
 use Straker\EasyTranslationPlatform\Api\Data\SetupInterface;
 use Straker\EasyTranslationPlatform\Api\Data\StrakerAPIInterface;
@@ -28,7 +27,6 @@ class Save extends Action
         $this->_logger = $logger;
         $this->_strakerApi = $strakerApi;
     }
-
 
     public function execute()
     {

@@ -77,7 +77,7 @@ class RestoreProductData extends Field
      */
     public function getAjaxResetUrl()
     {
-        return $this->getUrl('EasyTranslationPlatform/Settings/RestoreProductData'); //hit controller by ajax call on button click.
+        return $this->getUrl('EasyTranslationPlatform/Settings/RestoreProductData');
     }
 
     /**
@@ -96,18 +96,7 @@ class RestoreProductData extends Field
 
     public function getRestoreFileList()
     {
-        /** @var \Magento\Backup\Model\Fs\Collection $fsCollection */
-        $fsCollection = $this->_fsCollectionFactory->create();
-//        $fsCollection->setFilesFilter(
-//           '/^.*_straker[a-z0-9\_]+\.sql$/mi'
-//        );
-//        var_dump($fsCollection->getItems());exit;
-//        $items = $fsCollection->getItems();
-//        if(count( $items )){
-//            return reset($items);
-//        }
-//        return null;
-        return $fsCollection->getItems();
+        return $this->_fsCollectionFactory->create()->getItems();
     }
 
     public function getDateFormat($date)

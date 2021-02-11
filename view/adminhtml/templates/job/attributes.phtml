@@ -1,6 +1,10 @@
-<?php foreach ($block->getDefaultAttributes() as $key => $value): ?>
+<?php
+/* @var \Magento\Framework\View\Element\Template $block */
+
+foreach ($block->getDefaultAttributes() as $key => $value):
+    ?>
     <ul>
-        <li>Label - <?= $block->getAttributes()[$key]['label'] ?></li>
-        <li>Type - <?= $block->getAttributes()[$key]['type'] ?></li>
+        <li>Label - <?= $block->escapeHtml($block->getAttributes()[$key]['label']) ?></li>
+        <li>Type - <?= $block->escapeHtml($block->getAttributes()[$key]['type']) ?></li>
     </ul>
 <?php endforeach; ?>

@@ -1,14 +1,37 @@
+<?php /* @var Straker\EasyTranslationPlatform\Block\Adminhtml\About\Index $block */ ?>
+
 <div class="straker-about-page">
     <div>
-        <a href="https://www.strakertranslations.com" target="_blank"><img src="https://www.strakertranslations.com/assets/images/logo.png" alt="Straker Translations"></a>
+        <a href="https://www.strakertranslations.com"
+           target="_blank">
+            <img src="https://www.strakertranslations.com/assets/images/logo.png"
+                 alt="<?= $block->escapeHtml(__('Straker Translations')) ?>"
+            >
+        </a>
     </div>
     <br>
     <div>
-        <p><b>Extension Version</b>: <?= $block->getModuleVersion() ?></p>
+        <p>
+            <b><?= $block->escapeHtml(__('Extension Version')) ?></b>:
+            <?= $block->escapeHtml($block->getModuleVersion()) ?>
+        </p>
     </div>
     <hr>
     <div>
-        <p>Our API-based extension enables you to translate your Magento content by professional linguists with market expertise, all without having to import or export any files. The entire process, including the publishing of the translated content, is done via our extension’s UI. More information can be found in our <a href="https://support.strakertranslations.com/extensions/magento2/" title="Straker Doc - Magento2" target="_blank">knowledge page</a>.</p>
+        <p>
+<?=
+        $block->escapeHtml(__('Our API-based extension enables you to translate your Magento content 
+        by professional linguists with market expertise, all without having to import or export any files. 
+        The entire process, including the publishing of the translated content, is done via our 
+        extension’s UI. More information can be found in our'));
+?>
+            <a href="https://support.strakertranslations.com/extensions/magento2/"
+               title="<?= $block->escapeHtml(__('Straker Doc - Magento2')) ?>"
+               target="_blank"
+            >
+                <?= $block->escapeHtml(__('knowledge page')) ?>
+            </a>.
+        </p>
     </div>
 </div>
 

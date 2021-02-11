@@ -36,7 +36,7 @@ class MultiAction extends Action
     protected $_jobModel;
     protected $_pageUrlBuilder;
 
-    function __construct(
+    public function __construct(
         Context $context,
         EncoderInterface $jsonEncoder,
         Url $url,
@@ -90,6 +90,7 @@ class MultiAction extends Action
         return $html;
     }
 
+    //phpcs:disable
     /**
      * Render single action as link html
      *
@@ -97,8 +98,10 @@ class MultiAction extends Action
      * @param  \Magento\Framework\DataObject $row
      * @return string|false
      */
-    protected function _toLinkHtml($action, \Magento\Framework\DataObject $row)
-    {
+    protected function _toLinkHtml(
+        $action,
+        \Magento\Framework\DataObject $row
+    ) {
         $text = $action['caption']->getText();
         if (key_exists('caption', $action) && strcasecmp('View Details', $text) == 0) {
             return parent::_toLinkHtml($action, $row);
@@ -123,12 +126,24 @@ class MultiAction extends Action
                                     $this->_productModel->load($entityId)->setStoreId($targetStoreId);
                                     if ($isFront === false) {
                                         $attr .= ' title="View in Backend"';
-                                        $url = $this->getUrl('catalog/product/edit', ['id' => $entityId, 'store' => $targetStoreId]);
+                                        $url = $this->getUrl(
+                                            'catalog/product/edit',
+                                            ['id' => $entityId, 'store' => $targetStoreId]
+                                        );
                                         return sprintf('<a href="%s" %s>%s</a>', $url, $attr, $text);
                                     } else {
-                                        if ($this->_productModel->isVisibleInSiteVisibility() && !$this->_productModel->isDisabled()) {
+                                        if ($this->_productModel->isVisibleInSiteVisibility()
+                                            && !$this->_productModel->isDisabled()
+                                        ) {
                                             $attr .= ' title="View in Frontend"';
-                                            $url = $this->_frontendUrl->getUrl('catalog/product/view', ['id' => $entityId, '_nosid' => true, '_query' => ['___store' => $storeCode]]);
+                                            $url = $this->_frontendUrl->getUrl(
+                                                'catalog/product/view',
+                                                [
+                                                    'id' => $entityId,
+                                                    '_nosid' => true,
+                                                    '_query' => ['___store' => $storeCode]
+                                                ]
+                                            );
                                             return sprintf('<a href="%s" %s>%s</a>', $url, $attr, $text);
                                         }
                                     }
@@ -137,23 +152,39 @@ class MultiAction extends Action
                                     $this->_categoryModel->load($entityId)->setStoreId($targetStoreId);
                                     if ($isFront === false) {
                                         $attr .= ' title="View in Backend"';
-                                        $url = $this->getUrl('catalog/category/edit', ['id' => $entityId, 'store' => $targetStoreId]);
+                                        $url = $this->getUrl(
+                                            'catalog/category/edit',
+                                            ['id' => $entityId, 'store' => $targetStoreId]
+                                        );
                                     } else {
                                         $attr .= ' title="View in Frontend"';
-                                        $url = $this->_frontendUrl->getUrl('catalog/category/view', ['id' => $entityId, '_nosid' => true, '_query' => ['___store' => $storeCode]]);
+                                        $url = $this->_frontendUrl->getUrl(
+                                            'catalog/category/view',
+                                            [
+                                                'id' => $entityId,
+                                                '_nosid' => true,
+                                                '_query' => ['___store' => $storeCode]
+                                            ]
+                                        );
                                     }
                                     return sprintf('<a href="%s" %s>%s</a>', $url, $attr, $text);
-                                    break;
                                 case JobModelType::JOB_TYPE_PAGE:
                                     $pageId = $job->getTranslatedPageId($entityId);
                                     if ($pageId) {
                                         $this->_pageModel->load($pageId);
                                         if ($isFront === false) {
                                             $attr .= ' title="View in Backend"';
-                                            $url = $this->getUrl(PageActions::CMS_URL_PATH_EDIT, ['page_id' => $pageId]);
+                                            $url = $this->getUrl(
+                                                PageActions::CMS_URL_PATH_EDIT,
+                                                ['page_id' => $pageId]
+                                            );
                                         } else {
                                             $attr .= ' title="View in Frontend"';
-                                            $url = $this->_pageUrlBuilder->getUrl($this->_pageModel->getIdentifier(), $targetStoreId, $storeCode);
+                                            $url = $this->_pageUrlBuilder->getUrl(
+                                                $this->_pageModel->getIdentifier(),
+                                                $targetStoreId,
+                                                $storeCode
+                                            );
                                         }
                                         return sprintf('<a href="%s" %s>%s</a>', $url, $attr, $text);
                                     }
@@ -166,7 +197,6 @@ class MultiAction extends Action
                                         $url = $this->getUrl(BlockActions::URL_PATH_EDIT, ['block_id' => $blockId]);
                                     }
                                     return sprintf('<a href="%s" %s>%s</a>', $url, $attr, $text);
-                                    break;
                             }
                         }
                     }
@@ -174,6 +204,7 @@ class MultiAction extends Action
             }
         }
     }
+    //phpcs:enable
 
     /**
      * @param $action

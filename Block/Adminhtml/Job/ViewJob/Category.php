@@ -76,12 +76,12 @@ class Category extends Container
 
         $this->addChild(
             'straker-title-manageJob',
-            'Magento\Framework\View\Element\Template'
+            \Magento\Framework\View\Element\Template::class
         )->setTemplate('Straker_EasyTranslationPlatform::job/viewJobTitle.phtml')->setData('title', 'Manage Jobs');
 
         $this->addChild(
             'straker-breadcrumbs',
-            'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Widget\Breadcrumbs',
+            \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Widget\Breadcrumbs::class,
             [
                 [
                     'label' => __('Manage Jobs'),
@@ -109,7 +109,7 @@ class Category extends Container
 
         $this->addChild(
             'straker_job_category_grid',
-            'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Category\Grid'
+            \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Category\Grid::class
         );
 
         return parent::_prepareLayout();

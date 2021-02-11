@@ -206,12 +206,16 @@ class ConfigHelper extends AbstractHelper
 
     public function getPaymentPageUrl()
     {
-        return $this->_getSiteDomain('my_account_domain').'/'.$this->scopeConfig->getValue('straker/general/api_url/payment_page');
+        return $this->_getSiteDomain('my_account_domain')
+            . '/'
+            . $this->scopeConfig->getValue('straker/general/api_url/payment_page');
     }
 
     public function getBugLogUrl()
     {
-        return $this->_getSiteDomain('straker_bug_log_domain').'/'.$this->scopeConfig->getValue('straker/general/api_url/bug_log');
+        return $this->_getSiteDomain('straker_bug_log_domain')
+            . '/'
+            . $this->scopeConfig->getValue('straker/general/api_url/bug_log');
     }
 
     public function getMyAccountUrl()
@@ -221,7 +225,9 @@ class ConfigHelper extends AbstractHelper
 
     public function getDbBackupUrl()
     {
-        return $this->_getSiteDomain('', 'uat', 'backup') . '/' . $this->scopeConfig->getValue('straker/general/api_url/backup');
+        return $this->_getSiteDomain('', 'uat')
+            . '/'
+            . $this->scopeConfig->getValue('straker/general/api_url/backup');
     }
 
     public function getDbRestoreUrl()

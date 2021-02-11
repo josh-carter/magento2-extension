@@ -1,7 +1,7 @@
 <?php
 namespace Straker\EasyTranslationPlatform\Model;
 
-use Magento\Framework\Filesystem\DriverInterface;
+use \Magento\Framework\Filesystem\Driver\File as FileDriver;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Registry;
@@ -39,7 +39,7 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
     protected $_storeManager;
     protected $_messageManager;
     /**
-     * @var DriverInterface
+     * @var FileDriver
      */
     private $driver;
 
@@ -52,7 +52,7 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
         Logger $logger,
         StoreManagerInterface $storeManagerInterface,
         ManagerInterface $messageInterface,
-        DriverInterface $driver
+        FileDriver $driver
     ) {
         parent::__construct($context, $registry);
         $this->_configHelper = $configHelper;

@@ -19,7 +19,6 @@ class Grid extends Extended
     protected $_jobKey;
     protected $_sourceStoreId;
 
-
     public function __construct(
         Context $context,
         BackendHelperData $backendHelper,
@@ -43,20 +42,17 @@ class Grid extends Extended
      */
     protected function _prepareCollection()
     {
-
         $jobCollection = $this->_jobCollectionFactory->create()->addFieldToFilter('job_key', ['eq'=>$this->_jobKey ]);
         $jobCollection->setOrder('job_type_id', 'ASC');
         $this->setCollection($jobCollection);
         return parent::_prepareCollection();
     }
 
-
     /**
      * @return $this
      */
     protected function _prepareColumns()
     {
-
         $this->_filterVisibility = false;
 
         $this->addColumn(
@@ -80,7 +76,7 @@ class Grid extends Extended
                 'index' => 'job_type',
                 'type' => 'xxx',
                 'width' => '50px',
-                'renderer' => 'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Renderer\JobType'
+                'renderer' => \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Renderer\JobType::class
             ]
         );
         $this->addColumn(
@@ -105,14 +101,14 @@ class Grid extends Extended
                 'width' => '50px'
             ]
         );
-
+        //phpcs:disable
         $this->addColumn(
             'view',
             [
                 'header' => __('Action'),
                 'type' => 'action',
                 'getter' => 'getId',
-                'renderer' => 'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Renderer\JobTypeActions',
+                'renderer' => \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Renderer\JobTypeActions::class,
                 'filter' => false,
                 'sortable' => false,
                 'index' => 'view',
@@ -120,9 +116,9 @@ class Grid extends Extended
                 'column_css_class' => 'col-action'
             ]
         );
+        //phpcs:enable
         return parent::_prepareColumns();
     }
-
 
     /**
      * @param \Magento\Catalog\Model\Product|\Magento\Framework\DataObject $row

@@ -1,3 +1,4 @@
+<?php /* @var \Magento\Framework\View\Element\Template $block */ ?>
 <section id="job-summary" class="admin__page-section">
     <div class="admin__page-section-title">
         <span class="title"><strong>SUMMARY</strong></span>
@@ -8,19 +9,19 @@
                 <table class="admin__table-secondary order-information-table">
                     <tbody>
                         <tr>
-                            <th><?= __('Product') ?></th>
+                            <th><?= $block->escapeHtml(__('Product')) ?></th>
                             <td class="products">0</td>
                         </tr>
                         <tr>
-                            <th><?= __('Category') ?></th>
+                            <th><?= $block->escapeHtml(__('Category')) ?></th>
                             <td class="categories">0</td>
                         </tr>
                         <tr>
-                            <th><?= __('CMS Page') ?></th>
+                            <th><?= $block->escapeHtml(__('CMS Page')) ?></th>
                             <td class="pages">0</td>
                         </tr>
                         <tr>
-                            <th><?= __('CMS Block') ?></th>
+                            <th><?= $block->escapeHtml(__('CMS Block')) ?></th>
                             <td class="blocks">0</td>
                         </tr>
                     </tbody>

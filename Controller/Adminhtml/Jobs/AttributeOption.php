@@ -4,18 +4,15 @@ namespace Straker\EasyTranslationPlatform\Controller\Adminhtml\Jobs;
 
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
-use Magento\Framework\View\Result\PageFactory;
-use Magento\Framework\Registry;
 use Straker\EasyTranslationPlatform\Helper\ConfigHelper;
 use Straker\EasyTranslationPlatform\Model\JobFactory;
 use Straker\EasyTranslationPlatform\Model\StrakerAPI;
 use Straker\EasyTranslationPlatform\Logger\Logger;
-use Straker\EasyTranslationPlatform\Model;
-use Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeOptionTranslation\CollectionFactory as AttributeOptionTranslationCollectionFactory;
+use Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeOptionTranslation\CollectionFactory
+    as AttributeOptionTranslationCollectionFactory;
 
 class AttributeOption extends \Magento\Backend\App\Action
 {
-
     protected $_resultJsonFactory;
     protected $_attributeOptionTranslationCollectionFactory;
     protected $_configHelper;

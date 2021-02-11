@@ -1,5 +1,4 @@
 <?php
-
 namespace Straker\EasyTranslationPlatform\Block\Adminhtml\Support\Form;
 
 use Magento\Backend\Block\Widget\Form\Generic;
@@ -11,7 +10,6 @@ use Magento\Framework\Data\FormFactory;
 
 class Form extends Generic
 {
-
     protected $_jobCollection;
     protected $_Registry;
     protected $_configHelper;
@@ -32,15 +30,8 @@ class Form extends Generic
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
-
-    protected function _construct()
-    {
-        parent::_construct();
-    }
-
     protected function _prepareForm()
     {
-
         /** @var \Magento\Framework\Data\Form $form */
         $form = $this->_formFactory->create(
             ['data' => ['id' => 'edit_form', 'action' => $this->getData('action'), 'method' => 'post']]
@@ -118,8 +109,6 @@ class Form extends Generic
             ]
         );
 
-
-
         $fieldset->addField(
             'detail',
             'textarea',
@@ -161,9 +150,7 @@ class Form extends Generic
             ]
         );
 
-
         $form->setUseContainer(true);
-
         $form->setValues($this->getRequest()->getParams());
 
         $form->setValues(
@@ -180,15 +167,12 @@ class Form extends Generic
         );
 
         $this->setForm($form);
-
         return parent::_prepareForm();
     }
 
     protected function _getTJNumbers()
     {
-
         $options = [];
-
         $options[] = '';
 
         $jobs = $this->_jobCollection->create()
@@ -204,17 +188,21 @@ class Form extends Generic
         return $options;
     }
 
+    //phpcs:disable
     private function getFormDesc()
     {
         return '<div>
                     <h2>How can we help?</h2>
                     <div>
                         <h3 class="straker-support-form-title">Read our docs</h3>
-                        <p>Read our <a href="https://support.strakertranslations.com/extensions/magento2/" title="Straker Docs - Magento2" target="_blank">docs</a> available on Straker Translations knowledge base</p>
+                        <p>Read our <a href="https://support.strakertranslations.com/extensions/magento2/" 
+                        title="Straker Docs - Magento2" 
+                        target="_blank">docs</a> available on Straker Translations knowledge base</p>
                     </div>
                     <div>
                         <h3 class="straker-support-form-title">Magento Market Place</h3>
-                        <p>Visit our <a href="https://marketplace.magento.com/strakertranslations-straker-magento2.html#product.info.details.support" title="Magento Marketplace" target="_blank">support page</a> on Magento Marketplace</p>
+                        <p>Visit our <a href="https://marketplace.magento.com/strakertranslations-straker-magento2.html#product.info.details.support"
+                        title="Magento Marketplace" target="_blank">support page</a> on Magento Marketplace</p>
                     </div>
                     <div>
                         <h3 class="straker-support-form-title">Contact Us</h3>
@@ -223,4 +211,5 @@ class Form extends Generic
                 </div>
                ';
     }
+    //phpcs:enable
 }

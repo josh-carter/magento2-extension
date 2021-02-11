@@ -6,7 +6,7 @@ use Exception;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Filesystem\DriverInterface;
+use \Magento\Framework\Filesystem\Driver\File as FileDriver;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Xml\Parser;
 
@@ -32,7 +32,7 @@ class Import extends Action
     /** @var  \Straker\EasyTranslationPlatform\Model\Job */
     protected $_jobModel;
     /**
-     * @var DriverInterface
+     * @var FileDriver
      */
     private $driver;
 
@@ -45,7 +45,7 @@ class Import extends Action
         StoreManagerInterface $storeManager,
         StrakerAPIInterface $strakerAPI,
         Parser $xmlParser,
-        DriverInterface $driver
+        FileDriver $driver
     ) {
         $this->_jobFactory      = $jobFactory;
         $this->_configHelper    = $configHelper;

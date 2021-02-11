@@ -1,7 +1,10 @@
 <?php
 namespace Straker\EasyTranslationPlatform\Model;
 
-class AttributeTranslation extends \Magento\Framework\Model\AbstractModel implements AttributeTranslationInterface, \Magento\Framework\DataObject\IdentityInterface
+use Magento\Framework\DataObject\IdentityInterface;
+use Magento\Framework\Model\AbstractModel;
+
+class AttributeTranslation extends AbstractModel implements AttributeTranslationInterface, IdentityInterface
 {
     const CACHE_TAG = 'straker_easytranslationplatform_attributetranslation';
 

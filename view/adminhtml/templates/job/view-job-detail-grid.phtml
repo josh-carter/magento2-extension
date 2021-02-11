@@ -1,7 +1,7 @@
-<?php
-/**  @var $block \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob */
-echo $block->getHtml();
+<?php /**  @var $block \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob */ ?>
+<?= /* @noEscape */ $block->getHtml(); ?>
 
+<?php
 /** @var $typeBlock \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Type */
 $typeBlock = $block->getChildBlock('view_job_type_grid');
 ?>
@@ -9,12 +9,17 @@ $typeBlock = $block->getChildBlock('view_job_type_grid');
 <?php if ($typeBlock !== false): ?>
 
 <div id="import-translation-modal" style="display: none;">
-    <form id="import-translation-form" class="admin__fileldset" action="<?= $typeBlock->getImportUrl(); ?>" method="post" enctype="multipart/form-data">
+    <form id="import-translation-form"
+          class="admin__fileldset"
+          action="<?= $block->escapeUrl($typeBlock->getImportUrl()); ?>"
+          method="post"
+          enctype="multipart/form-data"
+    >
         <?= $block->getBlockHtml('formkey')?>
-        <input type="hidden" name="job_id" value="<?= $typeBlock->getJobId();?>" />
-        <input type="hidden" name="job_key" value="<?= $typeBlock->getJobKey();?>" />
-        <input type="hidden" name="source_store_id" value="<?= $typeBlock->getSourceStoreId();?>" />
-        <p><?= __('This will import translation by uploading translated file.') ?></p>
+        <input type="hidden" name="job_id" value="<?= $block->escapeHtml($typeBlock->getJobId());?>" />
+        <input type="hidden" name="job_key" value="<?= $block->escapeHtml($typeBlock->getJobKey());?>" />
+        <input type="hidden" name="source_store_id" value="<?= $block->escapeHtml($typeBlock->getSourceStoreId());?>" />
+        <p><?= $block->escapeHtml(__('This will import translation by uploading translated file.')) ?></p>
         <fieldset class="fieldset admin__fieldset fieldset-wide">
             <legend class="admin__legend legend">
                 <span></span>
@@ -25,10 +30,13 @@ $typeBlock = $block->getChildBlock('view_job_type_grid');
 
             <div class="admin__field required">
                 <label for="import_file_uploader" class="admin__field-label">
-                    <span><?php /* @escapeNotVerified */ echo __('Upload Translated File') ?></span>
+                    <span><?= $block->escapeHtml(__('Upload Translated File')) ?></span>
                 </label>
                 <div class="admin__field-control import-file-control">
-                    <input type="file" id="import_file_uploader" name="translated_file" class="input-file required-entry"/>
+                    <input type="file"
+                           id="import_file_uploader"
+                           name="translated_file"
+                           class="input-file required-entry"/>
                     <div class="straker_store_error_msg"><span></span></div>
                 </div>
             </div>
@@ -148,22 +156,29 @@ $typeBlock = $block->getChildBlock('view_job_type_grid');
                     if( typeof attrOptions.get(0) === 'undefined' ){
                        // loadingMask.show();
                         $.ajax({
-                            url: '<?= $this->getUrl('EasyTranslationPlatform/Jobs/AttributeOption'); ?>',
+                            url: '<?= $block->escapeUrl(
+                                $block->getUrl('EasyTranslationPlatform/Jobs/AttributeOption')
+                            ); ?>',
                             data: {attributeTranslationId: attrTranslationId},
                             dataType: 'json',
                             showLoader :  true,
                             method: 'get'
                         }).done(function (data, textStatus ) {
-                            if( textStatus == 'success' && data.status ){
-                                var html = '<tr class="job-option straker-job-attribute-option-'+ attrTranslationId +'">\
-                                                <td colspan="2"></td>\
-                                                <td class="attr-option-td" colspan="2">\
-                                                    <table class="attr-option-table" width="100%">';
+                            if( textStatus === 'success' && data.status ){
+                                var html = '<tr class="job-option straker-job-attribute-option-'
+                                    + attrTranslationId
+                                    +'">'
+                                    + '<td colspan="2"></td>'
+                                    + '<td class="attr-option-td" colspan="2">'
+                                    + '<table class="attr-option-table" width="100%">';
                                 $.each(data.option_data, function (index, element ) {
-                                    html += '<tr>\
-                                                <td class="a-left col-text col-original_value">' + element['original_value'] + '</td>\
-                                                <td class="col-text col-translated_value">' + element['translated_value'] + '</td>\
-                                             </tr>';
+                                    html += '<tr>'
+                                        + '<td class="a-left col-text col-original_value">'
+                                        + element['original_value'] + '</td>'
+                                        + '<td class="col-text col-translated_value">'
+                                        + element['translated_value']
+                                        + '</td>'
+                                        + '</tr>';
                                 });
                                 html += '</table></td></tr>';
                                 $(html).insertAfter(currentRow);

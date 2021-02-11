@@ -13,7 +13,7 @@ class CreateTestingStoreView extends Field
     private $_buttonName;
     protected $_setup;
 
-    function __construct(
+    public function __construct(
         Context $context,
         SetupInterface $setup,
         array $data = []
@@ -56,7 +56,7 @@ class CreateTestingStoreView extends Field
      */
     public function getAjaxResetUrl()
     {
-        return $this->getUrl('EasyTranslationPlatform/Settings/CreateTestStoreView'); //hit controller by ajax call on button click.
+        return $this->getUrl('EasyTranslationPlatform/Settings/CreateTestStoreView');
     }
 
     /**
@@ -77,7 +77,7 @@ class CreateTestingStoreView extends Field
     {
         $disable = $this->_setup->isTestingStoreViewExist()->getId() ? true : false;
         $button = $this->getLayout()->createBlock(
-            'Magento\Backend\Block\Widget\Button'
+            \Magento\Backend\Block\Widget\Button::class
         )->addData([
             'id' => $this->_buttonId,
             'name' => $this->_buttonName,

@@ -44,7 +44,7 @@ class RestoreButton extends Field
      */
     public function getAjaxRequestUrl()
     {
-        return $this->getUrl('EasyTranslationPlatform/Settings/RestoreBackup'); //hit controller by ajax call on button click.
+        return $this->getUrl('EasyTranslationPlatform/Settings/RestoreBackup');
     }
 
     /**
@@ -64,7 +64,7 @@ class RestoreButton extends Field
     public function getButtonHtml()
     {
         $button = $this->getLayout()->createBlock(
-            'Magento\Backend\Block\Widget\Button'
+            \Magento\Backend\Block\Widget\Button::class
         )->addData([
             'id' => $this->_buttonId,
             'name' => $this->_buttonName,

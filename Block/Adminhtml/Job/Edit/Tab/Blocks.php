@@ -11,8 +11,9 @@ use Straker\EasyTranslationPlatform\Model\JobFactory;
 
 class Blocks extends Extended
 {
-
+    //phpcs:disable
     protected $_massactionBlockName = \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Massaction\Extended::class;
+    //phpcs:enable
     protected $_blockCollectionFactory;
     protected $_jobFactory;
     protected $_sourceStoreId;
@@ -117,7 +118,7 @@ class Blocks extends Extended
         return parent::_prepareColumns();
     }
 
-    function _prepareMassaction()
+    protected function _prepareMassaction()
     {
         $this->setMassactionIdField('block_id');
         $this->getMassactionBlock()->setTemplate('Straker_EasyTranslationPlatform::job/massaction_extended.phtml');
@@ -159,7 +160,7 @@ class Blocks extends Extended
         return true;
     }
 
-    function filterIsTranslated($collection, $column)
+    public function filterIsTranslated($collection, $column)
     {
         $condition = $column->getFilter()->getCondition();
         $collection->getSelect()->having('`is_translated` =  ?', reset($condition));

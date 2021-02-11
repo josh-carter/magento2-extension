@@ -11,7 +11,7 @@ class Language extends Column
 {
     protected $_strakerAPI;
 
-    function __construct(
+    public function __construct(
         ContextInterface $context,
         UiComponentFactory $uiComponentFactory,
         Model\StrakerAPI $strakerAPI,

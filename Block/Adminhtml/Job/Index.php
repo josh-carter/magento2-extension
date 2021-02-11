@@ -9,7 +9,7 @@ class Index extends \Magento\Backend\Block\Widget\Container
 {
     protected $_configHelper;
 
-    function __construct(
+    public function __construct(
         Context $context,
         ConfigHelper $configHelper,
         array $data
@@ -18,11 +18,6 @@ class Index extends \Magento\Backend\Block\Widget\Container
         $this->_configHelper = $configHelper;
     }
 
-    /**
-     * Prepare button and grid
-     *
-     * @return \Magento\Catalog\Block\Adminhtml\Product
-     */
     protected function _prepareLayout()
     {
         $addNewJobButton = [
@@ -41,9 +36,8 @@ class Index extends \Magento\Backend\Block\Widget\Container
         $this->buttonList->add('add_new', $addNewJobButton, 0, 50);
         $this->buttonList->add('my_account', $myAccountButton, 10, 10);
 
-        return parent::_prepareLayout();
+        parent::_prepareLayout();
     }
-
 
     public function shouldDisable()
     {

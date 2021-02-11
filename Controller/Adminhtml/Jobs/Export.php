@@ -7,7 +7,7 @@ use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\Response\Http\FileFactory;
 use Magento\Framework\Controller\Result\RawFactory;
-use Magento\Framework\Filesystem\DriverInterface;
+use \Magento\Framework\Filesystem\Driver\File as FileDriver;
 use Straker\EasyTranslationPlatform\Helper\ConfigHelper;
 use Straker\EasyTranslationPlatform\Model\JobFactory;
 
@@ -21,7 +21,7 @@ class Export extends Action
     protected $configHelper;
     protected $fileFactory;
     /**
-     * @var DriverInterface
+     * @var FileDriver
      */
     private $driver;
 
@@ -31,7 +31,7 @@ class Export extends Action
         FileFactory $fileFactory,
         JobFactory $jobFactory,
         ConfigHelper $configHelper,
-        DriverInterface $driver
+        FileDriver $driver
     ) {
         parent::__construct($context);
         $this->fileFactory = $fileFactory;

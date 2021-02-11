@@ -11,12 +11,11 @@
  */
 namespace Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Tab;
 
-use Magento\Store\Model\Group;
-use Magento\Store\Model\Website;
+use Magento\Backend\Block\Widget\Tab\TabInterface;
+use Magento\Catalog\Block\Adminhtml\Category\Tree;
 
-class Categories extends \Magento\Catalog\Block\Adminhtml\Category\Tree implements \Magento\Backend\Block\Widget\Tab\TabInterface
+class Categories extends Tree implements TabInterface
 {
-
     /**
      * Tab settings
      *

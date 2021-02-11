@@ -45,6 +45,7 @@ class Grid extends Extended
         return parent::_prepareCollection();
     }
 
+    //phpcs:disable
     /**
      * @return $this
      */
@@ -79,11 +80,11 @@ class Grid extends Extended
             [
                 'header' => __('Is Label'),
                 'type' => 'text',
-                'filter' => 'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Filter\JobAttributeIsLabel',
+                'filter' => \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Filter\JobAttributeIsLabel::class,
                 'name' => 'label',
                 'align' => 'center',
                 'index' => 'is_label',
-                'renderer' => 'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Renderer\JobAttributeIsLabel'
+                'renderer' => \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Renderer\JobAttributeIsLabel::class
             ]
         );
 
@@ -96,7 +97,7 @@ class Grid extends Extended
                 'align' => 'left',
                 'index' => 'label',
                 'width' => '200px',
-                'renderer' => 'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Renderer\JobAttributeLabel',
+                'renderer' => \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Renderer\JobAttributeLabel::class,
                 'order_callback' => [$this, 'orderLabel']
             ]
         );
@@ -127,17 +128,19 @@ class Grid extends Extended
 
         return parent::_prepareColumns();
     }
+    //phpcs:enable
 
-    function getRowUrl($item)
+    public function getRowUrl($item)
     {
         return false;
     }
 
-    function orderLabel($collection, $column)
+    public function orderLabel($collection, $column)
     {
         $collection->getSelect()->order($column->getIndex() . ' ' . strtoupper($column->getDir()));
     }
 
+    //phpcs:disable
     protected function _setCollectionOrder($column)
     {
         if ($column->getOrderCallback()) {
@@ -146,4 +149,5 @@ class Grid extends Extended
         }
         return parent::_setCollectionOrder($column);
     }
+    //phpcs:enable
 }

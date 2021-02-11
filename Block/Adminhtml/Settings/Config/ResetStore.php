@@ -1,8 +1,6 @@
 <?php
 namespace Straker\EasyTranslationPlatform\Block\Adminhtml\Settings\Config;
 
-use Magento\Backend\Block\System\Store\Store;
-use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Backend\Block\Widget\Context;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Straker\EasyTranslationPlatform\Helper\ConfigHelper;
@@ -40,26 +38,13 @@ class ResetStore extends \Magento\Config\Block\System\Config\Form\Field
     }
 
     /**
-     * Render button
-     *
-     * @param  AbstractElement $element
-     * @return string
-     */
-    public function render(AbstractElement $element)
-    {
-        // Remove scope label
-//        $element->unsScope()->unsCanUseWebsiteValue()->unsCanUseDefaultValue();
-        return parent::render($element);
-    }
-
-    /**
      * Return ajax url for button
      *
      * @return string
      */
     public function getAjaxResetUrl()
     {
-        return $this->getUrl('EasyTranslationPlatform/Settings/ResetStore'); //hit controller by ajax call on button click.
+        return $this->getUrl('EasyTranslationPlatform/Settings/ResetStore');
     }
 
     /**
@@ -89,9 +74,15 @@ class ResetStore extends \Magento\Config\Block\System\Config\Form\Field
     public function getStoreLanguageSetting($storeId)
     {
         $storeInfo = $this->_configHelper->getStoreInfo($storeId);
-        $source_store = array_key_exists('straker/general/source_store', $storeInfo) ? $storeInfo['straker/general/source_store'] : false;
-        $source_language = array_key_exists('straker/general/source_language', $storeInfo) ? $storeInfo['straker/general/source_language'] : false;
-        $destination_language = array_key_exists('straker/general/destination_language', $storeInfo) ? $storeInfo['straker/general/destination_language'] : false;
+        $source_store = array_key_exists('straker/general/source_store', $storeInfo)
+            ? $storeInfo['straker/general/source_store']
+            : false;
+        $source_language = array_key_exists('straker/general/source_language', $storeInfo)
+            ? $storeInfo['straker/general/source_language']
+            : false;
+        $destination_language = array_key_exists('straker/general/destination_language', $storeInfo)
+            ? $storeInfo['straker/general/destination_language']
+            : false;
         $sourceStore = $source_store ? $this->_storeManager->getStore($source_store) : $source_store;
         $storeInfoArray = [
             'source' => $sourceStore,
@@ -119,7 +110,9 @@ class ResetStore extends \Magento\Config\Block\System\Config\Form\Field
     public function getRemoveTranslationButtonHtml($store)
     {
         if ($store->getId() && $this->_configHelper->getStoreSetup($store->getId())) {
-            $button = $this->getLayout()->createBlock('Magento\Backend\Block\Widget\Button')
+            $button = $this
+                ->getLayout()
+                ->createBlock(\Magento\Backend\Block\Widget\Button::class)
                 ->setData([
                     'id' => 'straker_reset_store_button_' . $store->getCode(),
                     'label' => __('Clear'),
@@ -128,10 +121,6 @@ class ResetStore extends \Magento\Config\Block\System\Config\Form\Field
                 ]);
             return $button->toHtml();
         }
-//        else{
-//
-//            return '<div class="empty-button">'.__('No language settings applied').'</div>';
-//        }
     }
 
     /**
@@ -140,7 +129,8 @@ class ResetStore extends \Magento\Config\Block\System\Config\Form\Field
      */
     public function getRemoveAllTranslationButtonHtml()
     {
-        $button = $this->getLayout()->createBlock('Magento\Backend\Block\Widget\Button')
+        $button = $this->getLayout()
+            ->createBlock(\Magento\Backend\Block\Widget\Button::class)
             ->setData([
                 'id' => 'straker_reset_all_store_button',
                 'label' => __('Clear All'),

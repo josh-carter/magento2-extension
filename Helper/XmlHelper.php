@@ -5,6 +5,7 @@ namespace Straker\EasyTranslationPlatform\Helper;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\DomDocument\DomDocumentFactory;
+use \Magento\Framework\Filesystem\Driver\File as FileDriver;
 
 class XmlHelper extends AbstractHelper
 {
@@ -32,6 +33,9 @@ class XmlHelper extends AbstractHelper
     /** @var JobHelper $_jobHelper */
     private $_configHelper;
 
+    /** @var FileDriver */
+    private $driver;
+
     private $_elemAttributes = [
         'name',
         'content_context',
@@ -46,11 +50,13 @@ class XmlHelper extends AbstractHelper
     public function __construct(
         Context $context,
         ConfigHelper $configHelper,
-        DomDocumentFactory $domDocumentFactory
+        DomDocumentFactory $domDocumentFactory,
+        FileDriver $driver
     ) {
         $this->_dom = $domDocumentFactory->create();
         $this->_configHelper = $configHelper;
         $this->_xmlFilePath = $this->_configHelper->getOriginalXMLFilePath();
+        $this->driver = $driver;
         parent::__construct($context);
     }
 
@@ -67,16 +73,16 @@ class XmlHelper extends AbstractHelper
         $this->_xmlFileName = $this->_xmlFilePath . DIRECTORY_SEPARATOR . 'straker_job'. $jobId .'.xml';
         $flag = true;
 
-        if (!file_exists($this->_xmlFilePath)) {
-            $flag = mkdir($this->_xmlFilePath, 0777, true);
+        if (!$this->driver->isExists($this->_xmlFilePath)) {
+            $flag = $this->driver->createDirectory($this->_xmlFilePath);
         }
 
         if (!$flag) {
             return false;
         }
 
-        if (!file_exists($this->_xmlFileName)) {
-            $isSuccess = file_put_contents($this->_xmlFileName, "");
+        if (!$this->driver->isExists($this->_xmlFileName)) {
+            $isSuccess = $this->driver->filePutContents($this->_xmlFileName, "");
             if ($isSuccess === false) {
                 return false;
             }
@@ -87,7 +93,7 @@ class XmlHelper extends AbstractHelper
         return true;
     }
 
-    function getAppInfo()
+    public function getAppInfo()
     {
         $appInfo = [];
 
@@ -110,7 +116,7 @@ class XmlHelper extends AbstractHelper
         return $appInfo;
     }
 
-    function addContentSummary($nodeData, $showAppInfo = false)
+    public function addContentSummary($nodeData, $showAppInfo = false)
     {
         $summaryNode = $this->_dom->createElement('summary');
         $summaryValue = [];
@@ -173,7 +179,7 @@ class XmlHelper extends AbstractHelper
     public function saveXmlFile()
     {
         $this->_dom->formatOutput = true;
-        if (!file_exists($this->_xmlFileName)) {
+        if (!$this->driver->isExists($this->_xmlFileName)) {
             return false;
         }
         $this->_dom->appendChild($this->_root);

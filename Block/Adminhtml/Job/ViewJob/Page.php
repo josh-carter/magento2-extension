@@ -75,7 +75,7 @@ class Page extends Container
     {
         $this->addChild(
             'straker-breadcrumbs',
-            'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Widget\Breadcrumbs',
+            \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Widget\Breadcrumbs::class,
             [
                 [
                     'label' => __('Manage Jobs'),
@@ -103,7 +103,7 @@ class Page extends Container
 
         $this->addChild(
             'straker_job_page_grid',
-            'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Page\Grid'
+            \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Page\Grid::class
         );
 
         return parent::_prepareLayout();

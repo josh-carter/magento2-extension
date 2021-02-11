@@ -52,7 +52,6 @@ class Grid extends Extended
         return parent::_prepareCollection();
     }
 
-
     /**
      * @return $this
      */
@@ -86,7 +85,7 @@ class Grid extends Extended
                 'class' => 'xxx',
             ]
         );
-
+        //phpcs:disable
         $this->addColumn(
             'view',
             [
@@ -141,14 +140,14 @@ class Grid extends Extended
                 ],
                 'filter' => false,
                 'sortable' => false,
-                'renderer' => 'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Renderer\MultiAction',
+                'renderer' => \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Renderer\MultiAction::class,
                 'header_css_class' => 'col-action',
                 'column_css_class' => 'col-action'
             ]
         );
+        //phpcs:enable
         return parent::_prepareColumns();
     }
-
 
     /**
      * @param \Magento\Catalog\Model\Product|\Magento\Framework\DataObject $row

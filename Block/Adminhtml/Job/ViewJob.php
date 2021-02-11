@@ -9,7 +9,7 @@ class ViewJob extends Template
     const BLOCK_TEMPLATE = 'job/view-job-detail-grid.phtml';
     protected $_childName;
 
-    function _construct()
+    public function _construct()
     {
         if (!$this->getTemplate()) {
             $this->setTemplate(static::BLOCK_TEMPLATE);
@@ -17,7 +17,7 @@ class ViewJob extends Template
         parent::_construct();
     }
 
-    function _prepareLayout()
+    protected function _prepareLayout()
     {
         $requestData = $this->getRequest()->getParams();
         if (array_key_exists('job_type_id', $requestData)) {
@@ -27,7 +27,7 @@ class ViewJob extends Template
                 case Model\JobType::JOB_TYPE_ATTRIBUTE:
                     $this->addChild(
                         'view_job_attribute_grid',
-                        'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Attribute',
+                        \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Attribute::class,
                         [
                             'id' => 'view-job-attribute-grid'
                         ]
@@ -37,7 +37,7 @@ class ViewJob extends Template
                 case Model\JobType::JOB_TYPE_PRODUCT:
                     $this->addChild(
                         'view_job_product_block',
-                        'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Product',
+                        \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Product::class,
                         [
                             'id' => 'view-job-product-grid'
                         ]
@@ -47,7 +47,7 @@ class ViewJob extends Template
                 case Model\JobType::JOB_TYPE_CATEGORY:
                     $this->addChild(
                         'view_job_category_grid',
-                        'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Category',
+                        \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Category::class,
                         [
                             'id' => 'view-job-category-grid'
                         ]
@@ -57,7 +57,7 @@ class ViewJob extends Template
                 case Model\JobType::JOB_TYPE_PAGE:
                     $this->addChild(
                         'view_job_page_grid',
-                        'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Page',
+                        \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Page::class,
                         [
                             'id' => 'view-job-page-grid'
                         ]
@@ -67,7 +67,7 @@ class ViewJob extends Template
                 case Model\JobType::JOB_TYPE_BLOCK:
                     $this->addChild(
                         'view_job_block_grid',
-                        'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Block',
+                        \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Block::class,
                         [
                             'id' => 'view-job-block-grid'
                         ]
@@ -77,7 +77,7 @@ class ViewJob extends Template
                 default:
                     $this->addChild(
                         'view_job_type_grid',
-                        'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Type',
+                        \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Type::class,
                         [
                             'id' => 'view-job-type-grid'
                         ]
@@ -89,7 +89,7 @@ class ViewJob extends Template
         return parent::_prepareLayout();
     }
 
-    function getHtml()
+    public function getHtml()
     {
         return  $this->getChildHtml($this->_childName);
     }

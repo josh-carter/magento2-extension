@@ -27,15 +27,8 @@ class Form extends Generic
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
-
-    protected function _construct()
-    {
-        parent::_construct();
-    }
-
     protected function _prepareForm()
     {
-
         /** @var \Magento\Framework\Data\Form $form */
         $form = $this->_formFactory->create(
             ['data' => ['id' => 'edit_form', 'action' => $this->getData('action'), 'method' => 'post']]
@@ -144,7 +137,12 @@ class Form extends Generic
             [
                 'label' => '',
                 'name' => 'terms',
-                'after_element_html' => '<span>&nbsp;&nbsp;' . __('I have read and agreed to the %1 terms and conditions %2', '</span><a href="https://www.strakertranslations.com/terms-conditions/" target="_blank">', '</a>'),
+                'after_element_html' => '<span>&nbsp;&nbsp;'
+                    . __(
+                        'I have read and agreed to the %1 terms and conditions %2',
+                        '</span><a href="https://www.strakertranslations.com/terms-conditions/" target="_blank">',
+                        '</a>'
+                    ),
                 'class'=>'checkbox required'
             ]
         );
@@ -170,9 +168,9 @@ class Form extends Generic
     protected function _getOptions()
     {
         $aCountries = [];
-
+        // phpcs:disable
         $aCountries[null] = 'Select a country';
-
+        // phpcs:enable
         foreach ($this->_strakerAPIInterface->getCountries() as $key => $value) {
             $aCountries[$value->code] = $value->name;
         }

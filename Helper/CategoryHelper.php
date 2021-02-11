@@ -4,7 +4,6 @@ namespace Straker\EasyTranslationPlatform\Helper;
 
 use Exception;
 use Magento\Catalog\Api\Data\CategoryAttributeInterface;
-use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Catalog\Model\Category;
 use Magento\Eav\Model\Config;
 use Magento\Framework\Api\SearchCriteriaBuilderFactory;
@@ -21,7 +20,6 @@ use Straker\EasyTranslationPlatform\Logger\Logger;
 
 class CategoryHelper extends AbstractHelper
 {
-
     protected $_productFactory;
     protected $_categoryCollectionFactory;
     protected $_attributeCollectionFactory;
@@ -49,12 +47,14 @@ class CategoryHelper extends AbstractHelper
 
     /**
      * CategoryHelper constructor.
+     *
      * @param Context $context
      * @param AttributeRepository $attributeRepository
      * @param AttributeCollection $attributeCollectionFactory
      * @param CategoryCollection $categoryCollectionFactory
      * @param AttributeTranslationFactory $attributeTranslationFactory
      * @param AttributeOptionTranslationFactory $attributeOptionTranslationFactory
+     * @param SearchCriteriaBuilderFactory $searchCriteriaBuilderFactory
      * @param Config $eavConfig
      * @param \Straker\EasyTranslationPlatform\Helper\ConfigHelper $configHelper
      * @param \Straker\EasyTranslationPlatform\Helper\AttributeHelper $attributeHelper
@@ -62,6 +62,7 @@ class CategoryHelper extends AbstractHelper
      * @param Logger $logger
      * @param StoreManagerInterface $storeManager
      * @param StrakerAPIInterface $strakerAPI
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function __construct(
         Context $context,
@@ -135,7 +136,6 @@ class CategoryHelper extends AbstractHelper
         $category_ids,
         $source_store_id
     ) {
-    
         if (strpos($category_ids, ',') !== false) {
             $category_ids = explode(',', $category_ids);
         }
@@ -293,13 +293,14 @@ class CategoryHelper extends AbstractHelper
                             ]
                         )->save();
 
-                        $this->_categoryData[$cat_key]['attributes'][$att_key]['value_translation_id'] = $attributeTranslationModel->getId();
+                        $this->_categoryData[$cat_key]['attributes'][$att_key]['value_translation_id']
+                            = $attributeTranslationModel->getId();
                     } catch (Exception $e) {
                         $this->_logger->error('error '.__FILE__.' '.__LINE__.''.$e->getMessage(), [$e]);
                         $this->_strakerApi->_callStrakerBugLog(
-                __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
-                $e->__toString()
-            );
+                            __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                            $e->__toString()
+                        );
                     }
                 }
             }
