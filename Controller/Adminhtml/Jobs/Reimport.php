@@ -85,11 +85,13 @@ class Reimport extends Action
         $resultRedirect = $this->resultRedirectFactory->create();
 
         try {
-            $this->driver->filePutContents(
+            //phpcs:disable
+            file_put_contents(
                 $this->_configHelper
                     ->getTranslatedXMLFilePath() .'/' . $jobData->getData('translated_file'),
                 $file_content
             );
+            //phpcs:enable
             $this->_importHelper->create($jobData->getData('job_id'))
                 ->parseTranslatedFile()
                 ->saveData();

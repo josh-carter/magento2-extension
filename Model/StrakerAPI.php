@@ -261,7 +261,9 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
             $countriesUrl = $this->_getCountriesUrl();
             $result = $this->_call($countriesUrl);
             if (!empty($result)) {
-                $this->driver->filePutContents($fileFullPath, json_encode($result));
+                //phpcs:disable
+                file_put_contents($fileFullPath, json_encode($result));
+                //phpcs:enable
             }
         }
         return isset($result->country) ? $result->country : [];
@@ -280,7 +282,9 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
         } else {
             $result = $this->_call($this->_getLanguagesUrl());
             if (!empty($result)) {
-                $this->driver->filePutContents($fileFullPath, json_encode($result));
+                //phpcs:disable
+                file_put_contents($fileFullPath, json_encode($result));
+                //phpcs:enable
             }
         }
         return isset($result->languages) ? $result->languages : [];

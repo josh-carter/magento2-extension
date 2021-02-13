@@ -290,11 +290,13 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
                             $result = true;
 
                             if (!$this->driver->isExists($fileFullName)) {
-                                $result = $this->driver->filePutContents($fileFullName, $fileContent);
+                                //phpcs:disable
+                                $result = file_put_contents($fileFullName, $fileContent);
+                                //phpcs:enable
                             }
-
+                            //phpcs:disable
                             $firstLine = fgets($this->driver->fileOpen($fileFullName, 'r'));
-
+                            //phpcs:enable
                             if (preg_match('/^[<?xml]+/', $firstLine)==0) {
                                 $result = false;
                                 $isEmptyFile = true;
