@@ -10,11 +10,11 @@ namespace Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Rende
 
 use Magento\Backend\Block\Context;
 use Magento\Backend\Block\Widget\Grid\Column\Renderer\Action;
-use Magento\Catalog\Model\CategoryFactory;
 use Magento\Catalog\Model\ProductFactory;
-use Magento\Cms\Block\Adminhtml\Page\Grid\Renderer\Action\UrlBuilder as PageUrlBuilder;
+use Magento\Catalog\Model\CategoryFactory;
 use Magento\Cms\Model\BlockFactory;
 use Magento\Cms\Model\PageFactory;
+use Magento\Cms\Block\Adminhtml\Page\Grid\Renderer\Action\UrlBuilder as PageUrlBuilder;
 use Magento\Cms\Ui\Component\Listing\Column\BlockActions;
 use Magento\Cms\Ui\Component\Listing\Column\PageActions;
 use Magento\Framework\Json\EncoderInterface;
@@ -28,13 +28,25 @@ use Straker\EasyTranslationPlatform\Model\JobType as JobModelType;
 class MultiAction extends Action
 {
     protected $_frontendUrl;
-    protected $_productModel;
     protected $_storeManager;
-    protected $_categoryModel;
-    protected $_pageModel;
-    protected $_blockModel;
     protected $_jobModel;
     protected $_pageUrlBuilder;
+    /**
+     * @var \Magento\Catalog\Model\Product
+     */
+    private $_productFactory;
+    /**
+     * @var BlockFactory
+     */
+    private $_blockFactory;
+    /**
+     * @var PageFactory
+     */
+    private $_pageFactory;
+    /**
+     * @var CategoryFactory
+     */
+    private $_categoryFactory;
 
     public function __construct(
         Context $context,
@@ -51,10 +63,10 @@ class MultiAction extends Action
     ) {
         parent::__construct($context, $jsonEncoder, $data);
         $this->_frontendUrl = $url;
-        $this->_productModel = $productFactory->create();
-        $this->_categoryModel = $categoryFactory->create();
-        $this->_pageModel = $pageFactory->create();
-        $this->_blockModel = $blockFactory->create();
+        $this->_productFactory = $productFactory;
+        $this->_categoryFactory = $categoryFactory;
+        $this->_pageFactory = $pageFactory;
+        $this->_blockFactory = $blockFactory;
         $this->_jobModel = $jobFactory->create();
         $this->_storeManager = $storeManager;
         $this->_pageUrlBuilder = $pageUrlBuilder;
@@ -123,17 +135,19 @@ class MultiAction extends Action
                             $url = '';
                             switch ($jobType) {
                                 case JobModelType::JOB_TYPE_PRODUCT:
-                                    $this->_productModel->load($entityId)->setStoreId($targetStoreId);
+                                    $productModel = $this->_productFactory->create();
+                                    $productModel->load($entityId)->setStoreId($targetStoreId);
                                     if ($isFront === false) {
                                         $attr .= ' title="View in Backend"';
+
                                         $url = $this->getUrl(
                                             'catalog/product/edit',
                                             ['id' => $entityId, 'store' => $targetStoreId]
                                         );
                                         return sprintf('<a href="%s" %s>%s</a>', $url, $attr, $text);
                                     } else {
-                                        if ($this->_productModel->isVisibleInSiteVisibility()
-                                            && !$this->_productModel->isDisabled()
+                                        if ($productModel->isVisibleInSiteVisibility()
+                                            && !$productModel->isDisabled()
                                         ) {
                                             $attr .= ' title="View in Frontend"';
                                             $url = $this->_frontendUrl->getUrl(
@@ -149,7 +163,8 @@ class MultiAction extends Action
                                     }
                                     break;
                                 case JobModelType::JOB_TYPE_CATEGORY:
-                                    $this->_categoryModel->load($entityId)->setStoreId($targetStoreId);
+                                    $categoryModel = $this->_categoryFactory->create();
+                                    $categoryModel->load($entityId)->setStoreId($targetStoreId);
                                     if ($isFront === false) {
                                         $attr .= ' title="View in Backend"';
                                         $url = $this->getUrl(
@@ -171,7 +186,8 @@ class MultiAction extends Action
                                 case JobModelType::JOB_TYPE_PAGE:
                                     $pageId = $job->getTranslatedPageId($entityId);
                                     if ($pageId) {
-                                        $this->_pageModel->load($pageId);
+                                        $pageModel = $this->_pageFactory->create();
+                                        $pageModel->load($pageId);
                                         if ($isFront === false) {
                                             $attr .= ' title="View in Backend"';
                                             $url = $this->getUrl(
@@ -181,7 +197,7 @@ class MultiAction extends Action
                                         } else {
                                             $attr .= ' title="View in Frontend"';
                                             $url = $this->_pageUrlBuilder->getUrl(
-                                                $this->_pageModel->getIdentifier(),
+                                                $pageModel->getIdentifier(),
                                                 $targetStoreId,
                                                 $storeCode
                                             );
@@ -191,7 +207,8 @@ class MultiAction extends Action
                                     break;
                                 case JobModelType::JOB_TYPE_BLOCK:
                                     $blockId = $job->getTranslatedBlockId($entityId);
-                                    $this->_blockModel->load($blockId);
+                                    $blockModel = $this->_blockFactory->create();
+                                    $blockModel->load($blockId);
                                     if ($isFront === false) {
                                         $attr .= ' title="View in Backend"';
                                         $url = $this->getUrl(BlockActions::URL_PATH_EDIT, ['block_id' => $blockId]);
