@@ -101,7 +101,7 @@ class Grid extends Extended
                 'width' => '50px'
             ]
         );
-        //phpcs:disable
+
         $this->addColumn(
             'view',
             [
@@ -116,7 +116,7 @@ class Grid extends Extended
                 'column_css_class' => 'col-action'
             ]
         );
-        //phpcs:enable
+
         return parent::_prepareColumns();
     }
 

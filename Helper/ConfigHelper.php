@@ -114,7 +114,6 @@ class ConfigHelper extends AbstractHelper
         if ($moduleInfoArray) {
             $env['active_plugins'] = $moduleInfoArray;
         }
-        //phpcs:disable
         $env['server_information']['php_version']       = phpversion();
         $env['server_information']['server_protocol']   = empty($_SERVER['SERVER_PROTOCOL']) ? '' : $_SERVER['SERVER_PROTOCOL'];
         $env['server_information']['user_agent']        = empty($_SERVER['HTTP_USER_AGENT']) ? '' : $_SERVER['HTTP_USER_AGENT'];
@@ -122,7 +121,6 @@ class ConfigHelper extends AbstractHelper
         $env['server_information']['server_host']       = empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME'];
         $env['server_information']['https']             = isset($_SERVER['HTTPS']);
         $env['server_information']['app_name']          = 'magento2';
-        //phpcs:enable
         $magentoVersion = $this->getMagentoVersion();
         $env['server_information']['app_version']       = empty($magentoVersion) ? '' : $magentoVersion;
 

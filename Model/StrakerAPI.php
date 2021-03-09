@@ -261,9 +261,7 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
             $countriesUrl = $this->_getCountriesUrl();
             $result = $this->_call($countriesUrl);
             if (!empty($result)) {
-                //phpcs:disable
                 file_put_contents($fileFullPath, json_encode($result));
-                //phpcs:enable
             }
         }
         return isset($result->country) ? $result->country : [];
@@ -282,9 +280,7 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
         } else {
             $result = $this->_call($this->_getLanguagesUrl());
             if (!empty($result)) {
-                //phpcs:disable
                 file_put_contents($fileFullPath, json_encode($result));
-                //phpcs:enable
             }
         }
         return isset($result->languages) ? $result->languages : [];
@@ -335,7 +331,6 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
         );
     }
 
-    //phpcs:disable
     public function _callStrakerBugLog($msg, $e = '')
     {
         $httpClient = $this->_httpClient->create();
@@ -367,5 +362,27 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
             $this->_messageManager->addExceptionMessage($e, __('Something went wrong while connecting Straker API.'));
         }
     }
-    //phpcs:enable
+
+    public function resolveApiStatus($apiJob): int
+    {
+        $status = 0;
+        if (!empty($apiJob) && !empty($apiJob->status)) {
+            switch (strtolower($apiJob->status)) {
+                case 'queued':
+                    $status =  strcasecmp($apiJob->quotation, 'ready') == 0  ? 3 : 2;
+                    break;
+                case 'in_progress':
+                    $status = 4;
+                    break;
+                case 'completed':
+                    $status = 5;
+                    break;
+                default:
+                    $status = 0;
+                    break;
+            }
+        }
+
+        return $status;
+    }
 }

@@ -246,7 +246,6 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
         }
     }
 
-    //phpcs:disable
     public function updateStatus($jobData)
     {
         $return = ['isSuccess' => true, 'Message' => ''];
@@ -290,13 +289,9 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
                             $result = true;
 
                             if (!$this->driver->isExists($fileFullName)) {
-                                //phpcs:disable
                                 $result = file_put_contents($fileFullName, $fileContent);
-                                //phpcs:enable
                             }
-                            //phpcs:disable
                             $firstLine = fgets($this->driver->fileOpen($fileFullName, 'r'));
-                            //phpcs:enable
                             if (preg_match('/^[<?xml]+/', $firstLine)==0) {
                                 $result = false;
                                 $isEmptyFile = true;
@@ -355,7 +350,6 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
 
         return $return;
     }
-    //phpcs:enable
 
     public function getJobStatus()
     {
@@ -478,7 +472,8 @@ class Job extends AbstractModel implements JobInterface, IdentityInterface
     {
         $jobMatches = [];
         preg_match("/job_(.*?)_/", $this->getSourceFile(), $jobMatches);
-        return explode('&', $jobMatches[1]);
+        $separator = stripos($jobMatches[1], '&') === false ? '-' : '&';
+        return explode($separator, $jobMatches[1]);
     }
 
     private function _getAllRelatedJobsCollection()

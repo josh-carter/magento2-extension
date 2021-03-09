@@ -443,12 +443,10 @@ class ProductHelper extends AbstractHelper
             foreach ($data['attributes'] as $attribute) {
                 if (is_array($attribute['value'])) {
                     if (isset($optionData[$attribute['attribute_code']])) {
-                        //phpcs:disable
                         $newValueArray = array_merge(
                             $optionData[$attribute['attribute_code']]['value'],
                             $attribute['value']
                         );
-                        //phpcs:enable
                         $optionData[$attribute['attribute_code']]['value'] = $newValueArray;
                     } else {
                         $optionData[$attribute['attribute_code']] = $attribute;
@@ -543,7 +541,6 @@ class ProductHelper extends AbstractHelper
         return $this;
     }
 
-    // phpcs:disable
     private function _getChildrenProducts($parentIds = [])
     {
         $children = [];
@@ -580,7 +577,6 @@ class ProductHelper extends AbstractHelper
         }
         return $children;
     }
-    // phpcs:enable
 
     public function addSummaryNode()
     {

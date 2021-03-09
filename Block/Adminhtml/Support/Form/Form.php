@@ -188,7 +188,6 @@ class Form extends Generic
         return $options;
     }
 
-    //phpcs:disable
     private function getFormDesc()
     {
         return '<div>
@@ -211,5 +210,4 @@ class Form extends Generic
                 </div>
                ';
     }
-    //phpcs:enable
 }

@@ -31,10 +31,6 @@ class RestoreBackup extends Action
 
     public function execute()
     {
-        //phpcs:disable
-         set_time_limit(0);
-        //phpcs:enable
-        ignore_user_abort(true);
         $response = $this->_api->dbRestore();
         $this->_backupHelper->invalidateCache();
         $adminSession = $this->_getSession();

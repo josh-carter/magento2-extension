@@ -63,42 +63,6 @@ class AttributeOption extends \Magento\Backend\App\Action
     }
 
     /**
-     * @param $apiJob
-     * @param \Straker\EasyTranslationPlatform\Model\Job $localJob
-     * @return array
-     */
-    protected function _compareJobs($apiJob, $localJob)
-    {
-        if ($localJob->getJobStatusId() < $this->resolveApiStatus($apiJob)) {
-            return $localJob->updateStatus($apiJob);
-        }
-
-        return ['isSuccess' => false, 'Message'=> __('The status is up to date') ];
-    }
-
-    protected function resolveApiStatus($apiJob)
-    {
-        $status = 0;
-        if (!empty($apiJob) && !empty($apiJob->status)) {
-            switch (strtolower($apiJob->status)) {
-                case 'queued':
-                    $status =  strcasecmp($apiJob->quotation, 'ready') == 0  ? 3 : 2;
-                    break;
-                case 'in_progress':
-                    $status = 4;
-                    break;
-                case 'completed':
-                    $status = 5;
-                    break;
-                default:
-                    $status = 0;
-                    break;
-            }
-        }
-
-        return $status;
-    }
-    /**
      * Is the user allowed to view the attachment grid.
      *
      * @return bool

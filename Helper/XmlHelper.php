@@ -82,9 +82,7 @@ class XmlHelper extends AbstractHelper
         }
 
         if (!$this->driver->isExists($this->_xmlFileName)) {
-            //phpcs:disable
             $isSuccess = file_put_contents($this->_xmlFileName, "");
-            //phpcs:enable
             if ($isSuccess === false) {
                 return false;
             }

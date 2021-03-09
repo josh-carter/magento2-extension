@@ -4,6 +4,7 @@ namespace Straker\EasyTranslationPlatform\Controller\Adminhtml\Jobs;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
+use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\LocalizedException;
 use \Magento\Framework\Filesystem\Driver\File as FileDriver;
 use Magento\Store\Model\StoreManagerInterface;
@@ -81,23 +82,21 @@ class Reimport extends Action
                 ->getTranslatedXMLFilePath().'/old_'.time().'_'.$jobData->getData('translated_file');
         
         $this->driver->rename($originalTranslatedFile, $newTranslatedFile);
-        $file_content = $this->_strakerApi->getTranslatedFile($jobData->getData('download_url'));
+        $fileContent = $this->_strakerApi->getTranslatedFile($jobData->getData('download_url'));
         $resultRedirect = $this->resultRedirectFactory->create();
 
         try {
-            //phpcs:disable
-            file_put_contents(
+            $this->driver->filePutContents(
                 $this->_configHelper
                     ->getTranslatedXMLFilePath() .'/' . $jobData->getData('translated_file'),
-                $file_content
+                $fileContent
             );
-            //phpcs:enable
             $this->_importHelper->create($jobData->getData('job_id'))
                 ->parseTranslatedFile()
                 ->saveData();
             $this->updateJobStatus($jobData);
             $resultRedirect->setPath('*/*/index');
-        } catch (LocalizedException $e) {
+        } catch (FileSystemException $e) {
             $this->messageManager->addErrorMessage($e->getMessage());
             $this->_logger->error('error'.__FILE__.' '.__LINE__, [$e]);
             $this->_strakerApi->_callStrakerBugLog(

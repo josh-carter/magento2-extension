@@ -102,7 +102,6 @@ class MultiAction extends Action
         return $html;
     }
 
-    //phpcs:disable
     /**
      * Render single action as link html
      *
@@ -221,7 +220,6 @@ class MultiAction extends Action
             }
         }
     }
-    //phpcs:enable
 
     /**
      * @param $action

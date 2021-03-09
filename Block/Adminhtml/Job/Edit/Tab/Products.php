@@ -337,9 +337,7 @@ class Products extends \Straker\EasyTranslationPlatform\Block\Adminhtml\Widget\G
     protected function _setCollectionOrder($column)
     {
         if ($column->getOrderCallback()) {
-            //phpcs:disable
             call_user_func($column->getOrderCallback(), $this->getCollection(), $column);
-            //phpcs:enable
             return $this;
         }
         return parent::_setCollectionOrder($column);

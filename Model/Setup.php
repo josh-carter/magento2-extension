@@ -147,7 +147,6 @@ class Setup extends AbstractModel implements SetupInterface
         return $this->_configModel;
     }
 
-    //phpcs:disable
     public function clearTranslations($storeId = null)
     {
         $result = ['Success' => false, 'Message' => '', 'Count' => 0];
@@ -229,7 +228,6 @@ class Setup extends AbstractModel implements SetupInterface
 
         return $result;
     }
-    //phpcs:enable
 
     public function clearStrakerData()
     {
@@ -260,9 +258,7 @@ class Setup extends AbstractModel implements SetupInterface
         } catch (Exception $e) {
             $connection->rollBack();
             $result['Message'] = $e->getMessage();
-            //phpcs:disable
             throw new Exception($result['Message']);
-            //phpcs:enable
         }
 
         return $result;

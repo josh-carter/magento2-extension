@@ -56,9 +56,8 @@ class Export extends Action
 
             if ($this->driver->isExists($filePath)) {
                 $sourceFile = $this->driver->fileGetContents($filePath);
-                //phpcs:disable
-                $contentLength = filesize($filePath);
-                //phpcs:enable
+                $stat = $this->driver->stat($filePath);
+                $contentLength = $stat['size'];
                 $this->fileFactory->create(
                     $filename,
                     null,

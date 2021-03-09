@@ -68,10 +68,8 @@ class ImportHelper extends AbstractHelper
     protected $_categoryData;
     protected $_timezoneInterface;
 
-    //phpcs:disable
     protected $_selectQuery = 'select option_id from %1$s where option_id = %2$s and store_id = %3$s';
     protected $_updateQuery = 'update %1$s set value = "%2$s" where option_id = %3$s and store_id = %4$s';
-    //phpcs:enable
 
     protected $_labelTable = 'catalog_product_super_attribute_label';
     protected $_categoryFactory;
@@ -755,9 +753,7 @@ class ImportHelper extends AbstractHelper
 
                 $originalData['store_id'] = [$this->_jobModel->getTargetStoreId()];
 
-                //phpcs:disable
                 $dbData = array_merge($originalData, $data);
-                //phpcs:enable
 
                 $newPage = $this->_pageFactory->create();
 
@@ -876,9 +872,7 @@ class ImportHelper extends AbstractHelper
 
                 $originalData['stores'] = $originalData['store_id'] = [$this->_jobModel->getTargetStoreId()];
 
-                //phpcs:disable
                 $dbData = array_merge($originalData, $data);
-                //phpcs:enable
 
                 $newBlock = $this->_blockFactory->create();
 

@@ -45,7 +45,6 @@ class Grid extends Extended
         return parent::_prepareCollection();
     }
 
-    //phpcs:disable
     /**
      * @return $this
      */
@@ -128,7 +127,6 @@ class Grid extends Extended
 
         return parent::_prepareColumns();
     }
-    //phpcs:enable
 
     public function getRowUrl($item)
     {
@@ -140,7 +138,6 @@ class Grid extends Extended
         $collection->getSelect()->order($column->getIndex() . ' ' . strtoupper($column->getDir()));
     }
 
-    //phpcs:disable
     protected function _setCollectionOrder($column)
     {
         if ($column->getOrderCallback()) {
@@ -149,5 +146,4 @@ class Grid extends Extended
         }
         return parent::_setCollectionOrder($column);
     }
-    //phpcs:enable
 }
