@@ -19,9 +19,6 @@ class Db extends \Magento\Framework\Backup\Db
      */
     public function rollback()
     {
-        set_time_limit(0);
-        ignore_user_abort(true);
-
         $this->_lastOperationSucceed = false;
 
         $archiveManager = new \Magento\Framework\Archive();

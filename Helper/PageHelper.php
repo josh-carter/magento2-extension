@@ -10,20 +10,19 @@ use Magento\Eav\Model\AttributeRepository;
 use Magento\Catalog\Model\ResourceModel\Category\Attribute\Collection as AttributeCollection;
 use Magento\Cms\Model\ResourceModel\Page\CollectionFactory as PageCollection;
 use Magento\Framework\App\Helper\Context;
+use Magento\Framework\Exception\FileSystemException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Model\StoreManagerInterface;
 use Straker\EasyTranslationPlatform\Api\Data\StrakerAPIInterface;
 use Straker\EasyTranslationPlatform\Model\AttributeTranslationFactory;
 use Straker\EasyTranslationPlatform\Model\AttributeOptionTranslationFactory;
 use Straker\EasyTranslationPlatform\Logger\Logger;
-use Straker\EasyTranslationPlatform\Model\JobType;
+use Straker\EasyTranslationPlatform\Model\Job;
 
 class PageHelper extends AbstractHelper
 {
-
     protected $_productFactory;
     protected $_pageCollectionFactory;
-    protected $_attributeTranslationModel;
-    protected $_attributeOptionTranslationModel;
     protected $_attributeCollectionFactory;
     protected $_storeManager;
     protected $_attributeTranslationFactory;
@@ -37,7 +36,6 @@ class PageHelper extends AbstractHelper
     protected $_pageData;
     protected $_storeId;
 
-    protected $_attributes = ['title','meta_keywords','meta_description','content_heading','content','meta_title'];
     protected $_strakerApi;
 
     public function __construct(
@@ -73,27 +71,27 @@ class PageHelper extends AbstractHelper
     }
 
     /**
-     * @param $page_ids
-     * @param $source_store_id
+     * @param $pageIds
+     * @param $sourceStoreId
      * @return $this Todo: Add store id to filter products by store
      * Todo: Add store id to filter products by store
      * @internal param $product_ids
      * @internal param $store_id
      */
     public function getPages(
-        $page_ids,
-        $source_store_id
+        $pageIds,
+        $sourceStoreId
     ) {
     
-        if (strpos($page_ids, '&') !== false) {
-            $page_ids = explode('&', $page_ids);
+        if (strpos($pageIds, '&') !== false) {
+            $pageIds = explode('&', $pageIds);
         }
 
-        $this->_storeId = $source_store_id;
+        $this->_storeId = $sourceStoreId;
 
         $pages = $this->_pageCollectionFactory->create()
             ->addStoreFilter($this->_storeId)
-            ->addFieldToFilter('page_id', [ 'in' => $page_ids ]);
+            ->addFieldToFilter('page_id', [ 'in' => $pageIds ]);
 
         $this->_pageData = $pages->getItems();
 
@@ -102,19 +100,17 @@ class PageHelper extends AbstractHelper
 
     /**
      * @return $this
+     * @throws NoSuchEntityException
      */
-    public function getSelectedPageAttributes()
+    public function getSelectedPageAttributes(): PageHelper
     {
-
         $pageData = [];
 
         foreach ($this->_pageData as $data) {
-
             $attributeData = [];
 
-            foreach ($this->_attributes as $attribute) {
-
-                if (in_array($attribute, $this->_attributes) && (!empty($data->getData($attribute)))) {
+            foreach (Job::PAGE_ATTRIBUTES as $attribute) {
+                if (!empty($data->getData($attribute))) {
                     array_push($attributeData, [
                         'attribute_code'=>$attribute,
                         'label'=>$attribute,
@@ -142,8 +138,9 @@ class PageHelper extends AbstractHelper
     /**
      * @param $jobModel
      * @return string
+     * @throws FileSystemException
      */
-    public function generatePageXML($jobModel)
+    public function generatePageXML($jobModel): string
     {
         $this->_xmlHelper->create('_'.$jobModel->getId().'_'.time());
 
@@ -180,27 +177,24 @@ class PageHelper extends AbstractHelper
         $target_store_id,
         $xmlHelper
     ) {
-    
         if ($pageData) {
-
             foreach ($pageData as $data) {
-
                 foreach ($data['attributes'] as $attribute) {
 
-                        $job_name = $job_id . '_' .$jobType_id . '_' . $target_store_id
-                            . '_' .$data['page_id'] . '_' . $attribute['attribute_code'];
+                    $job_name = $job_id . '_' .$jobType_id . '_' . $target_store_id
+                        . '_' .$data['page_id'] . '_' . $attribute['attribute_code'];
 
-                        $xmlHelper->appendDataToRoot([
-                            'name' => $job_name,
-                            'content_context' => 'page_attribute_value',
-                            'content_context_url' => $data['page_url'],
-                            'attribute_translation_id'=>$attribute['value_translation_id'],
-                            'source_store_id'=> $source_store_id,
-                            'page_id' => $data['page_id'],
-                            'attribute_code'=>$attribute['attribute_code'],
-                            'attribute_label'=>$attribute['label'],
-                            'value' => $attribute['value']
-                        ]);
+                    $xmlHelper->appendDataToRoot([
+                        'name' => $job_name,
+                        'content_context' => 'page_attribute_value',
+                        'content_context_url' => $data['page_url'],
+                        'attribute_translation_id'=>$attribute['value_translation_id'],
+                        'source_store_id'=> $source_store_id,
+                        'page_id' => $data['page_id'],
+                        'attribute_code'=>$attribute['attribute_code'],
+                        'attribute_label'=>$attribute['label'],
+                        'value' => $attribute['value']
+                    ]);
                 }
             }
             return $this;
@@ -212,9 +206,8 @@ class PageHelper extends AbstractHelper
      * @param $job_id
      * @return $this
      */
-    public function savePageData($job_id)
+    public function savePageData($job_id): PageHelper
     {
-
         foreach ($this->_pageData as $pageKey => $data) {
             foreach ($data['attributes'] as $attKey => $attribute) {
                 $attributeTranslationModel = $this->_attributeTranslationFactory->create();
@@ -252,7 +245,7 @@ class PageHelper extends AbstractHelper
         $this->_xmlHelper->addContentSummary($summaryArray);
     }
 
-    public function getSummary()
+    public function getSummary(): array
     {
         return ['cms_page' => count($this->_pageData)];
     }

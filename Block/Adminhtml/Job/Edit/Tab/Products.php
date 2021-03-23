@@ -14,6 +14,9 @@ use Magento\Catalog\Model\Product\TypeFactory;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory as SetFactory;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 
+use Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Massaction\Extended;
+use Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Renderer\MultiSelect;
+use Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Renderer\Thumbnail;
 use Straker\EasyTranslationPlatform\Helper\ProductHelper;
 use Straker\EasyTranslationPlatform\Model\JobFactory;
 use Straker\EasyTranslationPlatform\Model\ProductCollectionFactory;
@@ -23,8 +26,7 @@ use Magento\Catalog\Ui\Component\Listing\Attribute\RepositoryInterface;
 
 class Products extends \Straker\EasyTranslationPlatform\Block\Adminhtml\Widget\Grid\Extended
 {
-    protected $_massactionBlockName
-        = \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Massaction\Extended::class;
+    protected $_massactionBlockName = Extended::class;
     protected $productCollectionFactory;
     protected $jobFactory;
     protected $sourceStoreId;
@@ -131,7 +133,7 @@ class Products extends \Straker\EasyTranslationPlatform\Block\Adminhtml\Widget\G
                 'width'     => '97',
                 'filter'    => false,
                 'sortable'  => false,
-                'renderer'  => \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Renderer\Thumbnail::class
+                'renderer'  => Thumbnail::class
             ]
         );
 
@@ -228,8 +230,7 @@ class Products extends \Straker\EasyTranslationPlatform\Block\Adminhtml\Widget\G
             }
 
             if ($filter['frontendInput'] === 'multiselect') {
-                $columnConfig['renderer']
-                    = \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Renderer\MultiSelect::class;
+                $columnConfig['renderer'] = MultiSelect::class;
             }
 
             $this->addColumn($filter['code'], $columnConfig);
@@ -336,8 +337,8 @@ class Products extends \Straker\EasyTranslationPlatform\Block\Adminhtml\Widget\G
 
     protected function _setCollectionOrder($column)
     {
-        if ($column->getOrderCallback()) {
-            call_user_func($column->getOrderCallback(), $this->getCollection(), $column);
+        if ($callback = $column->getOrderCallback()) {
+            $callback($this->getCollection(), $column);
             return $this;
         }
         return parent::_setCollectionOrder($column);

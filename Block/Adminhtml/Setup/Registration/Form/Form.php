@@ -168,7 +168,7 @@ class Form extends Generic
     protected function _getOptions()
     {
         $aCountries = [];
-        $aCountries[null] = 'Select a country';
+        $aCountries[null] = __('Select a country');
         foreach ($this->_strakerAPIInterface->getCountries() as $key => $value) {
             $aCountries[$value->code] = $value->name;
         }

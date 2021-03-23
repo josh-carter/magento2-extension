@@ -5,6 +5,7 @@ namespace Straker\EasyTranslationPlatform\Helper;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\DomDocument\DomDocumentFactory;
+use Magento\Framework\Exception\FileSystemException;
 use \Magento\Framework\Filesystem\Driver\File as FileDriver;
 
 class XmlHelper extends AbstractHelper
@@ -62,8 +63,8 @@ class XmlHelper extends AbstractHelper
 
     /**
      * @param $jobId
-     * @param bool $showAppInfo
      * @return bool|\DOMElement
+     * @throws FileSystemException
      */
     public function create($jobId)
     {
@@ -82,7 +83,7 @@ class XmlHelper extends AbstractHelper
         }
 
         if (!$this->driver->isExists($this->_xmlFileName)) {
-            $isSuccess = file_put_contents($this->_xmlFileName, "");
+            $isSuccess = $this->driver->filePutContents($this->_xmlFileName, "");
             if ($isSuccess === false) {
                 return false;
             }

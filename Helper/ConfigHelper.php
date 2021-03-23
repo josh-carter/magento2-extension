@@ -62,11 +62,7 @@ class ConfigHelper extends AbstractHelper
             'straker/general/access_token',
             'default',
             ''
-        ) ? $this->scopeConfig->getValue(
-            'straker/general/access_token',
-            'default',
-            ''
-        ) : false ;
+        ) ?: false;
     }
 
     public function getApplicationKey()
@@ -75,18 +71,14 @@ class ConfigHelper extends AbstractHelper
             'straker/general/application_key',
             'default',
             ''
-        ) ? $this->scopeConfig->getValue(
-            'straker/general/application_key',
-            'default',
-            ''
-        ) : false ;
+        ) ?: false ;
     }
 
     /**
      * @return string or null  current version of the website
      * hard-coded in config.xml (value would be uat, dev, live ...)
      */
-    public function getVersion()
+    public function getVersion(): string
     {
         return $this->scopeConfig->getValue('straker/general/version');
     }
@@ -114,15 +106,15 @@ class ConfigHelper extends AbstractHelper
         if ($moduleInfoArray) {
             $env['active_plugins'] = $moduleInfoArray;
         }
+
         $env['server_information']['php_version']       = phpversion();
-        $env['server_information']['server_protocol']   = empty($_SERVER['SERVER_PROTOCOL']) ? '' : $_SERVER['SERVER_PROTOCOL'];
-        $env['server_information']['user_agent']        = empty($_SERVER['HTTP_USER_AGENT']) ? '' : $_SERVER['HTTP_USER_AGENT'];
-        $env['server_information']['web_server']        = empty($_SERVER['SERVER_SOFTWARE']) ? '' : $_SERVER['SERVER_SOFTWARE'];
-        $env['server_information']['server_host']       = empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME'];
-        $env['server_information']['https']             = isset($_SERVER['HTTPS']);
+        $env['server_information']['server_protocol']   = $this->_request->getServer('SERVER_PROTOCOL', '');
+        $env['server_information']['user_agent']        = $this->_httpHeader->getHttpUserAgent();
+        $env['server_information']['web_server']        = $this->_request->getServer('SERVER_SOFTWARE', '');
+        $env['server_information']['server_host']       = $this->_httpHeader->getHttpHost();
+        $env['server_information']['https']             = $$this->_request->getServer('HTTPS', '');
         $env['server_information']['app_name']          = 'magento2';
-        $magentoVersion = $this->getMagentoVersion();
-        $env['server_information']['app_version']       = empty($magentoVersion) ? '' : $magentoVersion;
+        $env['server_information']['app_version']       = $this->getMagentoVersion();
 
         if (phpversion() >= '5.4.0') {
             $jsonResult = json_encode($env, JSON_UNESCAPED_SLASHES);

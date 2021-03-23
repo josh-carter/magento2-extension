@@ -10,11 +10,14 @@ use Magento\Eav\Model\AttributeRepository;
 use Magento\Catalog\Model\ResourceModel\Category\Attribute\Collection as AttributeCollection;
 use Magento\Cms\Model\ResourceModel\Block\CollectionFactory as BlockCollection;
 use Magento\Framework\App\Helper\Context;
+use Magento\Framework\Exception\FileSystemException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Model\StoreManagerInterface;
 use Straker\EasyTranslationPlatform\Api\Data\StrakerAPIInterface;
 use Straker\EasyTranslationPlatform\Model\AttributeTranslationFactory;
 use Straker\EasyTranslationPlatform\Model\AttributeOptionTranslationFactory;
 use Straker\EasyTranslationPlatform\Logger\Logger;
+use Straker\EasyTranslationPlatform\Model\Job;
 
 class BlockHelper extends AbstractHelper
 {
@@ -68,24 +71,24 @@ class BlockHelper extends AbstractHelper
     }
 
     /**
-     * @param $block_ids
-     * @param $source_store_id
+     * @param $blockIds
+     * @param $sourceStoreId
      * @return $this
      */
     public function getBlocks(
-        $block_ids,
-        $source_store_id
-    ) {
+        $blockIds,
+        $sourceStoreId
+    ): BlockHelper {
     
-        if (strpos($block_ids, '&') !== false) {
-            $block_ids = explode('&', $block_ids);
+        if (strpos($blockIds, '&') !== false) {
+            $blockIds = explode('&', $blockIds);
         }
 
-        $this->_storeId = $source_store_id;
+        $this->_storeId = $sourceStoreId;
 
         $blocks = $this->_blockCollectionFactory->create()
-            ->addStoreFilter($source_store_id)
-            ->addFieldToFilter('main_table.block_id', [ 'in' => $block_ids ]);
+            ->addStoreFilter($sourceStoreId)
+            ->addFieldToFilter('main_table.block_id', [ 'in' => $blockIds ]);
 
         $this->_blockData = $blocks->getItems();
 
@@ -94,17 +97,17 @@ class BlockHelper extends AbstractHelper
 
     /**
      * @return $this
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws NoSuchEntityException
      */
-    public function getSelectedBlockAttributes()
+    public function getSelectedBlockAttributes(): BlockHelper
     {
         $blockData = [];
         $includeTitle = $this->_configHelper->shouldTranslateBlockTitle();
 
         foreach ($this->_blockData as $data) {
             $attributeData = [];
-            foreach ($this->_attributes as $attribute) {
-                if (in_array($attribute, $this->_attributes)) {
+            foreach (Job::BLOCK_ATTRIBUTES as $attribute) {
+                if (in_array($attribute, Job::BLOCK_ATTRIBUTES)) {
                     if ($attribute !== 'title' || $includeTitle) {
                         array_push($attributeData, [
                             'attribute_code'=>$attribute,
@@ -137,8 +140,9 @@ class BlockHelper extends AbstractHelper
     /**
      * @param $jobModel
      * @return string
+     * @throws FileSystemException
      */
-    public function generateBlockXML($jobModel)
+    public function generateBlockXML($jobModel): string
     {
         $this->_xmlHelper->create('_'.$jobModel->getId().'_'.time());
         $this->addSummaryNode();
@@ -157,7 +161,7 @@ class BlockHelper extends AbstractHelper
     }
 
     /**
-     * @param $pageData
+     * @param $blockData
      * @param $job_id
      * @param $jobType_id
      * @param $source_store_id
@@ -204,7 +208,7 @@ class BlockHelper extends AbstractHelper
      * @param $job_id
      * @return $this
      */
-    public function saveBlockData($job_id)
+    public function saveBlockData($job_id): BlockHelper
     {
         foreach ($this->_blockData as $blockKey => $data) {
             foreach ($data['attributes'] as $attKey => $attribute) {
@@ -243,7 +247,7 @@ class BlockHelper extends AbstractHelper
         $this->_xmlHelper->addContentSummary($summaryArray);
     }
 
-    public function getSummary()
+    public function getSummary(): array
     {
         return ['cms_block' => count($this->_blockData)];
     }

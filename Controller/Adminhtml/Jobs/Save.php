@@ -6,45 +6,24 @@ use Exception;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 
-use Magento\Backend\Helper\Js;
-use Magento\Eav\Model\AttributeRepository;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Xml\Parser;
 use RuntimeException;
 use Straker\EasyTranslationPlatform\Helper\ConfigHelper;
 use Straker\EasyTranslationPlatform\Helper\XmlHelper;
-use Straker\EasyTranslationPlatform\Model\JobType;
-use Straker\EasyTranslationPlatform\Model\JobRepository;
 use Straker\EasyTranslationPlatform\Helper\JobHelper;
 use Straker\EasyTranslationPlatform\Api\Data\StrakerAPIInterface;
 use Straker\EasyTranslationPlatform\Api\Data\SetupInterface;
 use Straker\EasyTranslationPlatform\Logger\Logger;
-use Straker\EasyTranslationPlatform\Model\ResourceModel\Job\CollectionFactory;
 
 class Save extends Action
 {
-
-    /**
-     * @var Js
-     */
-    protected $_jsHelper;
-
     protected $_setupInterface;
 
     /**
      * @var \Straker\EasyTranslationPlatform\Helper\ConfigHelper
      */
     protected $_configHelper;
-
-    /**
-     * @var CollectionFactory
-     */
-    protected $_jobCollectionFactory;
-
-    protected $_multiSelectInputTypes = [
-        'select', 'multiselect'
-    ];
 
     protected $_storeConfigKeys = [
         'magento_destination_store','straker_destination_language','magento_source_store','straker_source_language'
@@ -55,44 +34,31 @@ class Save extends Action
     protected $_xmlHelper;
     protected $_xmlParser;
     protected $_storeManager;
-    protected $_jobTypeModel;
-    protected $jobRepository;
     protected $_api;
     protected $_jobHelper;
     protected $_logger;
 
     /**
      * Save constructor.
+     *
      * @param Context $context
      * @param ConfigHelper $configHelper
-     * @param Js $jsHelper
-     * @param AttributeRepository $attributeRepository
-     * @param StoreManagerInterface $storeManager
      * @param XmlHelper $xmlHelper
      * @param Parser $xmlParser
-     * @param JobRepository $jobRepository
-     * @param JobType $jobType
      * @param JobHelper $jobHelper
      * @param StrakerAPIInterface $API
      * @param SetupInterface $setup
      * @param Logger $logger
-     * @param CollectionFactory $jobCollectionFactory
      */
     public function __construct(
         Context $context,
         ConfigHelper $configHelper,
-        Js $jsHelper,
-        AttributeRepository $attributeRepository,
-        StoreManagerInterface $storeManager,
         XmlHelper $xmlHelper,
         Parser $xmlParser,
-        JobRepository $jobRepository,
-        JobType $jobType,
         JobHelper $jobHelper,
         StrakerAPIInterface $API,
         SetupInterface $setup,
-        Logger $logger,
-        CollectionFactory $jobCollectionFactory
+        Logger $logger
     ) {
 
         $this->_api = $API;
@@ -280,10 +246,10 @@ class Save extends Action
             foreach ($job_object as $key => $data) {
                 $jobMergeData[$key]['id'] =  $data->getData('job_id');
                 $jobMergeData[$key]['file_name'] =  $data->getData('source_file');
-                $id.=  $data->getData('job_id').'&';
+                $id .=  $data->getData('job_id') . '-';
             }
 
-            $this->_xmlHelper->create('_'.rtrim($id, "&").'_'.time());
+            $this->_xmlHelper->create('_'.rtrim($id, "-").'_'.time());
 
             $summary = [];
 

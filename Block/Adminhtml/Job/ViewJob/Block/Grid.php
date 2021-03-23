@@ -5,16 +5,16 @@ namespace Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Block;
 use Magento\Backend\Block\Template\Context;
 use Magento\Backend\Block\Widget\Grid\Extended;
 use Magento\Backend\Helper\Data as BackendHelperData;
-use Magento\Framework\View\Element\Template;
+use Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Renderer\MultiAction;
 use Straker\EasyTranslationPlatform\Model;
+use Straker\EasyTranslationPlatform\Model\Job;
 use Straker\EasyTranslationPlatform\Model\JobFactory;
 
 class Grid extends Extended
 {
     protected $_jobFactory;
-    /** @var \Straker\EasyTranslationPlatform\Model\Job $_job */
+    /** @var Job $_job */
     protected $_job;
-    protected $_entityId;
     protected $_jobTypeId = Model\JobType::JOB_TYPE_ATTRIBUTE;
     protected $_jobKey;
     protected $_jobId;
@@ -127,7 +127,7 @@ class Grid extends Extended
                 ],
                 'filter' => false,
                 'sortable' => false,
-                'renderer' => \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Renderer\MultiAction::class,
+                'renderer' => MultiAction::class,
                 'header_css_class' => 'col-action',
                 'column_css_class' => 'col-action'
             ]

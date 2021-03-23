@@ -13,6 +13,7 @@ use Magento\Framework\HTTP\ZendClientFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Config\Model\ResourceModel\Config;
 use Magento\Framework\Message\ManagerInterface;
+use Magento\Framework\HTTP\Header;
 use Zend_Http_Client;
 
 class StrakerAPI extends AbstractModel implements StrakerAPIInterface
@@ -42,6 +43,10 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
      * @var FileDriver
      */
     private $driver;
+    /**
+     * @var Header
+     */
+    private $httpHeader;
 
     public function __construct(
         Context $context,
@@ -52,7 +57,8 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
         Logger $logger,
         StoreManagerInterface $storeManagerInterface,
         ManagerInterface $messageInterface,
-        FileDriver $driver
+        FileDriver $driver,
+        Header $httpHeader
     ) {
         parent::__construct($context, $registry);
         $this->_configHelper = $configHelper;
@@ -62,6 +68,7 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
         $this->_storeManager = $storeManagerInterface;
         $this->_messageManager = $messageInterface;
         $this->driver = $driver;
+        $this->httpHeader = $httpHeader;
     }
 
     protected function _call($url, $method = 'get', array $request = [], $timeout = 60)
@@ -70,7 +77,6 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
         $return = '';
 
         try {
-
             switch (strtolower($method)) {
                 case 'post':
                     $method = Zend_Http_Client::POST;
@@ -86,7 +92,7 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
 
             $httpClient->setUri($url);
             $httpClient->setConfig(['timeout' => $timeout, 'verifypeer' => 0]);
-//
+
             $headers = $this->getHeaders();
             if (!empty($headers)) {
                 $httpClient->setHeaders($headers);
@@ -110,7 +116,7 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
             }
         } catch (Exception $e) {
             $this->_logger->error('error'.__FILE__.' '.__LINE__, [$e]);
-            $this->_messageManager->addException($e, 'Straker API error. Please check logs.');
+            $this->_messageManager->addExceptionMessage($e, 'Straker API error. Please check logs.');
             $this->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
         }
 
@@ -261,7 +267,7 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
             $countriesUrl = $this->_getCountriesUrl();
             $result = $this->_call($countriesUrl);
             if (!empty($result)) {
-                file_put_contents($fileFullPath, json_encode($result));
+                $this->driver->filePutContents($fileFullPath, json_encode($result));
             }
         }
         return isset($result->country) ? $result->country : [];
@@ -280,7 +286,7 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
         } else {
             $result = $this->_call($this->_getLanguagesUrl());
             if (!empty($result)) {
-                file_put_contents($fileFullPath, json_encode($result));
+                $this->driver->filePutContents($fileFullPath, json_encode($result));
             }
         }
         return isset($result->languages) ? $result->languages : [];
@@ -340,14 +346,14 @@ class StrakerAPI extends AbstractModel implements StrakerAPIInterface
             'APIKey'           => $this->_configHelper->getApplicationKey(),
             'applicationCode'  => 'Magento2 Plugin',
             'HTMLReport'       => 'HTMLReport',
-            'templatePath'     => $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+            'templatePath'     => $this->httpHeader->getHttpHost() . $this->httpHeader->getRequestUri(),
             'message'          => $msg,
             'severityCode'     => 'ERROR',
             'exceptionMessage' => $msg,
             'exceptionDetails' => $e,
-            'userAgent'        => $_SERVER['HTTP_USER_AGENT'],
+            'userAgent'        => $this->httpHeader->getHttpUserAgent(),
             'dateTime'         => date('m/d/Y H:i:s'),
-            'hostName'         => $_SERVER['HTTP_HOST']
+            'hostName'         => $this->httpHeader->getHttpHost()
         ];
 
         try {

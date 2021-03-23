@@ -1,11 +1,13 @@
 <?php  /** @var $block \Magento\Backend\Block\Widget\Form\Container */?>
 
-<?php /* @escapeNotVerified */ echo $block->getFormInitScripts() ?>
+<?=  /* @noEscape */ $block->getFormInitScripts() ?>
 <?php if ($block->getButtonsHtml('header')): ?>
-    <div class="page-form-actions" <?php /* @escapeNotVerified */ echo $block->getUiId('content-header') ?>><?= $block->getButtonsHtml('header') ?></div>
+    <div class="page-form-actions" <?= $block->escapeHtml($block->getUiId('content-header')) ?>>
+        <?= $block->getButtonsHtml('header') ?>
+    </div>
 <?php endif; ?>
 <div class="entry-edit form-inline">
-    <form id="edit_form" action="<?= $block->getFormActionUrl() ?>" >
+    <form id="edit_form" action="<?= $block->escapeUrl($block->getFormActionUrl()) ?>" >
         <fieldset class="fieldset admin__fieldset fieldset-wide">
             <?= $block->getBlockHtml('formkey')?>
             <?= $block->getFormHtml() ?>
@@ -26,7 +28,7 @@
 
         $('#edit_form').form()
             .validation({
-                validationUrl: '<?php /* @escapeNotVerified */ echo $block->getValidationUrl() ?>',
+                validationUrl: '<?= $block->escapeUrl($block->getValidationUrl()) ?>',
                 highlight: function(element) {
                     var detailsElement = $(element).closest('details');
                     if (detailsElement.length && detailsElement.is('.details')) {
@@ -41,4 +43,4 @@
 
     });
 </script>
-<?php /* @escapeNotVerified */ echo $block->getFormScripts() ?>
+<?= /* @noEscape */ $block->getFormScripts() ?>

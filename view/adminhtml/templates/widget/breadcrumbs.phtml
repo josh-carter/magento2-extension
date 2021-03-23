@@ -6,16 +6,19 @@ if (!empty($data)): ?>
         <ul class="items">
         <?php $_size = count($data); ?>
         <?php foreach ($data as $_index => $_link):?>
-            <?php if( is_numeric( $_index ) ): ?>
+            <?php if (is_numeric($_index)): ?>
                 <li class="item">
                     <?php if (empty($_link['url'])): ?>
                         <?php if ($_index != $_size-1): ?>
-                            <span><?= __( $block->escapeHtml($_link['label']) ); ?></span>
+                            <span><?= $block->escapeHtml(__($_link['label'])); ?></span>
                         <?php else: ?>
-                            <strong><?= __( $block->escapeHtml($_link['label']) ); ?></strong>
+                            <strong><?= $block->escapeHtml(__($_link['label'])); ?></strong>
                         <?php endif; ?>
                     <?php else: ?>
-                        <a href="<?php /* @escapeNotVerified */ echo $_link['url'] ?>" title="<?= $block->escapeHtml($_link['title']) ?>"><?= __( $block->escapeHtml($_link['label']) ); ?></a>
+                        <a href="<?= $block->escapeUrl($_link['url']) ?>"
+                           title="<?= $block->escapeHtml($_link['title']) ?>">
+                            <?= $block->escapeHtml(__($_link['label'])); ?>
+                        </a>
                     <?php endif; ?>
                 </li>
             <?php endif; ?>

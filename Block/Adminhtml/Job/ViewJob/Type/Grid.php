@@ -5,17 +5,16 @@ namespace Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Type;
 use Magento\Backend\Block\Template\Context;
 use Magento\Backend\Block\Widget\Grid\Extended;
 use Magento\Backend\Helper\Data as BackendHelperData;
-use Magento\Framework\View\Element\Template;
-use Straker\EasyTranslationPlatform\Model;
+use Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Renderer\JobType;
+use Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Renderer\JobTypeActions;
+use Straker\EasyTranslationPlatform\Model\Job;
 use Straker\EasyTranslationPlatform\Model\ResourceModel\Job\CollectionFactory;
 
 class Grid extends Extended
 {
     protected $_jobCollectionFactory;
-    /** @var \Straker\EasyTranslationPlatform\Model\Job $_job */
+    /** @var Job $_job */
     protected $_job;
-    protected $_entityId;
-    protected $_jobTypeId = Model\JobType::JOB_TYPE_ATTRIBUTE;
     protected $_jobKey;
     protected $_sourceStoreId;
 
@@ -76,7 +75,7 @@ class Grid extends Extended
                 'index' => 'job_type',
                 'type' => 'xxx',
                 'width' => '50px',
-                'renderer' => \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Renderer\JobType::class
+                'renderer' => JobType::class
             ]
         );
         $this->addColumn(
@@ -108,7 +107,7 @@ class Grid extends Extended
                 'header' => __('Action'),
                 'type' => 'action',
                 'getter' => 'getId',
-                'renderer' => \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Renderer\JobTypeActions::class,
+                'renderer' => JobTypeActions::class,
                 'filter' => false,
                 'sortable' => false,
                 'index' => 'view',

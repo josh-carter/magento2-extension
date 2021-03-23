@@ -43,20 +43,19 @@ class Confirm extends Action
 
     public function execute()
     {
-        $job_id = $this->getRequest()->getParam('job_id');
+        $jobId = $this->getRequest()->getParam('job_id');
         $resultRedirect = $this->resultRedirectFactory->create();
-        $job = $this->_jobFactory->create()->load($job_id);
+        $job = $this->_jobFactory->create()->load($jobId);
         $jobMatches = [];
         preg_match("/job_(.*?)_/", $job->getSourceFile(), $jobMatches);
-        $jobIds = explode('&', $jobMatches[1]);
+        $separator = stripos($jobMatches[1], '&') === false ? '-' : '&';
+        $jobIds = explode($separator, $jobMatches[1]);
 
-        foreach ($jobIds as $job_id) {
-
+        foreach ($jobIds as $jobId) {
             try {
-
-                $currentJob = $this->_jobFactory->create()->load($job_id);
+                $currentJob = $this->_jobFactory->create()->load($jobId);
                 $jobType = $currentJob->getJobType();
-                $this->_importHelper->create($job_id)->publishTranslatedData();
+                $this->_importHelper->create($jobId)->publishTranslatedData();
                 $currentJob->addData(['job_status_id' => JobStatus::JOB_STATUS_CONFIRMED]);
                 $currentJob->save();
                 $this->messageManager->addSuccessMessage(

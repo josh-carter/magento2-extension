@@ -5,7 +5,13 @@ namespace Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Attribute;
 use Magento\Backend\Block\Template\Context;
 use Magento\Backend\Block\Widget\Grid\Extended;
 use Magento\Backend\Helper\Data as BackendHelperData;
+use Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Filter\JobAttributeIsLabel
+    as FilterJobAttributeIsLabel;
+use Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Renderer\JobAttributeIsLabel
+    as RendererJobAttributeIsLabel;
+use Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Renderer\JobAttributeLabel;
 use Straker\EasyTranslationPlatform\Model\AttributeTranslationFactory;
+use Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeTranslation\Collection;
 
 class Grid extends Extended
 {
@@ -35,7 +41,7 @@ class Grid extends Extended
      */
     protected function _prepareCollection()
     {
-        /** @var \Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeTranslation\Collection $attrConnection */
+        /** @var Collection $attrConnection */
         $attrConnection = $this->_attributeTranslationFactory->create()
             ->getCollection()
             ->addFieldToFilter('main_table.job_id', ['eq' => $this->_jobId ])
@@ -79,11 +85,11 @@ class Grid extends Extended
             [
                 'header' => __('Is Label'),
                 'type' => 'text',
-                'filter' => \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Filter\JobAttributeIsLabel::class,
+                'filter' => FilterJobAttributeIsLabel::class,
                 'name' => 'label',
                 'align' => 'center',
                 'index' => 'is_label',
-                'renderer' => \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Renderer\JobAttributeIsLabel::class
+                'renderer' => RendererJobAttributeIsLabel::class
             ]
         );
 
@@ -96,8 +102,7 @@ class Grid extends Extended
                 'align' => 'left',
                 'index' => 'label',
                 'width' => '200px',
-                'renderer' => \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Renderer\JobAttributeLabel::class,
-                'order_callback' => [$this, 'orderLabel']
+                'renderer' => JobAttributeLabel::class
             ]
         );
 
@@ -131,19 +136,5 @@ class Grid extends Extended
     public function getRowUrl($item)
     {
         return false;
-    }
-
-    public function orderLabel($collection, $column)
-    {
-        $collection->getSelect()->order($column->getIndex() . ' ' . strtoupper($column->getDir()));
-    }
-
-    protected function _setCollectionOrder($column)
-    {
-        if ($column->getOrderCallback()) {
-            call_user_func($column->getOrderCallback(), $this->getCollection(), $column);
-            return $this;
-        }
-        return parent::_setCollectionOrder($column);
     }
 }

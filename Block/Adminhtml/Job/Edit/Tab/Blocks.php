@@ -3,18 +3,18 @@
 namespace Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Tab;
 
 use Magento\Backend\Block\Template\Context;
-use Magento\Backend\Block\Widget\Grid\Extended;
+use Magento\Backend\Block\Widget\Grid\Extended as GridExtended;
 use Magento\Backend\Helper\Data;
+use Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Massaction\Extended;
 use Straker\EasyTranslationPlatform\Model\BlockCollection as BlockCollectionFactory;
 use Straker\EasyTranslationPlatform\Helper\ConfigHelper;
 use Straker\EasyTranslationPlatform\Model\JobFactory;
 
-class Blocks extends Extended
+class Blocks extends GridExtended
 {
-    protected $_massactionBlockName = \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Massaction\Extended::class;
+    protected $_massactionBlockName = Extended::class;
     protected $_blockCollectionFactory;
     protected $_jobFactory;
-    protected $_sourceStoreId;
     protected $_configHelper;
     protected $targetStoreId;
     protected $sourceStoreId;

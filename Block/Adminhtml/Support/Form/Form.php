@@ -190,24 +190,36 @@ class Form extends Generic
 
     private function getFormDesc()
     {
-        return '<div>
-                    <h2>How can we help?</h2>
-                    <div>
-                        <h3 class="straker-support-form-title">Read our docs</h3>
-                        <p>Read our <a href="https://support.strakertranslations.com/extensions/magento2/" 
-                        title="Straker Docs - Magento2" 
-                        target="_blank">docs</a> available on Straker Translations knowledge base</p>
-                    </div>
-                    <div>
-                        <h3 class="straker-support-form-title">Magento Market Place</h3>
-                        <p>Visit our <a href="https://marketplace.magento.com/strakertranslations-straker-magento2.html#product.info.details.support"
-                        title="Magento Marketplace" target="_blank">support page</a> on Magento Marketplace</p>
-                    </div>
-                    <div>
-                        <h3 class="straker-support-form-title">Contact Us</h3>
-                        <p>Fill in the form below and we will be in touch</p>
-                    </div>
+        $url = 'https://marketplace.magento.com/strakertranslations-straker-magento2.html#product.info.details.support';
+
+        return
+            '<div>
+                <h2>' . __('How can we help?') .'</h2>
+                <div>
+                    <h3 class="straker-support-form-title">' . __('Read our docs') . '</h3>
+                    <p>' . __('Read our')
+                    . '<a href="https://support.strakertranslations.com/extensions/magento2/" 
+                          title="' . __('Straker Docs - Magento2') . '" 
+                          target="_blank">&nbsp;' . __('docs')
+                    . '</a>&nbsp;'
+                        . __('available on Straker Translations knowledge base.')
+                . '</p>
                 </div>
-               ';
+                <div>
+                    <h3 class="straker-support-form-title">' . __('Magento Market Place') . '</h3>
+                    <p>' . __('Visit our')
+                        . '<a  href="' . $url .'"
+                               title="Magento Marketplace" 
+                               target="_blank">
+                        ' . __('support page')
+                        . '</a>' . __('on Magento Marketplace')
+                . '</p>
+                </div>
+                <div>
+                    <h3 class="straker-support-form-title">' . __('Contact Us') . '</h3>
+                    <p>' . __('Fill in the form below and we will be in touch') . '</p>
+                </div>
+            </div>
+           ';
     }
 }
