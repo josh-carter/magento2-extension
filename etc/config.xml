@@ -3,17 +3,26 @@
     <default>
         <straker>
             <general>
-                <version>live</version>
+                <version>uat</version>
                 <domain>
+                    <local>https://local-app.strakertranslations.com</local>
+                    <dev>https://dev-app.strakertranslations.com</dev>
+                    <uat>https://uat-app.strakertranslations.com</uat>
+                    <sandbox>https://uat-app-sandbox.strakertranslations.com</sandbox>
                     <live>https://app.strakertranslations.com</live>
-                    <sandbox>https://app-sandbox.strakertranslations.com</sandbox>
                 </domain>
-                <straker_bug_log_domain>
-                    <live>https://buglog.strakertranslations.com</live>
-                </straker_bug_log_domain>
                 <my_account_domain>
+                    <local>https://local-deltaray.strakertranslations.com</local>
+                    <dev>https://dev-deltaray.strakertranslations.com</dev>
+                    <uat>https://uat-deltaray.strakertranslations.com</uat>
                     <live>https://deltaray.strakertranslations.com</live>
                 </my_account_domain>
+                <straker_bug_log_domain>
+                    <local>https://local-buglog.strakertranslations.com</local>
+                    <dev>https://uat-buglog.strakertranslations.com</dev>
+                    <uat>https://uat-buglog.strakertranslations.com</uat>
+                    <live>https://buglog.strakertranslations.com</live>
+                </straker_bug_log_domain>
                 <api_url>
                     <register>v1/ta4ma/register</register>
                     <languages>v1/ta4ma/languages</languages>
@@ -22,6 +31,8 @@
                     <countries>v1/ta4ma/countries</countries>
                     <payment_page>o/?action=api.quote</payment_page>
                     <support>v1/ta4ma/support</support>
+                    <backup>v1/ta4ma/test/backup</backup>
+                    <restore>v1/ta4ma/test/restore</restore>
                     <bug_log>bugLog/listeners/bugLogListenerREST.cfm</bug_log>
                 </api_url>
             </general>

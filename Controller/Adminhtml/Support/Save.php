@@ -16,7 +16,6 @@ use Magento\Backend\App\Action\Context;
 
 class Save extends Action
 {
-
     protected $_config;
     protected $_reinitConfig;
     protected $_strakerAPI;

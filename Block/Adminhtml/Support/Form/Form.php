@@ -191,6 +191,7 @@ class Form extends Generic
     private function getFormDesc()
     {
         $url = 'https://marketplace.magento.com/strakertranslations-straker-magento2.html#product.info.details.support';
+        $docUrl = 'https://help.strakertranslations.com/hc/en-us/categories/115000412493-Magento-2-Extension';
 
         return
             '<div>
@@ -198,7 +199,7 @@ class Form extends Generic
                 <div>
                     <h3 class="straker-support-form-title">' . __('Read our docs') . '</h3>
                     <p>' . __('Read our')
-                    . '<a href="https://support.strakertranslations.com/extensions/magento2/" 
+                    . '<a href="' . $docUrl . '"
                           title="' . __('Straker Docs - Magento2') . '" 
                           target="_blank">&nbsp;' . __('docs')
                     . '</a>&nbsp;'

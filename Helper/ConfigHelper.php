@@ -75,10 +75,10 @@ class ConfigHelper extends AbstractHelper
     }
 
     /**
-     * @return string or null  current version of the website
+     * @return string|null  current version of the website
      * hard-coded in config.xml (value would be uat, dev, live ...)
      */
-    public function getVersion(): string
+    public function getVersion(): ?string
     {
         return $this->scopeConfig->getValue('straker/general/version');
     }
@@ -112,7 +112,7 @@ class ConfigHelper extends AbstractHelper
         $env['server_information']['user_agent']        = $this->_httpHeader->getHttpUserAgent();
         $env['server_information']['web_server']        = $this->_request->getServer('SERVER_SOFTWARE', '');
         $env['server_information']['server_host']       = $this->_httpHeader->getHttpHost();
-        $env['server_information']['https']             = $$this->_request->getServer('HTTPS', '');
+        $env['server_information']['https']             = $this->_request->getServer('HTTPS', '');
         $env['server_information']['app_name']          = 'magento2';
         $env['server_information']['app_version']       = $this->getMagentoVersion();
 

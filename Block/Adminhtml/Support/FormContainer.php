@@ -9,15 +9,6 @@ class FormContainer extends \Magento\Backend\Block\Widget\Form\Container
 {
     protected $_mode = 'form';
 
-    public function __construct(
-        Context $context,
-        Registry $registry
-    ) {
-    
-        $this->_coreRegistry = $registry;
-        parent::__construct($context);
-    }
-
     protected function _construct()
     {
         parent::_construct();
