@@ -26,7 +26,6 @@ class ViewQuote extends Container
 
     public function _construct()
     {
-
         $this->_requestData = $this->getRequest()->getParams();
         $this->_job = $this->_jobFactory->create()->load($this->_requestData['job_id']);
 
@@ -45,7 +44,6 @@ class ViewQuote extends Container
 
     protected function _prepareLayout()
     {
-
         $this->addChild(
             'straker-title-job-quote',
             \Magento\Framework\View\Element\Template::class

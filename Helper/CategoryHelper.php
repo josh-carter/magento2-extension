@@ -171,6 +171,7 @@ class CategoryHelper extends AbstractHelper
                         $attributeData,
                         [
                             'attribute_id' => $attribute->getId(),
+                            'attribute_code' => $attribute->getAttributeCode(),
                             'label' => $category
                                 ->getResource()
                                 ->getAttribute($attribute->getId())->getStoreLabel($this->_storeId),
@@ -275,7 +276,6 @@ class CategoryHelper extends AbstractHelper
      */
     public function saveCategoryData($job_id)
     {
-
         foreach ($this->_categoryData as $cat_key => $data) {
             foreach ($data['attributes'] as $att_key => $attribute) {
                 $attributeTranslationModel = $this->_attributeTranslationFactory->create();
@@ -287,6 +287,7 @@ class CategoryHelper extends AbstractHelper
                                 'job_id' => $job_id,
                                 'entity_id' => $data['category_id'],
                                 'attribute_id' => $attribute['attribute_id'],
+                                'attribute_code' => $attribute['attribute_code'],
                                 'original_value' => $attribute['value'],
                                 'is_label' => (bool)0,
                                 'label' => $attribute['label']

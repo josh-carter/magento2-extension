@@ -5,22 +5,22 @@
  */
 /** @var \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Tab\Categories $block */
 ?>
+<?php if ($block->getRoot()): ?>
     <div class="fieldset-wrapper">
-    <div class="fieldset-wrapper-title"
-         data-role="title"
-         aria-controls="super_config-content"
-         role="tab"
-         aria-selected="true"
-         aria-expanded="true"
-    >
-        <strong class="admin__collapsible-title">
-            <span><?= $block->escapeHtml(__('Please Select Your Categories:')) ?></span>
-        </strong>
-    </div>
+        <div class="fieldset-wrapper-title"
+             data-role="title"
+             aria-controls="super_config-content"
+             role="tab"
+             aria-selected="true"
+             aria-expanded="true"
+        >
+            <strong class="admin__collapsible-title">
+                <span><?= $block->escapeHtml(__('Please Select Your Categories:')) ?></span>
+            </strong>
+        </div>
     </div>
 
     <div class="categories-side-col">
-        <?php if ($block->getRoot()): ?>
         <div class="tree-actions">
             <?php if ($block->getRoot()): ?>
                 <a href="#" onclick="tree.collapseTree(); return false;">
@@ -122,8 +122,7 @@
                     if (!params) {
                         if (this.activeTab) {
                             params = {active_tab_id: this.activeTab};
-                        }
-                        else {
+                        } else {
                             params = {};
                         }
                     }
@@ -164,9 +163,9 @@
 
                 categoryClick: function (node, e) {
 
-                    if(node.attributes.checked){
+                    if (node.attributes.checked) {
                         node.getUI().check(0);
-                    }else{
+                    } else {
                         node.getUI().check(1);
                     }
                 },
@@ -198,8 +197,7 @@
                     if ($('add_root_category_button')) {
                         if (!switcherParams.scopeId) {
                             $('add_root_category_button').show();
-                        }
-                        else {
+                        } else {
                             $('add_root_category_button').hide();
                         }
                     }
@@ -213,7 +211,7 @@
                         var params = {
                             form_key: FORM_KEY
                         };
-                        new Ajax.Request(url + (url.match(new RegExp('\\?')) ? '&isAjax=true' : '?isAjax=true' ), {
+                        new Ajax.Request(url + (url.match(new RegExp('\\?')) ? '&isAjax=true' : '?isAjax=true'), {
                             parameters: params,
                             method: 'post',
                             onComplete: function (transport) {
@@ -282,12 +280,12 @@
                     dataUrl: '<?= $block->escapeUrl($block->getLoadTreeUrl()) ?>'
                 });
 
-                categoryLoader.createNode = function(config) {
+                categoryLoader.createNode = function (config) {
                     config.uiProvider = Ext.tree.CheckboxNodeUI;
                     var node;
                     // var _node = Object.clone(config);
                     if (config.children && !config.children.length) {
-                        delete(config.children);
+                        delete (config.children);
                         node = new Ext.tree.AsyncTreeNode(config);
                     } else {
                         node = new Ext.tree.TreeNode(config);
@@ -315,7 +313,7 @@
                             var node;
                             var _node = Object.clone(config[i]);
                             if (_node.children && !_node.children.length) {
-                                delete(_node.children);
+                                delete (_node.children);
                                 node = new Ext.tree.AsyncTreeNode(_node);
                             } else {
                                 node = new Ext.tree.TreeNode(config[i]);
@@ -381,9 +379,9 @@
                     useAjax: false,
                     switchTreeUrl: '<?= $block->escapeUrl($block->getSwitchTreeUrl()) ?>',
                     editUrl: '<?= $block->escapeUrl($block->getEditUrl()) ?>',
-                    currentNodeId: <?= (int)$block->getCategoryId() ?>,
+                    currentNodeId: <?= (int) $block->getCategoryId() ?>,
                     baseUrl: '<?= $block->escapeUrl($block->getEditUrl()) ?>',
-                    rootUIProvider:   Ext.tree.CheckboxNodeUI
+                    rootUIProvider: Ext.tree.CheckboxNodeUI
                 };
 
                 defaultLoadTreeParams = {
@@ -391,10 +389,10 @@
                         text: '<?= $block->escapeHtml($block->getRoot()->getName()) ?>',
                         draggable: false,
                         allowDrop: false,
-                        id: <?= (int)$block->getRoot()->getId() ?>,
-                        expanded: <?= (int)$block->getIsWasExpanded() ?>,
-                        store_id: <?= (int)$block->getStore()->getId() ?>,
-                        category_id: <?= (int)$block->getCategoryId() ?>
+                        id: <?= (int) $block->getRoot()->getId() ?>,
+                        expanded: <?= (int) $block->getIsWasExpanded() ?>,
+                        store_id: <?= (int) $block->getStore()->getId() ?>,
+                        category_id: <?= (int) $block->getCategoryId() ?>
                     },
                     data: <?= /* @noEscape */ $block->getTreeJson() ?>
                 };
@@ -402,15 +400,15 @@
                 reRenderTree();
 
 
-                tree.on('check', function(node) {
-                    if(node.attributes.checked) {
+                tree.on('check', function (node) {
+                    if (node.attributes.checked) {
                         categoryAdd(node.id);
-                        node.childNodes.each(function(c){
+                        node.childNodes.each(function (c) {
                             c.getUI().check(1);
                         });
                     } else {
                         categoryRemove(node.id);
-                        node.childNodes.each(function(c){
+                        node.childNodes.each(function (c) {
                             c.getUI().check(0);
                         });
                     }
@@ -421,7 +419,7 @@
 
                 tree.root.cascade(function (n) {
                     if (typeof n.id === "string") {
-                        if(n.attributes.checked){
+                        if (n.attributes.checked) {
                             catIds += n.id + ',';
                         }
                     }
@@ -442,7 +440,7 @@
                 while (-1 !== ids.indexOf(id)) {
                     ids.splice(ids.indexOf(id), 1);
                 }
-                jQuery('input[name="categories"]').val(ids.join(',')) ;
+                jQuery('input[name="categories"]').val(ids.join(','));
             }
         });
 

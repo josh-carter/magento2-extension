@@ -27,7 +27,6 @@ class Blocks extends GridExtended
         ConfigHelper $configHelper,
         array $data = []
     ) {
-
         $this->_jobFactory = $jobFactory;
         $this->_blockCollectionFactory = $blockCollectionFactory;
         $this->_configHelper = $configHelper;
@@ -66,7 +65,6 @@ class Blocks extends GridExtended
      */
     protected function _prepareColumns()
     {
-
 //        $this->addColumn(
 //            'in_block',
 //            [

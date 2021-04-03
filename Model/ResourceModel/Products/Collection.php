@@ -35,7 +35,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     private function _buildIsTranslatedSelect()
     {
-
         $strakerJobs = $this->_resource->getTableName('straker_job');
         $strakerTrans = $this->_resource->getTableName('straker_attribute_translation');
 

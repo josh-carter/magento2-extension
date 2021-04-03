@@ -489,11 +489,14 @@ class ImportHelper extends AbstractHelper
 
     public function saveTranslatedCategoryData()
     {
-
         foreach ($this->_categoryData as $data) {
             $attTransModel = $this->_attributeTranslationFactory->create()
                 ->load($data['_attribute']['attribute_translation_id']);
-            $attTransModel->addData(['is_imported' => 1, 'translated_value' => $data['_value']['value']]);
+            $attTransModel->addData([
+                'is_imported' => 1,
+                'translated_value' => $data['_value']['value'],
+                'imported_at' => $this->_timezoneInterface->date()->format('y-m-d H:i:s')
+            ]);
             $this->updateRow($attTransModel);
         }
 
@@ -562,10 +565,7 @@ class ImportHelper extends AbstractHelper
             ->addFieldToSelect(['attribute_id', 'translated_value', 'entity_id','attribute_code'])
             ->addFieldToFilter('job_id', ['eq' => $this->_jobModel->getId()]);
 
-        $saveData = $this->updateAttributeTranslationRow(
-            $translatedPageAttributes->getData(),
-            'entity_id'
-        );
+        $saveData = $this->updateAttributeTranslationRow($translatedPageAttributes->getData());
 
         foreach ($saveData as $key => $data) {
             $originalPage = $this->_pageFactory->create()->load($key);
@@ -603,10 +603,7 @@ class ImportHelper extends AbstractHelper
             ->addFieldToSelect(['attribute_translation_id', 'translated_value', 'entity_id', 'attribute_code'])
             ->addFieldToFilter('job_id', ['eq' => $this->_jobModel->getId()]);
 
-        $saveData = $this->updateAttributeTranslationRow(
-            $translatedBlockAttributes->getData(),
-            'entity_id'
-        );
+        $saveData = $this->updateAttributeTranslationRow($translatedBlockAttributes->getData());
 
         foreach ($saveData as $key => $data) {
             $originalBlock = $this->_blockFactory->create()->load($key);
@@ -659,22 +656,23 @@ class ImportHelper extends AbstractHelper
 
     /**
      * @param array $attributeData
-     * @param $entityId
      * @return array
      */
     private function updateAttributeTranslationRow(
-        array $attributeData,
-        $entityId = 'attribute_translation_id'
+        array $attributeData
     ): array {
         $saveData = [];
 
         foreach ($attributeData as $data) {
-            if (key_exists('attribute_code', $data)) {
-                $saveData[$data[$entityId]][$data['attribute_code']]
+            if (key_exists('attribute_code', $data)
+                && key_exists('entity_id', $data)
+                && key_exists('translated_value', $data)
+            ) {
+                $saveData[$data['entity_id']][$data['attribute_code']]
                     = $data['translated_value'];
             }
 
-            $updateRow = $this->_attributeTranslationFactory->create()->load($data[$entityId]);
+            $updateRow = $this->_attributeTranslationFactory->create()->load($data['attribute_translation_id']);
 
             $this->updateRow($updateRow);
         }

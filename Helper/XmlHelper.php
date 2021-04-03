@@ -83,7 +83,7 @@ class XmlHelper extends AbstractHelper
         }
 
         if (!$this->driver->isExists($this->_xmlFileName)) {
-            $isSuccess = $this->driver->filePutContents($this->_xmlFileName, "");
+            $isSuccess = $this->driver->filePutContents($this->_xmlFileName, "\n");
             if ($isSuccess === false) {
                 return false;
             }
