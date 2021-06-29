@@ -156,7 +156,7 @@ class ImportHelper extends AbstractHelper
                 $dataArray = [];
             }
 
-            if (key_exists('_value', $dataArray)) {
+            if (isset($dataArray['_value'])) {
                 $this->_parsedFileData[0] = $dataArray;
             } else {
                 $this->_parsedFileData = $dataArray;
@@ -235,7 +235,7 @@ class ImportHelper extends AbstractHelper
         $this->getOptionIds($this->_jobModel->getId());
 
         foreach ($this->_productData as $data) {
-            if (array_key_exists('attribute_translation_id', $data['_attribute'])) {
+            if (isset($data['_attribute']['attribute_translation_id'])) {
                 try {
                     $attTransModel = $this->_attributeTranslationFactory
                         ->create()
@@ -262,7 +262,7 @@ class ImportHelper extends AbstractHelper
                 }
             }
 
-            if (array_key_exists('option_translation_id', $data['_attribute'])) {
+            if (isset($data['_attribute']['option_translation_id'])) {
                 try {
                     $attOptModel = $this->_attributeOptionTranslationFactory->create()
                         ->load($data['_attribute']['option_translation_id']);
@@ -664,9 +664,9 @@ class ImportHelper extends AbstractHelper
         $saveData = [];
 
         foreach ($attributeData as $data) {
-            if (key_exists('attribute_code', $data)
-                && key_exists('entity_id', $data)
-                && key_exists('translated_value', $data)
+            if (isset($data['attribute_code'])
+                && isset($data['entity_id'])
+                && isset($data['translated_value'])
             ) {
                 $saveData[$data['entity_id']][$data['attribute_code']]
                     = $data['translated_value'];

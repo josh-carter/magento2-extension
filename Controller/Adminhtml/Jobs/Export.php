@@ -44,9 +44,9 @@ class Export extends Action
     public function execute()
     {
         $params = $this->getRequest()->getParams();
-        $jobId          = array_key_exists('job_id', $params) ? $params['job_id'] : 0;
-        $jobKey         = array_key_exists('job_id', $params) ? $params['job_key'] : 0;
-        $sourceStoreId  = array_key_exists('job_id', $params) ? $params['source_store_id'] : 0;
+        $jobId          = $params['job_id'] ?? 0;
+        $jobKey         = $params['job_key'] ?? 0;
+        $sourceStoreId  = $params['source_store_id'] ?? 0;
 
         if (!empty($jobId)) {
             $jobModel = $this->jobFactory->create()->load($jobId);

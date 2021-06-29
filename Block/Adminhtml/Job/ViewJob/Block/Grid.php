@@ -97,23 +97,23 @@ class Grid extends Extended
                 'actions' => [
                     [
                         'caption' => __('View Details'),
-                        'url' => [
-                            'base' => '*/*/ViewJob',
-                            'params' => [
+                        'url' => $this->getUrl(
+                            '*/*/viewJob',
+                            [
                                 'job_id' => $this->_job->getJobId(),
                                 'job_type_id' => $this->_jobTypeId,
                                 'job_type_referrer' => Model\JobType::JOB_TYPE_BLOCK,
                                 'job_key' => $this->_jobKey,
                                 'source_store_id' => $this->_sourceStoreId
                             ]
-                        ],
+                        ),
                         'field' => 'entity_id'
                     ],
                     [
                         'caption' => __('View in the Backend'),
-                        'url' => [
-                            'base' => '*',
-                            'params' => [
+                        'url' => $this->getUrl(
+                            '*/*/viewJob',
+                            [
                                 'job_id' => $this->_job->getJobId(),
                                 'job_type_id' => $this->_jobTypeId,
                                 'job_type_referrer' => Model\JobType::JOB_TYPE_BLOCK,
@@ -121,7 +121,7 @@ class Grid extends Extended
                                 'source_store_id' => $this->_sourceStoreId,
                                 'target_store_id'=>$this->_job->getTargetStoreId()
                             ]
-                        ],
+                        ),
                         'field' => 'entity_id'
                     ]
                 ],

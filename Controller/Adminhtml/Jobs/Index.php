@@ -90,7 +90,7 @@ class Index extends Action
             } else {
                 $dataArray = (array)$apiData;
                 $result['status'] = false;
-                if (key_exists('message', $dataArray)) {
+                if (isset($dataArray['message'])) {
                     $result['message'] =  __('Server: 1%', $dataArray['message']);
                 }
                 $this->_logger->addError($result['message'], $dataArray);

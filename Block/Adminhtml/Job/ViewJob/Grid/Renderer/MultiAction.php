@@ -110,6 +110,11 @@ class MultiAction extends Action
     ) {
         $text = $action['caption']->getText();
         if ($text && strcasecmp('View Details', $text) === 0) {
+            if (isset($action['field']) && isset($action['url']) && is_string($action['url'])) {
+                $param = "{$action['field']}/{$this->_getValue($row)}";
+                $action['url'] .= $param;
+                unset($action['field']);
+            }
             return parent::_toLinkHtml($action, $row);
         } else {
             return $this->getLinkHtml($action, $row, $text);
@@ -122,11 +127,11 @@ class MultiAction extends Action
      */
     private function getJob($action)
     {
-        $urlArray = key_exists('url', $action) ? $action['url'] : null;
+        $urlArray = $action['url'] ?? null;
         if (is_array($urlArray)) {
-            $params = key_exists('params', $urlArray) ? $urlArray['params'] : null;
+            $params = $urlArray['params'] ?? null;
             if (is_array($params)) {
-                $jobId = key_exists('job_id', $params) ? $params['job_id'] : null;
+                $jobId = $params['job_id'] ?? null;
                 if (is_numeric($jobId)) {
                     $this->_jobModel->load($jobId);
                     return $this->_jobModel->getId() ? $this->_jobModel : null;

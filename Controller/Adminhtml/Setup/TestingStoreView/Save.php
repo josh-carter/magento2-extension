@@ -71,7 +71,7 @@ class Save extends \Magento\Backend\App\Action
             //create testing store if store name is given
             $data = $this->getRequest()->getParams();
             if ($data) {
-                if (key_exists('store_view_name', $data) && !empty($data['store_view_name'])) {
+                if (isset($data['store_view_name']) && !empty($data['store_view_name'])) {
                     //create a store view
                     $result = $this->_setup->createTestingStoreView($data['store_view_name']);
                     if ($result['Success']) {

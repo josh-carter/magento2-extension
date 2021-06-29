@@ -17,11 +17,11 @@ class JobRefresh extends Column
     {
         if (isset($dataSource['data']['items'])) {
             foreach ($dataSource['data']['items'] as &$item) {
-                if (array_key_exists('job_key', $item)) {
+                if (isset($item['job_key'])) {
                     $item[$this->getData('name')] = "
                     <a  href='#'
-                        class='straker-job-refresh-anchor' 
-                        data-job-id='". $item['job_id'] ."' 
+                        class='straker-job-refresh-anchor'
+                        data-job-id='". $item['job_id'] ."'
                         data-job-key='" . $item['job_key'] . "' >
                         <i class='fa fa-refresh'></i>
                     </a>";

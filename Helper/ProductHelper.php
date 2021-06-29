@@ -567,7 +567,7 @@ class ProductHelper extends AbstractHelper
     {
         $productArray = [];
         foreach ($this->_productData as $productData) {
-            if (key_exists($productData['product_type'], $productArray)) {
+            if (isset($productArray[$productData['product_type']])) {
                 $productArray[$productData['product_type']] += 1;
             } else {
                 $productArray[$productData['product_type']] = 1;

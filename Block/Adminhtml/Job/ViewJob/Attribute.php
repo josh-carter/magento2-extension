@@ -24,7 +24,7 @@ class Attribute extends Container
         JobFactory $jobFactory,
         array $data = []
     ) {
-    
+
         $this->_jobFactory = $jobFactory;
         parent::__construct($context, $data);
     }
@@ -33,10 +33,8 @@ class Attribute extends Container
     {
         $this->_requestData = $this->getRequest()->getParams();
         $this->_job = $this->_jobFactory->create()->load($this->_requestData['job_id']);
-        $this->_entityId = array_key_exists('entity_id', $this->_requestData) ? $this->_requestData['entity_id'] : 0;
-        $this->_referrerId = array_key_exists('job_type_referrer', $this->_requestData)
-            ? $this->_requestData['job_type_referrer']
-            : 0;
+        $this->_entityId = $this->_requestData['entity_id'] ?? 0;
+        $this->_referrerId = $this->_requestData['job_type_referrer'] ?? 0;
         $this->_getReferrer();
         $this->_getEntityName();
 

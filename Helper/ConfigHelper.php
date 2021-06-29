@@ -91,7 +91,7 @@ class ConfigHelper extends AbstractHelper
         }
         $moduleInfoArray = $this->_moduleList->getOne($moduleName);
         $version = '';
-        if (array_key_exists('setup_version', $moduleInfoArray)) {
+        if (isset($moduleInfoArray['setup_version'])) {
             $version = $moduleInfoArray['setup_version'];
         }
         return trim($version);
@@ -238,15 +238,9 @@ class ConfigHelper extends AbstractHelper
             $dbStoreConfig[$item->getPath()] = $item->getValue();
         }
 
-        $source_store = array_key_exists('straker/general/source_store', $dbStoreConfig)
-            ? $dbStoreConfig['straker/general/source_store']
-            : false;
-        $source_language = array_key_exists('straker/general/source_language', $dbStoreConfig)
-            ? $dbStoreConfig['straker/general/source_language']
-            : false;
-        $destination_language = array_key_exists('straker/general/destination_language', $dbStoreConfig)
-            ? $dbStoreConfig['straker/general/destination_language']
-            :  false;
+        $source_store = $dbStoreConfig['straker/general/source_store'] ?? false;
+        $source_language = $dbStoreConfig['straker/general/source_language'] ?? false;
+        $destination_language = $dbStoreConfig['straker/general/destination_language'] ?? false;
 
         return $source_store && $source_language && $destination_language;
     }
@@ -362,8 +356,8 @@ class ConfigHelper extends AbstractHelper
         return
             '<p><b>' . __('Sandbox Mode Enabled') . '</b></p><p>'
             . __(
-                'Thank you for installing our plugin. We have enabled the Sandbox testing mode for you. 
-                Jobs you create while this is enabled will not be received by Straker Translations, 
+                'Thank you for installing our plugin. We have enabled the Sandbox testing mode for you.
+                Jobs you create while this is enabled will not be received by Straker Translations,
                 and content will not be translated by a human - rather it will only be sample text.
                  To change the Sandbox Mode, go to <a href="'
                 . $this->_urlFactory->create()->getUrl('adminhtml/system_config/edit', ['section' => 'straker_config'])

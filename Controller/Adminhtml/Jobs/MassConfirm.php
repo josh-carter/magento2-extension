@@ -100,7 +100,7 @@ class MassConfirm extends Action implements HttpPostActionInterface
                 $job->setData('job_status_id', JobStatus::JOB_STATUS_CONFIRMED);
                 $this->jobResource->save($job);
 
-                if (!key_exists($jobNumber, $publishedJobs)) {
+                if (!isset($publishedJobs[$jobNumber])) {
                     $publishedJobs[$jobNumber] = [];
                 }
 

@@ -20,7 +20,7 @@ class ViewJob extends Template
     protected function _prepareLayout()
     {
         $requestData = $this->getRequest()->getParams();
-        if (array_key_exists('job_type_id', $requestData)) {
+        if (isset($requestData['job_type_id'])) {
             $jobType = $requestData['job_type_id'];
 
             switch ($jobType) {

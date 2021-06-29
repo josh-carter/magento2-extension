@@ -18,7 +18,7 @@ class JobActions extends Column
         if (isset($dataSource['data']['items'])) {
             foreach ($dataSource['data']['items'] as & $item) {
                 $name = $this->getData('name');
-                if (array_key_exists('job_status_id', $item) && array_key_exists('job_id', $item)) {
+                if (isset($item['job_status_id']) && isset($item['job_id'])) {
                     $statusId = $item['job_status_id'];
 
                     $url = 'EasyTranslationPlatform/Jobs/ViewJob';

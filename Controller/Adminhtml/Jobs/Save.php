@@ -60,7 +60,6 @@ class Save extends Action
         SetupInterface $setup,
         Logger $logger
     ) {
-
         $this->_api = $API;
         $this->_setupInterface = $setup;
         $this->_jobHelper = $jobHelper;
@@ -201,7 +200,7 @@ class Save extends Action
         try {
             $response = $this->_api->callTranslate($this->_jobRequest);
 
-            if (key_exists('success', $response) && $response->success) {
+            if (isset($response->success) && $response->success) {
                 foreach ($job_object as $job) {
                     $job->addData(['job_key'=>$response->job_key]);
                     $job->setData('sl', $this->_api->getLanguageName($job->getData('sl')));
@@ -219,12 +218,11 @@ class Save extends Action
                     $this->messageManager->addSuccess(__('Your job was successfully sent to Straker Translations.'));
                 }
             } else {
-                $message = isset($response->message)
-                    ? $response->message
-                    : (method_exists($response, 'getMessage')
+                $message = $response->message ?? (
+                    method_exists($response, 'getMessage')
                         ? $response->getMessage()
                         : 'Unknown networking issue.'
-                    );
+                );
                 $this->messageManager->addErrorMessage(__($message));
             }
         } catch (Exception $e) {
@@ -287,7 +285,6 @@ class Save extends Action
 
             $this->_xmlHelper->saveXmlFile();
             return ['filename' => $this->_xmlHelper->getXmlFileName(), 'summary' => json_encode($summary)];
-
         } catch (Exception $e) {
             $this->_logger->error('error '.__FILE__.' '.__LINE__.''.$e->getMessage(), [$e]);
             $this->_api->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
