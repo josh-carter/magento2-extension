@@ -37,20 +37,20 @@ class Plugin
 
         if (!$this->_configHelper->getAccessToken()) {
             $resultRedirect = $this->_redirectFactory->create();
-            $resultRedirect->setPath('*/setup_registration/index/', array('from' => $actionName));
+            $resultRedirect->setPath('*/setup_registration/index/', ['from' => $actionName]);
             return $resultRedirect;
         }
 
         if ($actionName === 'new') {
             if (empty($this->_configHelper->getDefaultAttributes())) {
                 $resultRedirect = $this->_redirectFactory->create();
-                $resultRedirect->setPath("*/setup_productattributes/index/", array('from' => $actionName));
+                $resultRedirect->setPath("*/setup_productattributes/index/", ['from' => $actionName]);
                 return $resultRedirect;
             }
 
-            if($this->_configHelper->isSandboxMode() && !$this->_setupApi->isTestingStoreViewExist()->getId()){
+            if ($this->_configHelper->isSandboxMode() && !$this->_setupApi->isTestingStoreViewExist()->getId()) {
                 $resultRedirect = $this->_redirectFactory->create();
-                $resultRedirect->setPath("*/setup_testingstoreview/index/", array('from' => $actionName));
+                $resultRedirect->setPath("*/setup_testingstoreview/index/", ['from' => $actionName]);
                 return $resultRedirect;
             }
         }

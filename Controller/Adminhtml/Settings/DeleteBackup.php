@@ -34,13 +34,12 @@ class DeleteBackup extends Action
         parent::__construct($context);
     }
 
-
     public function execute()
     {
         $result = ['Success' => false, 'Message' => __('We can\'t delete one or more backups.')];
         $id = $this->getRequest()->getParam('id');
 
-        if ( !empty($id) ) {
+        if (!empty($id)) {
             try {
                 list($time, $type) = explode('_', $id);
                 $backupModel = $this->_backupModelFactory->create($time, $type)->deleteFile();

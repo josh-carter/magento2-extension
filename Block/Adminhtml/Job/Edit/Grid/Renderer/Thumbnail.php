@@ -18,13 +18,13 @@ class Thumbnail extends AbstractRenderer
         Image $imageHelper,
         ProductRepositoryInterfaceFactory $productRepositoryInterfaceFactory,
         array $data = []
-    ){
+    ) {
         parent::__construct($context, $data);
         $this->imageHelper = $imageHelper;
         $this->productRepositoryInterfaceFactory = $productRepositoryInterfaceFactory;
     }
 
-    function render(DataObject $row)
+    public function render(DataObject $row)
     {
         $index = $this->getColumn()->getIndex();
         $product = $this->productRepositoryInterfaceFactory->create()->getById($row->getData('entity_id'));

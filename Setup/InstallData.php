@@ -14,7 +14,7 @@ class InstallData implements InstallDataInterface
 
         $data = [];
 
-        foreach (Model\JobStatus::getJobStatus() as $id => $status) {
+        foreach (Model\JobStatus::JOB_STATUS as $id => $status) {
             $data[] = ['status_id' => ++$id, 'status_name' => $status ];
         }
 
@@ -23,7 +23,7 @@ class InstallData implements InstallDataInterface
 
         $data = [];
 
-        foreach (Model\JobType::getJobTypes() as $id => $type) {
+        foreach (Model\JobType::JOB_TYPES as $id => $type) {
             $data[] = ['type_id' => ++$id, 'type_name' => $type ];
         }
 

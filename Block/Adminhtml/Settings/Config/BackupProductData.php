@@ -48,7 +48,7 @@ class BackupProductData extends \Magento\Config\Block\System\Config\Form\Field
      */
     public function getAjaxResetUrl()
     {
-        return $this->getUrl('EasyTranslationPlatform/Settings/BackupProductData'); //hit controller by ajax call on button click.
+        return $this->getUrl('EasyTranslationPlatform/Settings/BackupProductData');
     }
 
     /**
@@ -68,7 +68,7 @@ class BackupProductData extends \Magento\Config\Block\System\Config\Form\Field
     public function getButtonHtml()
     {
         $button = $this->getLayout()->createBlock(
-            'Magento\Backend\Block\Widget\Button'
+            \Magento\Backend\Block\Widget\Button::class
         )->addData([
             'id' => $this->_buttonId,
                 'name' => $this->_buttonName,

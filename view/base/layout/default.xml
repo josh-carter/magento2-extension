@@ -5,9 +5,4 @@
         <css src="Straker_EasyTranslationPlatform::css/font-awesome.min.css"/>
         <link src="Straker_EasyTranslationPlatform::js/straker.js"/>
     </head>
-    <!--<body>-->
-        <!--<referenceContainer name="before.body.end">-->
-            <!--<block class="Magento\Framework\View\Element\Template" template="Straker_EasyTranslationPlatform::support/googleAnalytics.phtml" />-->
-        <!--</referenceContainer>-->
-    <!--</body>-->
 </page>

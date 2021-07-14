@@ -1,4 +1,6 @@
 <?php
-/** @var $block \Straker\EasyTranslationPlatform\Block\Adminhtml\Settings\Config\BackupProductData */
+use Straker\EasyTranslationPlatform\Block\Adminhtml\Settings\Config\BackupProductData;
+
+/** @var $block BackupProductData */
 echo $block->getButtonHtml();
-echo '<p class="note"><span>'. __('This will perform a Magento database backup.') .'</span>';
+echo '<p class="note"><span>'. $block->escapeHtml(__('This will perform a Magento database backup.')) .'</span>';

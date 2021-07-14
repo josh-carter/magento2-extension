@@ -13,18 +13,15 @@ class JobType extends AbstractModel implements JobTypeInterface, IdentityInterfa
     const JOB_TYPE_ATTRIBUTE    = 3;
     const JOB_TYPE_PAGE         = 4;
     const JOB_TYPE_BLOCK        = 5;
+    const JOB_TYPES             = ['product', 'category', 'attribute', 'page', 'block'];
 
     protected function _construct()
     {
-        $this->_init('Straker\EasyTranslationPlatform\Model\ResourceModel\JobType');
+        $this->_init(\Straker\EasyTranslationPlatform\Model\ResourceModel\JobType::class);
     }
 
     public function getIdentities()
     {
         return [self::CACHE_TAG . '_' . $this->getId()];
-    }
-
-    public static function getJobTypes(){
-        return ['product', 'category', 'attribute', 'page', 'block'];
     }
 }

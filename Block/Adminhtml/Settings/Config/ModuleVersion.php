@@ -16,18 +16,18 @@ class ModuleVersion extends \Magento\Config\Block\System\Config\Form\Field
 {
     protected $_configHelper;
 
-    function __construct(
+    public function __construct(
         Context $context,
         ConfigHelper $configHelper,
         array $data = []
-    )
-    {
+    ) {
         parent::__construct($context, $data);
         $this->_configHelper = $configHelper;
     }
 
-    function _getElementHtml(\Magento\Framework\Data\Form\Element\AbstractElement $element)
-    {
+    public function _getElementHtml(
+        \Magento\Framework\Data\Form\Element\AbstractElement $element
+    ) {
         $this->_cache->clean(Config::CACHE_TAG);
         $myAccountUrl = $this->_configHelper->getMyAccountUrl();
         $disabled = empty($this->_configHelper->getAccessToken()) ? 'disabled' : '';

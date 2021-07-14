@@ -5,6 +5,7 @@ namespace Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Product;
 use Magento\Backend\Block\Template\Context;
 use Magento\Backend\Block\Widget\Grid\Extended;
 use Magento\Backend\Helper\Data as BackendHelperData;
+use Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Renderer\MultiAction;
 use Straker\EasyTranslationPlatform\Model;
 use Straker\EasyTranslationPlatform\Model\JobFactory;
 
@@ -15,12 +16,10 @@ use Magento\Catalog\Model\Product\TypeFactory;
 
 use Magento\Store\Model\ResourceModel\Website\CollectionFactory as WebsiteFactory;
 
-
 class Grid extends Extended
 {
     protected $_jobFactory;
     protected $_job;
-    protected $_entityId;
     protected $_jobTypeId = Model\JobType::JOB_TYPE_ATTRIBUTE;
     protected $_jobKey;
     protected $_jobId;
@@ -81,7 +80,6 @@ class Grid extends Extended
         $this->setCollection($productCollection);
         return parent::_prepareCollection();
     }
-
 
     /**
      * @return $this
@@ -169,7 +167,7 @@ class Grid extends Extended
             ]
         );
 
-        if (!$this->_storeManager->isSingleStoreMode()){
+        if (!$this->_storeManager->isSingleStoreMode()) {
             $this->addColumn(
                 'websites',
                 [
@@ -191,23 +189,23 @@ class Grid extends Extended
                 'actions' => [
                     [
                         'caption' => __('View Details'),
-                        'url' => [
-                            'base' => '*/*/ViewJob',
-                            'params' => [
+                        'url' => $this->getUrl(
+                            '*/*/viewJob',
+                            [
                                 'job_id' => $this->_job->getJobId(),
                                 'job_type_id' => $this->_jobTypeId,
                                 'job_type_referrer' => Model\JobType::JOB_TYPE_PRODUCT,
                                 'job_key' => $this->_jobKey,
                                 'source_store_id' => $this->_sourceStoreId
                             ]
-                        ],
+                        ),
                         'field' => 'entity_id'
                     ],
                     [
                         'caption' => __('View in the Frontend'),
-                        'url' => [
-                            'base' => '*',
-                            'params' => [
+                        'url' => $this->getUrl(
+                            '*/*/viewJob',
+                            [
                                 'job_id' => $this->_job->getJobId(),
                                 'job_type_id' => $this->_jobTypeId,
                                 'job_type_referrer' => Model\JobType::JOB_TYPE_PRODUCT,
@@ -215,14 +213,14 @@ class Grid extends Extended
                                 'source_store_id' => $this->_sourceStoreId,
                                 'target_store_id'=>$this->_job->getTargetStoreId()
                             ]
-                        ],
+                        ),
                         'field' => 'entity_id'
                     ],
                     [
                         'caption' => __('View in the Backend'),
-                        'url' => [
-                            'base' => '*',
-                            'params' => [
+                        'url' => $this->getUrl(
+                            '*/*/viewJob',
+                            [
                                 'job_id' => $this->_job->getJobId(),
                                 'job_type_id' => $this->_jobTypeId,
                                 'job_type_referrer' => Model\JobType::JOB_TYPE_PRODUCT,
@@ -230,13 +228,13 @@ class Grid extends Extended
                                 'source_store_id' => $this->_sourceStoreId,
                                 'target_store_id'=>$this->_job->getTargetStoreId()
                             ]
-                        ],
+                        ),
                         'field' => 'entity_id'
                     ]
                 ],
                 'filter' => false,
                 'sortable' => false,
-                'renderer' => 'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Renderer\MultiAction',
+                'renderer' => MultiAction::class,
                 'header_css_class' => 'col-action',
                 'column_css_class' => 'col-action'
             ]
@@ -245,7 +243,8 @@ class Grid extends Extended
         return parent::_prepareColumns();
     }
 
-    protected function _addColumnFilterToCollection($column){
+    protected function _addColumnFilterToCollection($column)
+    {
         if ($this->getCollection()) {
             if ($column->getId() == 'websites') {
                 $this->getCollection()->joinField(
@@ -260,7 +259,6 @@ class Grid extends Extended
         }
         return parent::_addColumnFilterToCollection($column);
     }
-
 
     /**
      * @param \Magento\Catalog\Model\Product|\Magento\Framework\DataObject $row

@@ -8,8 +8,7 @@ use Straker\EasyTranslationPlatform\Model\JobType as JobTypeModel;
 
 class JobTypeActions extends AbstractRenderer
 {
-
-    function render(DataObject $row)
+    public function render(DataObject $row)
     {
         $params = $this->getRequest()->getParams();
 

@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Paul
- * Date: 5/07/16
- * Time: 15:31
- */
-
 namespace Straker\EasyTranslationPlatform\Block\Adminhtml\Settings\Config;
 
 use Magento\Backend\Block\Template\Context;
@@ -16,17 +9,16 @@ class MyAccount extends \Magento\Config\Block\System\Config\Form\Field
 {
     protected $_configHelper;
 
-    function __construct(
+    public function __construct(
         Context $context,
         ConfigHelper $configHelper,
         array $data = []
-    )
-    {
+    ) {
         parent::__construct($context, $data);
         $this->_configHelper = $configHelper;
     }
 
-    function _getElementHtml(\Magento\Framework\Data\Form\Element\AbstractElement $element)
+    protected function _getElementHtml(\Magento\Framework\Data\Form\Element\AbstractElement $element)
     {
         $this->_cache->clean(Config::CACHE_TAG);
         $myAccountUrl = $this->_configHelper->getMyAccountUrl();

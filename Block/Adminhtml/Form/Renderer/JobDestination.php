@@ -44,66 +44,67 @@ class JobDestination extends Element implements RendererInterface
 
     public function getWebsites()
     {
-
         return $this->_storeManager->getWebsites();
     }
 
     public function getOptions()
     {
-        if($this->isSandboxModeEnabled()){
+        if ($this->isSandboxModeEnabled()) {
             return $this->getSandboxLanguages();
         }
         return $this->_strakerAPIInterface->getLanguages();
     }
 
-    public function isSandboxModeEnabled(){
+    public function isSandboxModeEnabled()
+    {
         return $this->_configHelper->isSandboxMode();
     }
 
-    public function getSandboxLanguages(){
+    public function getSandboxLanguages()
+    {
         return $this->_dataHelper->getSandboxLanguages();
     }
 
-    public function getTestingStoreCode(){
+    public function getTestingStoreCode()
+    {
         return $this->_configHelper->getTestingStoreViewCode();
     }
 
-    public function listStores($label, $forTarget = false){
+    public function listStores($label, $forTarget = false)
+    {
         $options = '<option value="">' . __($label) . '</option>';
 
         foreach ($this->getWebsites() as $website):
             $showWebsite = false;
             foreach ($website->getGroups() as $group):
                 $showGroup = false;
-                    foreach ($group->getStores() as $store):
-                        if ($showWebsite === false):
-                            $showWebsite = true;
-                            $options .= '<optgroup label="' . $this->escapeHtml($website->getName()) . '"></optgroup>';
+                foreach ($group->getStores() as $store):
+                    if ($showWebsite === false):
+                        $showWebsite = true;
+                        $options .= '<optgroup label="' . $this->escapeHtml($website->getName()) . '"></optgroup>';
+                    endif;
+                    if ($showGroup === false):
+                        $showGroup = true;
+                        $options .= '<optgroup label="' . $this->escapeHtml($group->getName())  . '">';
+                    endif;
+                    if ($forTarget) {
+                        if ((!$this->isSandboxModeEnabled()
+                            && strcasecmp($store->getCode(), $this->getTestingStoreCode()) != 0)
+                        || ($this->isSandboxModeEnabled()
+                            && strcasecmp($store->getCode(), $this->getTestingStoreCode()) == 0)):
+
+                            $options .= '<option value="'
+                                . $this->escapeHtml($store->getId())
+                                . '">'
+                                . $this->escapeHtml($store->getName())
+                                . '</option>';
                         endif;
-                        if ($showGroup === false):
-                            $showGroup = true;
-                            $options .= '<optgroup label="' . $this->escapeHtml($group->getName())  . '">';
-                        endif;
-                        if($forTarget){
-                            if((!$this->isSandboxModeEnabled()
-                                && strcasecmp($store->getCode(), $this->getTestingStoreCode()) != 0)
-                            || ($this->isSandboxModeEnabled()
-                                && strcasecmp($store->getCode(), $this->getTestingStoreCode()) == 0) ):
-
-                            $options .= '<option value="' . $this->escapeHtml($store->getId()) . '">' . $this->escapeHtml($store->getName()) . '</option>';
-                            endif;
-                        } else {
-                            $options .= '<option value="' . $this->escapeHtml($store->getId()) . '">';
-
-//                            if ($this->getStoreId() == $store->getId()):
-//                                $options .= 'selected="selected"';
-//                            endif;
-//                            $options .= '>';
-
-                            $options .= $this->escapeHtml($store->getName());
-                            $options .= '</option>';
-                        }
-                    endforeach;
+                    } else {
+                        $options .= '<option value="' . $this->escapeHtml($store->getId()) . '">';
+                        $options .= $this->escapeHtml($store->getName());
+                        $options .= '</option>';
+                    }
+                endforeach;
                 if ($showGroup):
                     $options .= '</optgroup>';
                 endif;

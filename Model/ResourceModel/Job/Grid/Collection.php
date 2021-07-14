@@ -54,7 +54,7 @@ class Collection extends JobCollection implements SearchResultInterface
         $eventPrefix,
         $eventObject,
         $resourceModel,
-        $model = 'Magento\Framework\View\Element\UiComponent\DataProvider\Document'
+        $model = \Magento\Framework\View\Element\UiComponent\DataProvider\Document::class
     ) {
         parent::__construct(
             $entityFactory,
@@ -131,9 +131,9 @@ class Collection extends JobCollection implements SearchResultInterface
     public function getTotalCount()
     {
         $version = $this->_configHelper->getMagentoVersion();
-        if(version_compare($version, '2.1.0', '>=')){
+        if (version_compare($version, '2.1.0', '>=')) {
             return $this->getSize();
-        }else{
+        } else {
             return count($this);
         }
     }
@@ -165,39 +165,43 @@ class Collection extends JobCollection implements SearchResultInterface
     protected function _beforeLoad()
     {
         parent::_beforeLoad();
-        $strakerJobTypeTable = $this->_resource->getTable('straker_job_type');
-                $this->getSelect()
-                    ->reset(Select::COLUMNS)
-                    ->columns([
-                        'job_id',
-                        'job_number',
-                        'GROUP_CONCAT(summary  SEPARATOR \''. JobHelper::SEPARATOR .'\') AS summary',
-                        'created_at',
-                        'updated_at',
-                        'sl',
-                        'tl',
-                        'job_status_id',
-                        'job_type_id',
-                        'job_key',
-                        'source_store_id',
-                        'target_store_id',
-                        'source_file',
-                        'translated_file',
-                        'download_url',
-                        'is_test_job'
-                    ])->joinLeft(
-                        [ 'st_type' => $strakerJobTypeTable ],
-                        'st_type.type_id=main_table.job_type_id AND main_table.job_key IS NOT NULL AND main_table.job_key <> \'\'',
-                        'GROUP_CONCAT(st_type.type_name SEPARATOR \''. JobHelper::SEPARATOR . '\') AS job_types'
-                    )
-                    ->where('is_test_job = ?', $this->_configHelper->isSandboxMode())
-                    ->group('job_key');
-        $this->getSelect()->where('is_test_job = ?', $this->_configHelper->isSandboxMode())->group('job_key');
-        $hasUpdatedJob = $this->_coreRegistry->registry('job_updated');
-        if( $hasUpdatedJob ){
-            $this->getSelect()->order('updated_at DESC');
-            $this->_coreRegistry->unregister('job_updated');
+        if (!$this->hasFlag('get_data_without_group')) {
+            $strakerJobTypeTable = $this->_resource->getTable('straker_job_type');
+            $this->getSelect()
+                ->reset(Select::COLUMNS)
+                ->columns([
+                    'job_id',
+                    'job_number',
+                    'GROUP_CONCAT(summary  SEPARATOR \''. JobHelper::SEPARATOR .'\') AS summary',
+                    'created_at',
+                    'updated_at',
+                    'sl',
+                    'tl',
+                    'job_status_id',
+                    'job_type_id',
+                    'job_key',
+                    'source_store_id',
+                    'target_store_id',
+                    'source_file',
+                    'translated_file',
+                    'download_url',
+                    'is_test_job'
+                ])->joinLeft(
+                    [ 'st_type' => $strakerJobTypeTable ],
+                    'st_type.type_id=main_table.job_type_id'
+                    . ' AND main_table.job_key IS NOT NULL AND main_table.job_key <> \'\'',
+                    'GROUP_CONCAT(st_type.type_name SEPARATOR \''. JobHelper::SEPARATOR . '\') AS job_types'
+                )
+                ->where('is_test_job = ?', $this->_configHelper->isSandboxMode())
+                ->group('job_key');
+            $this->getSelect()->where('is_test_job = ?', $this->_configHelper->isSandboxMode())->group('job_key');
+            $hasUpdatedJob = $this->_coreRegistry->registry('job_updated');
+            if ($hasUpdatedJob) {
+                $this->getSelect()->order('updated_at DESC');
+                $this->_coreRegistry->unregister('job_updated');
+            }
         }
+
         return $this;
     }
 }

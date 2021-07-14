@@ -9,7 +9,6 @@ use Magento\Backend\Block\Template\Context;
 use Magento\Framework\Registry;
 use Magento\Framework\Data\FormFactory;
 
-
 class Form extends Generic
 {
     protected $_Registry;
@@ -28,15 +27,8 @@ class Form extends Generic
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
-
-    protected function _construct()
-    {
-        parent::_construct();
-    }
-
     protected function _prepareForm()
     {
-
         /** @var \Magento\Framework\Data\Form $form */
         $form = $this->_formFactory->create(
             ['data' => ['id' => 'edit_form', 'action' => $this->getData('action'), 'method' => 'post']]
@@ -145,7 +137,12 @@ class Form extends Generic
             [
                 'label' => '',
                 'name' => 'terms',
-                'after_element_html' => '<span>&nbsp;&nbsp;' . __('I have read and agreed to the %1 terms and conditions %2', '</span><a href="https://www.strakertranslations.com/terms-conditions/" target="_blank">', '</a>'),
+                'after_element_html' => '<span>&nbsp;&nbsp;'
+                    . __(
+                        'I have read and agreed to the %1 terms and conditions %2',
+                        '</span><a href="https://www.strakertranslations.com/terms-conditions/" target="_blank">',
+                        '</a>'
+                    ),
                 'class'=>'checkbox required'
             ]
         );
@@ -171,9 +168,7 @@ class Form extends Generic
     protected function _getOptions()
     {
         $aCountries = [];
-
-        $aCountries[null] = 'Select a country';
-
+        $aCountries[null] = __('Select a country');
         foreach ($this->_strakerAPIInterface->getCountries() as $key => $value) {
             $aCountries[$value->code] = $value->name;
         }
@@ -181,13 +176,14 @@ class Form extends Generic
         return $aCountries;
     }
 
-    private function _getCompanySizeOptions() {
-        return array(
+    private function _getCompanySizeOptions()
+    {
+        return [
             ''          => '-',
             '1 - 10'    => '1 - 10',
             '11 - 50'   => '11 - 50',
             '51 - 250'  => '51 - 250',
             '250+'      => '250+'
-        );
+        ];
     }
 }

@@ -20,7 +20,7 @@ class Type extends Container
         JobFactory $jobFactory,
         ConfigHelper $configHelper,
         array $data = []
-    ){
+    ) {
         $this->_jobFactory = $jobFactory;
         $this->_configHelper = $configHelper;
         parent::__construct($context, $data);
@@ -67,19 +67,19 @@ class Type extends Container
             'title' => __('Publish the job of 1%', $this->_job->getJobNumber())
         ];
 
-        $this->addButton('manage_job', $goBackButton, 0,10);
+        $this->addButton('manage_job', $goBackButton, 0, 10);
 
         $statusId = $this->_job->_getLowestJobStatusId();
 
-        if($statusId >= JobStatus::JOB_STATUS_INIT){
+        if ($statusId >= JobStatus::JOB_STATUS_INIT) {
             $this->addButton('export_source_file', $exportButtonData, 0, 20);
         }
 
-        if ($statusId >= JobStatus::JOB_STATUS_COMPLETED){
+        if ($statusId >= JobStatus::JOB_STATUS_COMPLETED) {
             $this->addButton('import_translated_file', $importButtonData, 0, 30);
         }
 
-        if ($statusId == JobStatus::JOB_STATUS_COMPLETED){
+        if ($statusId == JobStatus::JOB_STATUS_COMPLETED) {
             $this->addButton('publish', $publishButtonData, 0, 40);
         }
 
@@ -90,12 +90,12 @@ class Type extends Container
     {
         $this->addChild(
             'straker-title-manageJob',
-            'Magento\Framework\View\Element\Template'
+            \Magento\Framework\View\Element\Template::class
         )->setTemplate('Straker_EasyTranslationPlatform::job/viewJobTitle.phtml')->setData('title', 'Manage Jobs');
 
         $this->addChild(
             'straker-breadcrumbs',
-            'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Widget\Breadcrumbs',
+            \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Widget\Breadcrumbs::class,
             [
                 [
                     'label' => __('Manage Jobs'),
@@ -110,7 +110,7 @@ class Type extends Container
 
         $this->addChild(
             'straker_job_type_grid',
-            'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Type\Grid'
+            \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Type\Grid::class
         );
 
         return parent::_prepareLayout();
@@ -124,7 +124,7 @@ class Type extends Container
     public function getButtonHtml($label, $onclick, $class = '', $buttonId = null, $dataAttr = [])
     {
         return $this->getLayout()->createBlock(
-            'Magento\Backend\Block\Widget\Button'
+            \Magento\Backend\Block\Widget\Button::class
         )->setData(
             ['label' => $label, 'onclick' => $onclick, 'class' => $class, 'type' => 'button', 'id' => $buttonId]
         )->setDataAttribute(
@@ -149,7 +149,6 @@ class Type extends Container
 
     public function getImportUrl()
     {
-        return $this->getUrl('EasyTranslationPlatform/Jobs/Import'); //hit controller by ajax call on button click.
-
+        return $this->getUrl('EasyTranslationPlatform/Jobs/Import');
     }
 }

@@ -1,7 +1,10 @@
 <?php
 namespace Straker\EasyTranslationPlatform\Model;
 
-class AttributeTranslation extends \Magento\Framework\Model\AbstractModel implements AttributeTranslationInterface, \Magento\Framework\DataObject\IdentityInterface
+use Magento\Framework\DataObject\IdentityInterface;
+use Magento\Framework\Model\AbstractModel;
+
+class AttributeTranslation extends AbstractModel implements AttributeTranslationInterface, IdentityInterface
 {
     const CACHE_TAG = 'straker_easytranslationplatform_attributetranslation';
 
@@ -24,7 +27,7 @@ class AttributeTranslation extends \Magento\Framework\Model\AbstractModel implem
 
     protected function _construct()
     {
-        $this->_init('Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeTranslation');
+        $this->_init(\Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeTranslation::class);
     }
 
     public function getIdentities()

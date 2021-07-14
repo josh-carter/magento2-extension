@@ -39,12 +39,11 @@ class ViewQuote extends \Magento\Backend\App\Action
         $this->_jobFactory = $jobFactory;
     }
 
-
     public function execute()
     {
         $jobKey = $this->getRequest()->getParam('job_key');
         $quoteUrl = $this->_configHelper->getPaymentPageUrl().'&job_key='.$jobKey;
-        $this->_coreRegistry->register('quote_url', $quoteUrl );
+        $this->_coreRegistry->register('quote_url', $quoteUrl);
         $resultPage = $this->_resultPageFactory->create();
         $resultPage->setActiveMenu('Straker_EasyTranslationPlatform::managejobs');
         $resultPage->getConfig()->getTitle()->prepend(__('Straker Translations'));

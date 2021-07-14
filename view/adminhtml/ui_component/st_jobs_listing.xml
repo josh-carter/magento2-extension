@@ -87,6 +87,19 @@
                 </item>
             </argument>
         </filters>
+        <massaction name="listing_massaction">
+            <action name="publish">
+                <settings>
+                    <confirm>
+                        <message translate="true">Publish all selected jobs? Note: Only jobs that are ready to publish will be processed.</message>
+                        <title translate="true">Publish</title>
+                    </confirm>
+                    <url path="EasyTranslationPlatform/Jobs/MassConfirm"/>
+                    <type>delete</type>
+                    <label translate="true">Publish</label>
+                </settings>
+            </action>
+        </massaction>
         <paging name="listing_paging">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
@@ -123,13 +136,13 @@
                 </item>
             </item>
         </argument>
-        <!--<selectionsColumn name="ids">-->
-            <!--<argument name="data" xsi:type="array">-->
-                <!--<item name="config" xsi:type="array">-->
-                    <!--<item name="indexField" xsi:type="string">job_id</item>-->
-                <!--</item>-->
-            <!--</argument>-->
-        <!--</selectionsColumn>-->
+        <selectionsColumn name="ids">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="indexField" xsi:type="string">job_id</item>
+                </item>
+            </argument>
+        </selectionsColumn>
         <column name="job_number">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">

@@ -5,16 +5,16 @@ namespace Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Block;
 use Magento\Backend\Block\Template\Context;
 use Magento\Backend\Block\Widget\Grid\Extended;
 use Magento\Backend\Helper\Data as BackendHelperData;
-use Magento\Framework\View\Element\Template;
+use Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Renderer\MultiAction;
 use Straker\EasyTranslationPlatform\Model;
+use Straker\EasyTranslationPlatform\Model\Job;
 use Straker\EasyTranslationPlatform\Model\JobFactory;
 
 class Grid extends Extended
 {
     protected $_jobFactory;
-    /** @var \Straker\EasyTranslationPlatform\Model\Job $_job */
+    /** @var Job $_job */
     protected $_job;
-    protected $_entityId;
     protected $_jobTypeId = Model\JobType::JOB_TYPE_ATTRIBUTE;
     protected $_jobKey;
     protected $_jobId;
@@ -52,7 +52,6 @@ class Grid extends Extended
         $this->setCollection($blockCollection);
         return parent::_prepareCollection();
     }
-
 
     /**
      * @return $this
@@ -98,23 +97,23 @@ class Grid extends Extended
                 'actions' => [
                     [
                         'caption' => __('View Details'),
-                        'url' => [
-                            'base' => '*/*/ViewJob',
-                            'params' => [
+                        'url' => $this->getUrl(
+                            '*/*/viewJob',
+                            [
                                 'job_id' => $this->_job->getJobId(),
                                 'job_type_id' => $this->_jobTypeId,
                                 'job_type_referrer' => Model\JobType::JOB_TYPE_BLOCK,
                                 'job_key' => $this->_jobKey,
                                 'source_store_id' => $this->_sourceStoreId
                             ]
-                        ],
+                        ),
                         'field' => 'entity_id'
                     ],
                     [
                         'caption' => __('View in the Backend'),
-                        'url' => [
-                            'base' => '*',
-                            'params' => [
+                        'url' => $this->getUrl(
+                            '*/*/viewJob',
+                            [
                                 'job_id' => $this->_job->getJobId(),
                                 'job_type_id' => $this->_jobTypeId,
                                 'job_type_referrer' => Model\JobType::JOB_TYPE_BLOCK,
@@ -122,13 +121,13 @@ class Grid extends Extended
                                 'source_store_id' => $this->_sourceStoreId,
                                 'target_store_id'=>$this->_job->getTargetStoreId()
                             ]
-                        ],
+                        ),
                         'field' => 'entity_id'
                     ]
                 ],
                 'filter' => false,
                 'sortable' => false,
-                'renderer' => 'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Grid\Renderer\MultiAction',
+                'renderer' => MultiAction::class,
                 'header_css_class' => 'col-action',
                 'column_css_class' => 'col-action'
             ]
@@ -136,7 +135,6 @@ class Grid extends Extended
 
         return parent::_prepareColumns();
     }
-
 
     /**
      * @param \Magento\Catalog\Model\Product|\Magento\Framework\DataObject $row

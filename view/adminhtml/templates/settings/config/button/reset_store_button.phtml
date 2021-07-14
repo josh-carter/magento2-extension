@@ -9,7 +9,13 @@
             foreach ($website->getGroups() as $group) { ?>
                 <tr>
                     <td colspan="4" class="site-group-name">
-                        <span> <?php echo __($website->getName()) . ' - ' . __($group->getName()); ?> </span>
+                        <span>
+                            <?= $block->escapeHtml(
+                                __($website->getName())
+                                . ' - '
+                                . __($group->getName())
+                            ); ?>
+                        </span>
                     </td>
                 </tr>
                 <?php $stores = $group->getStores();
@@ -24,19 +30,29 @@
                                 ?>
                                 <tr class="store-view-list">
                                     <td class="store-view-name">
-                                        <span><?php echo __($storeData['source']->getName()) ?></span>
-                                        <p class="store-language">[<?php echo $storeData['source_language']; ?>]</p>
+                                        <span>
+                                            <?= $block->escapeHtml(__($storeData['source']->getName())) ?>
+                                        </span>
+                                        <p class="store-language">
+                                            [<?= $block->escapeHtml($storeData['source_language']); ?>]
+                                        </p>
                                     </td>
                                     <td>
                                         <i class="fa fa-angle-right" aria-hidden="true"></i>
                                     </td>
                                     <td class="store-view-name">
-                                        <span><?php echo __($store->getName()) ?></span>
-                                        <p class="store-language">[<?php echo $storeData['target_language']; ?>]</p>
+                                        <span>
+                                            <?= $block->escapeHtml(__($store->getName())) ?>
+                                        </span>
+                                        <p class="store-language">
+                                            [<?= $block->escapeHtml($storeData['target_language']); ?>]
+                                        </p>
                                     </td>
                                     <td class="clear-language">
-                                        <input type="hidden" name="store-id" value="<?php echo $store->getId(); ?>"/>
-                                        <?php echo $block->getRemoveTranslationButtonHtml($store) ?>
+                                        <input type="hidden"
+                                               name="store-id"
+                                               value="<?= $block->escapeHtml($store->getId()); ?>"/>
+                                        <?= $block->getRemoveTranslationButtonHtml($store) ?>
                                     </td>
                                 </tr>
                             <?php } ?>
@@ -45,7 +61,7 @@
                     <?php if ($count === 0): ?>
                         <tr class="store-view-list">
                             <td colspan="4">
-                                <span><?php echo __("No language settings have been setup."); ?></span>
+                                <span><?= $block->escapeHtml(__("No language settings have been setup.")); ?></span>
                             </td>
                         </tr>
                     <?php endif; ?>
@@ -53,7 +69,7 @@
                 } else { ?>
                     <tr class="store-view-list">
                         <td colspan="4">
-                            <span><?php echo __("No store views for this website."); ?></span>
+                            <span><?= $block->escapeHtml(__("No store views for this website.")); ?></span>
                         </td>
                     </tr>
                     <?php
@@ -62,12 +78,14 @@
         } else { ?>
             <tr>
                 <td colspan="4">
-                    <span class="site-group-name"> <?php echo $website->getName(); ?> </span>
+                    <span class="site-group-name">
+                        <?= $block->escapeHtml($website->getName()); ?>
+                    </span>
                 </td>
             </tr>
             <tr>
                 <td colspan="4">
-                    <span> <?php echo __("No stores for this website."); ?> </span>
+                    <span> <?= $block->escapeHtml(__("No stores for this website.")); ?> </span>
                 </td>
             </tr>
         <?php } ?>
@@ -77,13 +95,13 @@
             </td>
         </tr>
     <?php } ?>
-    <?php if($hasLanguageSetting): ?>
+    <?php if ($hasLanguageSetting): ?>
     <tr>
         <td class="all-store-view-name">
             <b>All Store Views</b>
         </td>
         <td colspan="3" align="right" class="clear-language">
-            <?php echo $block->getRemoveAllTranslationButtonHtml(); ?>
+            <?= $block->getRemoveAllTranslationButtonHtml(); ?>
         </td>
     </tr>
     <?php endif; ?>
@@ -107,12 +125,12 @@
         $resetAllButton.on('click', function (e) {
             e.preventDefault();
             confirm({
-                title: '<?php echo __("Please Confirm") ?>',
-                content: '<?php echo __('Do you want to reset settings for all store views?') ?>',
+                title: '<?= $block->escapeHtml(__("Please Confirm")) ?>',
+                content: '<?= $block->escapeHtml(__('Do you want to reset settings for all store views?')) ?>',
                 actions: {
                     confirm: function () {
                         $.ajax({
-                            url: '<?php echo $block->getAjaxResetUrl(); ?>',
+                            url: '<?= $block->escapeUrl($block->getAjaxResetUrl()); ?>',
                             method: 'get',
                             showLoader: true,
                             complete: function () {
@@ -133,12 +151,12 @@
             if ($.isNumeric(iStoreId) && iStoreId > 0) {
 
                 confirm({
-                    title: '<?php echo __("Please Confirm") ?>',
-                    content: '<?php echo __('Do you want to reset settings for this store view?') ?>',
+                    title: '<?= $block->escapeHtml(__("Please Confirm")) ?>',
+                    content: '<?= $block->escapeHtml(__('Do you want to reset settings for this store view?')) ?>',
                     actions: {
                         confirm: function () {
                             $.ajax({
-                                url: '<?php echo $block->getAjaxResetUrl(); ?>',
+                                url: '<?= $block->escapeHtml($block->getAjaxResetUrl()); ?>',
                                 data: {'store': iStoreId},
                                 method: 'get',
                                 showLoader: true,
@@ -152,7 +170,7 @@
 
             } else {
                 alert({
-                    content: '<?php echo __('Store code is not valid.'); ?>',
+                    content: '<?= $block->escapeHtml(__('Store code is not valid.')); ?>',
                 });
             }
         });

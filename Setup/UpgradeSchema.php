@@ -8,7 +8,6 @@
 
 namespace Straker\EasyTranslationPlatform\Setup;
 
-
 use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\Setup\UpgradeSchemaInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
@@ -36,7 +35,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->increaseInt($setup, $context);
         }
 
-        if (version_compare($context->getVersion(), '1.1.0', '<')){
+        if (version_compare($context->getVersion(), '1.1.0', '<')) {
             $this->addSummaryColumn($setup, $context);
         }
 
@@ -93,12 +92,13 @@ class UpgradeSchema implements UpgradeSchemaInterface
         );
     }
 
-    private function increaseInt(SchemaSetupInterface $setup){
+    private function increaseInt(SchemaSetupInterface $setup)
+    {
 
         $connection  = $setup->getConnection();
         $foreignKeys = $connection->getForeignKeys($setup->getTable('straker_attribute_option_translation'));
 
-        foreach($foreignKeys as $foreignKey){
+        foreach ($foreignKeys as $foreignKey) {
             $connection->dropForeignKey(
                 $setup->getTable('straker_attribute_option_translation'),
                 $foreignKey['FK_NAME']
@@ -107,9 +107,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
 
         $connection->modifyColumn(
             $setup->getTable(
-                'straker_attribute_option_translation'),
-                'attribute_translation_id',
-                [
+                'straker_attribute_option_translation'
+            ),
+            'attribute_translation_id',
+            [
                     'type'              => Table::TYPE_BIGINT,
                     'comment'           => 'Attribute Translation Id',
                     'unsigned'          => true,
@@ -119,9 +120,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
 
         $connection->modifyColumn(
             $setup->getTable(
-                'straker_attribute_translation'),
-                'attribute_translation_id',
-                [
+                'straker_attribute_translation'
+            ),
+            'attribute_translation_id',
+            [
                     'type'              => Table::TYPE_BIGINT,
                     'comment'           => 'Attribute Translation Id',
                     'identity'          => true,
@@ -131,7 +133,12 @@ class UpgradeSchema implements UpgradeSchemaInterface
         );
 
         $connection->addForeignKey(
-            $setup->getFkName($setup->getTable('straker_attribute_option_translation'), 'attribute_translation_id', $setup->getTable('straker_attribute_translation'), 'attribute_translation_id'),
+            $setup->getFkName(
+                $setup->getTable('straker_attribute_option_translation'),
+                'attribute_translation_id',
+                $setup->getTable('straker_attribute_translation'),
+                'attribute_translation_id'
+            ),
             $setup->getTable('straker_attribute_option_translation'),
             'attribute_translation_id',
             $setup->getTable('straker_attribute_translation'),
@@ -139,14 +146,18 @@ class UpgradeSchema implements UpgradeSchemaInterface
         );
 
         $connection->addForeignKey(
-            $setup->getFkName($setup->getTable('straker_attribute_option_translation'), 'option_id', 'eav_attribute_option', 'option_id'),
+            $setup->getFkName(
+                $setup->getTable('straker_attribute_option_translation'),
+                'option_id',
+                'eav_attribute_option',
+                'option_id'
+            ),
             $setup->getTable('straker_attribute_option_translation'),
             'option_id',
             $setup->getTable('eav_attribute_option'),
             'option_id'
         );
     }
-
 
     private function addSummaryColumn(SchemaSetupInterface $setup)
     {

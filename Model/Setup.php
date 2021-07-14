@@ -4,6 +4,7 @@ namespace Straker\EasyTranslationPlatform\Model;
 
 use Exception;
 use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Registry;
@@ -44,82 +45,108 @@ class Setup extends AbstractModel implements SetupInterface
         parent::__construct($context, $registry);
     }
 
-    public function saveClientData($data)
+    public function saveClientData($data): Config
     {
-        $this->_configModel->saveConfig('straker/general/name', $data['first_name'] . ' ' . $data['last_name'], 'default', 0);
+        $this->_configModel->saveConfig(
+            'straker/general/name',
+            $data['first_name'] . ' ' . $data['last_name'],
+            'default',
+            0
+        );
         $this->_configModel->saveConfig('straker/general/first_name', $data['first_name'], 'default', 0);
-        $this->_configModel->saveConfig('straker/general/last_name', $data['last_name'] , 'default', 0);
+        $this->_configModel->saveConfig('straker/general/last_name', $data['last_name'], 'default', 0);
         $this->_configModel->saveConfig('straker/general/email', $data['email'], 'default', 0);
 
-        if(!empty($data['country'])) {
+        if (!empty($data['country'])) {
             $this->_configModel->saveConfig('straker/general/country', $data['country'], 'default', 0);
         }
 
-        if(!empty($data['company_name'])) {
+        if (!empty($data['company_name'])) {
             $this->_configModel->saveConfig('straker/general/company_name', $data['company_name'], 'default', 0);
         }
 
-        if(!empty($data['company_size'])) {
+        if (!empty($data['company_size'])) {
             $this->_configModel->saveConfig('straker/general/company_size', $data['company_size'], 'default', 0);
         }
 
-        if(!empty($data['phone_number'])) {
+        if (!empty($data['phone_number'])) {
             $this->_configModel->saveConfig('straker/general/phone_number', $data['phone_number'], 'default', 0);
         }
 
-        if(!empty($data['url'])) {
+        if (!empty($data['url'])) {
             $this->_configModel->saveConfig('straker/general/url', $data['url'], 'default', 0);
         }
 
         return $this->_configModel;
     }
 
-    public function saveAppKey($appKey)
+    public function saveAppKey($appKey): Config
     {
-
         $this->_configModel->saveConfig('straker/general/application_key', $appKey, 'default', 0);
-
         return $this->_configModel;
     }
 
-    public function saveAccessToken($accessToken)
+    public function saveAccessToken($accessToken): Config
     {
-
         $this->_configModel->saveConfig('straker/general/access_token', $accessToken, 'default', 0);
+        return $this->_configModel;
+    }
+
+    public function saveStoreSetup(
+        $storeId,
+        $source_store = '',
+        $source_language = '',
+        $destination_language = ''
+    ): Config {
+        $this->_configModel->saveConfig(
+            'straker/general/source_store',
+            $source_store,
+            ScopeInterface::SCOPE_STORES,
+            $storeId
+        );
+        $this->_configModel->saveConfig(
+            'straker/general/source_language',
+            $source_language,
+            ScopeInterface::SCOPE_STORES,
+            $storeId
+        );
+        $this->_configModel->saveConfig(
+            'straker/general/destination_language',
+            $destination_language,
+            ScopeInterface::SCOPE_STORES,
+            $storeId
+        );
 
         return $this->_configModel;
     }
 
-    public function saveStoreSetup($scopeId, $source_store = '', $source_language = '', $destination_language = '')
+    public function saveAttributes($attributes): Config
     {
-
-        $this->_configModel->saveConfig('straker/general/source_store', $source_store, ScopeInterface::SCOPE_STORES, $scopeId);
-        $this->_configModel->saveConfig('straker/general/source_language', $source_language, ScopeInterface::SCOPE_STORES, $scopeId);
-        $this->_configModel->saveConfig('straker/general/destination_language', $destination_language, ScopeInterface::SCOPE_STORES, $scopeId);
-
-        return $this->_configModel;
-    }
-
-    public function saveAttributes($attributes)
-    {
-
         if (!empty($attributes['custom'])) {
-            $this->_configModel->saveConfig('straker_config/attribute/product_custom', $attributes['custom'], 'default', 0);
+            $this->_configModel->saveConfig(
+                'straker_config/attribute/product_custom',
+                $attributes['custom'],
+                'default'
+            );
         }
 
         if (!empty($attributes['default'])) {
-            $this->_configModel->saveConfig('straker_config/attribute/product_default', $attributes['default'], 'default', 0);
+            $this->_configModel->saveConfig(
+                'straker_config/attribute/product_default',
+                $attributes['default'],
+                'default'
+            );
         }
 
         if (!empty($attributes['category'])) {
-            $this->_configModel->saveConfig('straker_config/attribute/category', $attributes['category'], 'default', 0);
+            $this->_configModel->saveConfig('straker_config/attribute/category', $attributes['category'], 'default');
         }
 
         $this->_cacheManager->clean(\Magento\Framework\App\Cache\Type\Config::CACHE_TAG);
         return $this->_configModel;
     }
 
-    public function clearTranslations($storeId = null)
+    public function clearTranslations($storeId = null): array
     {
         $result = ['Success' => false, 'Message' => '', 'Count' => 0];
         $deleteCount = 0;
@@ -136,49 +163,18 @@ class Setup extends AbstractModel implements SetupInterface
                 }
 
                 if ($connection->isTableExists($table)) {
-                    if (strcasecmp($rawTableName, 'cms_page_store') === 0 || strcasecmp($rawTableName, 'cms_block_store') === 0) {
-                        $idField = ( strcasecmp($rawTableName, 'cms_page_store') === 0 ) ? 'page_id' : 'block_id';
-
-                        $select = $connection
-                            ->select()
-                            ->from($table, [ $idField ])
-                            ->where('store_id != ?', Store::DEFAULT_STORE_ID);
-                        $return = $select->query()->fetchAll();
-                        $ids = array_column($return, $idField);
-
-                        $rawTargetTable = strcasecmp($idField, 'page_id') === 0 ? 'cms_page' : 'cms_block';
-                        $targetTable = $this->_resourceConnection->getTableName($rawTargetTable);
-
-                        if ($connection->isTableExists($targetTable)) {
-                            $where = [$idField. ' IN(?)' => $ids ];
-                            $deleteCount = $connection->delete($targetTable, $where);
-                        }
+                    if (strcasecmp($rawTableName, 'cms_page_store') === 0
+                        || strcasecmp($rawTableName, 'cms_block_store') === 0
+                    ) {
+                        $deleteCount += $this->deleteCmsContent($rawTableName, $connection, $table);
                     }
 
-                    if (is_null($storeId)) {
+                    if ($storeId === null) {
                         //CLEAR FOR ALL STORES
-                        if (strcasecmp($rawTableName, 'url_rewrite') === 0) {
-                            $select = $connection->select()->from($table, ['url_rewrite_id'])->where('store_id != ?', 1);
-                            $urlRewriteIds = [];
-                            $return = $select->query()->fetchAll();
-                            if (count($return) > 0) {
-                                $urlRewriteIds = array_column($return, 'url_rewrite_id');
-                            }
-                            $where = [ 'store_id != ?' => 1];
-                            $deleteCount += $connection->delete($table, $where);
-                            $urlRewriteProductCategoryTable = $this->_resourceConnection->getTableName('catalog_url_rewrite_product_category');
-                            if ($connection->isTableExists($urlRewriteProductCategoryTable)  && count($urlRewriteIds) > 0) {
-                                $where = ['url_rewrite_id IN(?)'=> $urlRewriteIds ];
-                                $deleteCount += $connection->delete($urlRewriteProductCategoryTable, $where);
-                            }
-                        } else {
-                            $where = ['store_id != ?' => Store::DEFAULT_STORE_ID ];
-                            $deleteCount += $connection->delete($table, $where);
-                        }
+                        $deleteCount += $this->clearAllStores($rawTableName, $connection, $table);
                     } else {
                         //CLEAR FOR A SINGLE STORE
-                        $where = ['store_id = ?' => $storeId ];
-                        $deleteCount += $connection->delete($table, $where);
+                        $deleteCount += $connection->delete($table, ['store_id = ?' => $storeId ]);
                     }
                 }
             }
@@ -188,13 +184,12 @@ class Setup extends AbstractModel implements SetupInterface
         } catch (Exception $e) {
             $connection->rollBack();
             $result['Message'] = $e->getMessage();
-            throw new Exception($result['Message']);
         }
 
         return $result;
     }
 
-    public function clearStrakerData()
+    public function clearStrakerData(): array
     {
         $tables = [
             'straker_attribute_option_translation',
@@ -223,15 +218,13 @@ class Setup extends AbstractModel implements SetupInterface
         } catch (Exception $e) {
             $connection->rollBack();
             $result['Message'] = $e->getMessage();
-            throw new Exception($result['Message']);
         }
 
         return $result;
     }
 
-    protected function clearDefaultAttributeSettings()
+    protected function clearDefaultAttributeSettings(): Config
     {
-
         $this->_configModel->saveConfig('straker_config/attribute/product_custom', '', 'default', 0);
         $this->_configModel->saveConfig('straker_config/attribute/product_default', '', 'default', 0);
         $this->_configModel->saveConfig('straker_config/attribute/category', '', 'default', 0);
@@ -240,14 +233,14 @@ class Setup extends AbstractModel implements SetupInterface
     }
 
     /**
-     * @return \Magento\Framework\DB\Adapter\AdapterInterface
+     * @return AdapterInterface
      */
-    protected function _getConnection()
+    protected function _getConnection(): AdapterInterface
     {
         return $this->_resourceConnection->getConnection();
     }
 
-    public function deleteSandboxSetting()
+    public function deleteSandboxSetting(): Config
     {
         $this->_configModel->deleteConfig('straker_config/env/site_mode', 'default', 0);
         return  $this->_configModel;
@@ -256,59 +249,60 @@ class Setup extends AbstractModel implements SetupInterface
     /**
      * @param int $mode 0: sandbox, 1: live
      */
-    public function setSiteMode( $mode = 0 )
+    public function setSiteMode($mode = 0)
     {
-        $this->_configModel->saveConfig('straker_config/env/site_mode', $mode,  'default', 0);
+        $this->_configModel->saveConfig('straker_config/env/site_mode', $mode, 'default', 0);
         $this->_clean();
     }
 
-    private function _clean(){
+    private function _clean()
+    {
         $this->_cacheManager->clean(\Magento\Framework\App\Cache\Type\Config::CACHE_TAG);
     }
 
-    public function isTestingStoreViewExist(){
-        $testingStore = $this->_storeFactory->create()->load($this->_configHelper->getTestingStoreViewCode());
-        return $testingStore;
+    public function isTestingStoreViewExist(): Store
+    {
+        return $this->_storeFactory->create()->load($this->_configHelper->getTestingStoreViewCode());
     }
 
-    public function deleteTestingStoreView($siteMode = SetupInterface::SITE_MODE_LIVE)
+    public function deleteTestingStoreView($siteMode = SetupInterface::SITE_MODE_LIVE): array
     {
         $result = ['Success' => true, 'Message' => '', 'SiteMode' => SetupInterface::SITE_MODE_SANDBOX];
-        try{
+        try {
             $testingStore = $this->isTestingStoreViewExist();
-            if($testingStore->getId()){
+            if ($testingStore->getId()) {
                 $testingStore->delete();
                 $this->_eventManager->dispatch('store_delete', ['store' => $testingStore]);
                 //switch site mode
-                if( $siteMode == SetupInterface::SITE_MODE_LIVE ){
-                    if($this->_configHelper->isSandboxMode()){
+                if ($siteMode == SetupInterface::SITE_MODE_LIVE) {
+                    if ($this->_configHelper->isSandboxMode()) {
                         $this->setSiteMode(SetupInterface::SITE_MODE_LIVE);
                     }
                     $result['SiteMode'] = SetupInterface::SITE_MODE_LIVE;
-                }else{
-                    if(!$this->_configHelper->isSandboxMode()){
+                } else {
+                    if (!$this->_configHelper->isSandboxMode()) {
                         $this->setSiteMode(SetupInterface::SITE_MODE_SANDBOX);
                     }
                 }
-            }else{
+            } else {
                 $result['Success'] = false;
                 $result['Message'] = __('The testing store does not exist.');
             }
-        }catch (Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
         return $result;
     }
 
-    public function createTestingStoreView($storeName = '', $siteMode = SetupInterface::SITE_MODE_SANDBOX)
+    public function createTestingStoreView($storeName = '', $siteMode = SetupInterface::SITE_MODE_SANDBOX): array
     {
         $result = ['Success' => true, 'Message' => '', 'SiteMode' => SetupInterface::SITE_MODE_LIVE];
-        try{
+        try {
             $testingStore = $this->isTestingStoreViewExist();
-            if($testingStore->getId()){
+            if ($testingStore->getId()) {
                 $result['Success'] = false;
                 $result['Message'] = __('The testing store exist.');
-            }else{
+            } else {
                 if (!empty(trim($storeName))) {
                     //create a store view
                     $testingStore->setName($storeName);
@@ -323,13 +317,13 @@ class Setup extends AbstractModel implements SetupInterface
                     $this->_storeManager->reinitStores();
                     $this->_eventManager->dispatch('store_add', ['store' => $testingStore]);
                     //switch site mode
-                    if( $siteMode == SetupInterface::SITE_MODE_SANDBOX ){
-                        if(!$this->_configHelper->isSandboxMode()){
+                    if ($siteMode == SetupInterface::SITE_MODE_SANDBOX) {
+                        if (!$this->_configHelper->isSandboxMode()) {
                             $this->setSiteMode(SetupInterface::SITE_MODE_SANDBOX);
                         }
                         $result['SiteMode'] = SetupInterface::SITE_MODE_SANDBOX;
-                    }else{
-                        if($this->_configHelper->isSandboxMode()){
+                    } else {
+                        if ($this->_configHelper->isSandboxMode()) {
                             $this->setSiteMode(SetupInterface::SITE_MODE_LIVE);
                         }
                     }
@@ -343,5 +337,75 @@ class Setup extends AbstractModel implements SetupInterface
             $result['Message'] = __('There was an error registering your details');
         }
         return $result;
+    }
+
+    /**
+     * @param string $rawTableName
+     * @param AdapterInterface $connection
+     * @param string $table
+     * @return int
+     */
+    private function deleteCmsContent(
+        string $rawTableName,
+        AdapterInterface $connection,
+        string $table
+    ): int {
+        $deleteCount = 0;
+        $idField = (strcasecmp($rawTableName, 'cms_page_store') === 0) ? 'page_id' : 'block_id';
+
+        $select = $connection
+            ->select()
+            ->from($table, [$idField])
+            ->where('store_id != ?', Store::DEFAULT_STORE_ID);
+        $return = $select->query()->fetchAll();
+        $ids = array_column($return, $idField);
+
+        $rawTargetTable = strcasecmp($idField, 'page_id') === 0 ? 'cms_page' : 'cms_block';
+        $targetTable = $this->_resourceConnection->getTableName($rawTargetTable);
+
+        if ($connection->isTableExists($targetTable)) {
+            $where = [$idField . ' IN(?)' => $ids];
+            $deleteCount = $connection->delete($targetTable, $where);
+        }
+        return $deleteCount;
+    }
+
+    /**
+     * @param string $rawTableName
+     * @param AdapterInterface $connection
+     * @param string $table
+     * @return int
+     */
+    private function clearAllStores(
+        string $rawTableName,
+        AdapterInterface $connection,
+        string $table
+    ): int {
+        $deleteCount = 0;
+
+        if (strcasecmp($rawTableName, 'url_rewrite') === 0) {
+            $select = $connection->select()
+                ->from($table, ['url_rewrite_id'])
+                ->where('store_id != ?', 1);
+            $urlRewriteIds = [];
+            $return = $select->query()->fetchAll();
+            if (count($return) > 0) {
+                $urlRewriteIds = array_column($return, 'url_rewrite_id');
+            }
+            $where = ['store_id != ?' => 1];
+            $deleteCount += $connection->delete($table, $where);
+            $urlRewriteProductCategoryTable = $this->_resourceConnection
+                ->getTableName('catalog_url_rewrite_product_category');
+            if ($connection->isTableExists($urlRewriteProductCategoryTable)
+                && count($urlRewriteIds) > 0
+            ) {
+                $where = ['url_rewrite_id IN(?)' => $urlRewriteIds];
+                $deleteCount += $connection->delete($urlRewriteProductCategoryTable, $where);
+            }
+        } else {
+            $where = ['store_id != ?' => Store::DEFAULT_STORE_ID];
+            $deleteCount += $connection->delete($table, $where);
+        }
+        return $deleteCount;
     }
 }

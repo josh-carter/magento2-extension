@@ -13,8 +13,7 @@ class ProductFilters implements ArrayInterface
 
     public function __construct(
         ProductHelper $productHelper
-    )
-    {
+    ) {
         $this->_productHelper = $productHelper;
     }
 

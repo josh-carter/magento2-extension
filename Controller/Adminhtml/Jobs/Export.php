@@ -7,10 +7,12 @@ use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\Response\Http\FileFactory;
 use Magento\Framework\Controller\Result\RawFactory;
+use \Magento\Framework\Filesystem\Driver\File as FileDriver;
 use Straker\EasyTranslationPlatform\Helper\ConfigHelper;
 use Straker\EasyTranslationPlatform\Model\JobFactory;
 
-class Export extends Action {
+class Export extends Action
+{
     /**
      * @var RawFactory
      */
@@ -18,36 +20,44 @@ class Export extends Action {
     protected $jobFactory;
     protected $configHelper;
     protected $fileFactory;
+    /**
+     * @var FileDriver
+     */
+    private $driver;
 
     public function __construct(
         Context $context,
         RawFactory $resultRawFactory,
         FileFactory $fileFactory,
         JobFactory $jobFactory,
-        ConfigHelper $configHelper
+        ConfigHelper $configHelper,
+        FileDriver $driver
     ) {
         parent::__construct($context);
         $this->fileFactory = $fileFactory;
         $this->jobFactory = $jobFactory;
         $this->configHelper = $configHelper;
         $this->resultRawFactory = $resultRawFactory;
+        $this->driver = $driver;
     }
 
-    public function execute(){
+    public function execute()
+    {
         $params = $this->getRequest()->getParams();
-        $jobId          = array_key_exists('job_id', $params) ? $params['job_id'] : 0;
-        $jobKey         = array_key_exists('job_id', $params) ? $params['job_key'] : 0;
-        $sourceStoreId  = array_key_exists('job_id', $params) ? $params['source_store_id'] : 0;
+        $jobId          = $params['job_id'] ?? 0;
+        $jobKey         = $params['job_key'] ?? 0;
+        $sourceStoreId  = $params['source_store_id'] ?? 0;
 
-        if(!empty($jobId)) {
+        if (!empty($jobId)) {
             $jobModel = $this->jobFactory->create()->load($jobId);
             $filePath = $jobModel->getData('source_file');
 
             $filename = substr($filePath, strrpos($filePath, DIRECTORY_SEPARATOR) + 1);
 
-            if (file_exists($filePath)) {
-                $sourceFile = file_get_contents($filePath);
-                $contentLength = filesize($filePath);
+            if ($this->driver->isExists($filePath)) {
+                $sourceFile = $this->driver->fileGetContents($filePath);
+                $stat = $this->driver->stat($filePath);
+                $contentLength = $stat['size'];
                 $this->fileFactory->create(
                     $filename,
                     null,
@@ -60,8 +70,8 @@ class Export extends Action {
                 $resultRaw = $this->resultRawFactory->create();
                 $resultRaw->setContents($sourceFile);
                 return $resultRaw;
-            }else{
-                $this->messageManager->addErrorMessage( __('File not found.'));
+            } else {
+                $this->messageManager->addErrorMessage(__('File not found.'));
                 $data = [
                     'job_id'            => $jobId,
                     'job_key'           => $jobKey,
@@ -70,11 +80,9 @@ class Export extends Action {
                 ];
                 $this->_redirect('*/*/ViewJob', $data);
             }
-        }else {
+        } else {
             $this->messageManager->addErrorMessage(__('Job id is required.'));
             $this->_redirect('*/*');
         }
-
-        return;
     }
 }

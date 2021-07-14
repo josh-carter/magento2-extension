@@ -64,7 +64,7 @@ class ResetAccountButton extends \Magento\Config\Block\System\Config\Form\Field
     public function getButtonHtml()
     {
         $button = $this->getLayout()->createBlock(
-            'Magento\Backend\Block\Widget\Button'
+            \Magento\Backend\Block\Widget\Button::class
         )->addData([
             'id' => $this->_buttonId,
                 'name' => $this->_buttonName,

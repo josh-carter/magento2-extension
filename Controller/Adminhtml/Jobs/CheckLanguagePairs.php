@@ -38,7 +38,6 @@ class CheckLanguagePairs extends Action
         return parent::__construct($context);
     }
 
-
     public function execute()
     {
         $target_store_id = $this->getRequest()->getPost('target_store_id');

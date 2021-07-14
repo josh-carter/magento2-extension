@@ -4,31 +4,24 @@ namespace Straker\EasyTranslationPlatform\Helper;
 
 use Exception;
 use Magento\Catalog\Api\Data\CategoryAttributeInterface;
+use Magento\Catalog\Model\Category;
 use Magento\Eav\Model\Config;
+use Magento\Framework\Api\SearchCriteriaBuilderFactory;
 use Magento\Framework\App\Helper\AbstractHelper;
-use Magento\Catalog\Model\ProductFactory;
 use Magento\Eav\Model\AttributeRepository;
 use Magento\Catalog\Model\ResourceModel\Category\Attribute\Collection as AttributeCollection;
 use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory as CategoryCollection;
 use Magento\Framework\App\Helper\Context;
-use Magento\Framework\Data\Collection;
 use Magento\Store\Model\StoreManagerInterface;
 use Straker\EasyTranslationPlatform\Api\Data\StrakerAPIInterface;
-use Straker\EasyTranslationPlatform\Model\AttributeOptionTranslation;
 use Straker\EasyTranslationPlatform\Model\AttributeTranslationFactory;
 use Straker\EasyTranslationPlatform\Model\AttributeOptionTranslationFactory;
-use Straker\EasyTranslationPlatform\Helper\ConfigHelper;
-use Straker\EasyTranslationPlatform\Helper\AttributeHelper;
-use Straker\EasyTranslationPlatform\Helper\XmlHelper;
 use Straker\EasyTranslationPlatform\Logger\Logger;
 
 class CategoryHelper extends AbstractHelper
 {
-
     protected $_productFactory;
     protected $_categoryCollectionFactory;
-    protected $_attributeTranslationModel;
-    protected $_attributeOptionTranslationModel;
     protected $_attributeCollectionFactory;
     protected $_storeManager;
 
@@ -40,9 +33,6 @@ class CategoryHelper extends AbstractHelper
         'name','description','meta_title','meta_keywords','meta_description'
     ];
 
-    protected $_translatableBackendType =  [
-        'varchar', 'text','int'
-    ];
     protected $_attributeTranslationFactory;
     protected $_attributeOptionTranslationFactory;
     protected $_attributeRepository;
@@ -50,15 +40,21 @@ class CategoryHelper extends AbstractHelper
     protected $_attributeHelper;
     protected $_xmlHelper;
     protected $_strakerApi;
+    /**
+     * @var SearchCriteriaBuilderFactory
+     */
+    private $searchCriteriaBuilderFactory;
 
     /**
      * CategoryHelper constructor.
+     *
      * @param Context $context
      * @param AttributeRepository $attributeRepository
      * @param AttributeCollection $attributeCollectionFactory
      * @param CategoryCollection $categoryCollectionFactory
      * @param AttributeTranslationFactory $attributeTranslationFactory
      * @param AttributeOptionTranslationFactory $attributeOptionTranslationFactory
+     * @param SearchCriteriaBuilderFactory $searchCriteriaBuilderFactory
      * @param Config $eavConfig
      * @param \Straker\EasyTranslationPlatform\Helper\ConfigHelper $configHelper
      * @param \Straker\EasyTranslationPlatform\Helper\AttributeHelper $attributeHelper
@@ -66,6 +62,7 @@ class CategoryHelper extends AbstractHelper
      * @param Logger $logger
      * @param StoreManagerInterface $storeManager
      * @param StrakerAPIInterface $strakerAPI
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function __construct(
         Context $context,
@@ -74,6 +71,7 @@ class CategoryHelper extends AbstractHelper
         CategoryCollection $categoryCollectionFactory,
         AttributeTranslationFactory $attributeTranslationFactory,
         AttributeOptionTranslationFactory $attributeOptionTranslationFactory,
+        SearchCriteriaBuilderFactory $searchCriteriaBuilderFactory,
         Config $eavConfig,
         ConfigHelper $configHelper,
         AttributeHelper $attributeHelper,
@@ -85,13 +83,15 @@ class CategoryHelper extends AbstractHelper
         $this->_attributeCollectionFactory = $attributeCollectionFactory;
         $this->_categoryCollectionFactory = $categoryCollectionFactory;
         $this->_attributeTranslationFactory = $attributeTranslationFactory;
+        $this->searchCriteriaBuilderFactory = $searchCriteriaBuilderFactory;
         $this->_attributeOptionTranslationFactory = $attributeOptionTranslationFactory;
         $this->_attributeRepository = $attributeRepository;
         $this->_configHelper = $configHelper;
         $this->_attributeHelper = $attributeHelper;
         $this->_xmlHelper = $xmlHelper;
         $this->_logger = $logger;
-        $this->_entityTypeId =  $eavConfig->getEntityType(CategoryAttributeInterface::ENTITY_TYPE_CODE)->getEntityTypeId();
+        $this->_entityTypeId = $eavConfig->getEntityType(CategoryAttributeInterface::ENTITY_TYPE_CODE)
+            ->getEntityTypeId();
         $this->_storeManager = $storeManager;
         $this->_strakerApi = $strakerAPI;
         parent::__construct($context);
@@ -99,11 +99,33 @@ class CategoryHelper extends AbstractHelper
 
     public function getAttributes()
     {
-        $collection = $this->_attributeCollectionFactory->setEntityTypeFilter($this->_entityTypeId)
-            ->addFieldToFilter('attribute_code', [ 'in' => $this->_translatableAttributeCode ]);
-        return $collection;
+        return $this->_attributeCollectionFactory->setEntityTypeFilter($this->_entityTypeId)
+            ->addFieldToFilter('attribute_code', [ 'in' => $this->_translatableAttributeCode]);
     }
 
+    public function getCategorySetting()
+    {
+        $selectedAttributeIds = $this->_configHelper->getCategoryAttributes();
+        $selectedCategoryAttributes = [];
+
+        if (count($selectedAttributeIds) > 0) {
+            $searchCriteria = $this->searchCriteriaBuilderFactory->create()
+                ->addFilter('attribute_id', $selectedAttributeIds, 'in')
+                ->create();
+            $selectedAttributes = $this->_attributeRepository->getList(Category::ENTITY, $searchCriteria)->getItems();
+            $selectedCategoryAttributes = [];
+            foreach ($selectedAttributes as $attribute) {
+                $selectedCategoryAttributes[] = $attribute->getAttributeCode();
+            }
+
+            $selectedCategoryAttributes = array_intersect(
+                $selectedCategoryAttributes,
+                $this->_translatableAttributeCode
+            );
+        }
+
+        return $selectedCategoryAttributes;
+    }
 
     /**
      * @param $category_ids
@@ -114,11 +136,9 @@ class CategoryHelper extends AbstractHelper
         $category_ids,
         $source_store_id
     ) {
-    
         if (strpos($category_ids, ',') !== false) {
             $category_ids = explode(',', $category_ids);
         }
-
 
         $this->_storeManager->setCurrentStore($source_store_id);
 
@@ -140,19 +160,37 @@ class CategoryHelper extends AbstractHelper
     public function getSelectedCategoryAttributes()
     {
         $categoryData = [];
+        $selectedCategories = $this->getCategorySetting();
 
         foreach ($this->_categoryData as $category) {
             $attributeData = [];
 
             foreach ($this->getAttributes() as $attribute) {
-                array_push($attributeData, ['attribute_id'=>$attribute->getId(),'label'=>$category->getResource()->getAttribute($attribute->getId())->getStoreLabel($this->_storeId),'value'=>$category->getResource()->getAttributeRawValue($category->getId(), $attribute->getId(), $this->_storeId)]);
+                if (in_array($attribute->getAttributeCode(), $selectedCategories)) {
+                    array_push(
+                        $attributeData,
+                        [
+                            'attribute_id' => $attribute->getId(),
+                            'attribute_code' => $attribute->getAttributeCode(),
+                            'label' => $category
+                                ->getResource()
+                                ->getAttribute($attribute->getId())->getStoreLabel($this->_storeId),
+                            'value' =>
+                                $category
+                                    ->getResource()
+                                    ->getAttributeRawValue($category->getId(), $attribute->getId(), $this->_storeId)
+                        ]
+                    );
+                }
             }
 
             $categoryData[] = [
-                'category_id'=>$category->getId(),
-                'category_name'=>$category->getName(),
-                'category_url'=>$this->_storeManager->getStore($this->_storeId)->getBaseUrl().$category->getUrlKey().'.html',//check
-                'attributes'=>$attributeData
+                'category_id' => $category->getId(),
+                'category_name' => $category->getName(),
+                'category_url' => $this->_storeManager->getStore($this->_storeId)->getBaseUrl()
+                    . $category->getUrlKey()
+                    . '.html',
+                'attributes' => $attributeData
             ];
         }
 
@@ -184,7 +222,6 @@ class CategoryHelper extends AbstractHelper
         return $this->_xmlHelper->getXmlFileName();
     }
 
-
     /**
      * @param $categoryData
      * @param $job_id
@@ -202,13 +239,15 @@ class CategoryHelper extends AbstractHelper
         $target_store_id,
         $xmlHelper
     ) {
-    
-
         if ($categoryData) {
             foreach ($categoryData as $data) {
                 foreach ($data['attributes'] as $attribute) {
                     if ($attribute['value']) {
-                        $job_name = $job_id.'_'.$jobtype_id.'_'.$target_store_id.'_'.$data['category_id'].'_'.$attribute['attribute_id'];
+                        $job_name = $job_id
+                            . '_' . $jobtype_id
+                            . '_' . $target_store_id
+                            . '_' . $data['category_id']
+                            . '_' . $attribute['attribute_id'];
 
                         $xmlHelper->appendDataToRoot([
                             'name' => $job_name,
@@ -237,7 +276,6 @@ class CategoryHelper extends AbstractHelper
      */
     public function saveCategoryData($job_id)
     {
-
         foreach ($this->_categoryData as $cat_key => $data) {
             foreach ($data['attributes'] as $att_key => $attribute) {
                 $attributeTranslationModel = $this->_attributeTranslationFactory->create();
@@ -249,16 +287,21 @@ class CategoryHelper extends AbstractHelper
                                 'job_id' => $job_id,
                                 'entity_id' => $data['category_id'],
                                 'attribute_id' => $attribute['attribute_id'],
+                                'attribute_code' => $attribute['attribute_code'],
                                 'original_value' => $attribute['value'],
                                 'is_label' => (bool)0,
                                 'label' => $attribute['label']
                             ]
                         )->save();
 
-                        $this->_categoryData[$cat_key]['attributes'][$att_key]['value_translation_id'] = $attributeTranslationModel->getId();
+                        $this->_categoryData[$cat_key]['attributes'][$att_key]['value_translation_id']
+                            = $attributeTranslationModel->getId();
                     } catch (Exception $e) {
                         $this->_logger->error('error '.__FILE__.' '.__LINE__.''.$e->getMessage(), [$e]);
-                        $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(), $e->__toString());
+                        $this->_strakerApi->_callStrakerBugLog(
+                            __FILE__ . ' ' . __METHOD__ . ' ' . $e->getMessage(),
+                            $e->__toString()
+                        );
                     }
                 }
             }
@@ -273,7 +316,8 @@ class CategoryHelper extends AbstractHelper
         $this->_xmlHelper->addContentSummary($summaryArray);
     }
 
-    public function getSummary(){
+    public function getSummary()
+    {
         return ['category' => count($this->_categoryData)];
     }
 }

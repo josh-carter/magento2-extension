@@ -58,7 +58,7 @@ class CompleteJob extends Field
      */
     public function getAjaxResetUrl()
     {
-        return $this->getUrl('EasyTranslationPlatform/Settings/ResetStore'); //hit controller by ajax call on button click.
+        return $this->getUrl('EasyTranslationPlatform/Settings/ResetStore');
     }
 
     /**
@@ -77,7 +77,7 @@ class CompleteJob extends Field
     public function getButtonHtml()
     {
         $button = $this->getLayout()->createBlock(
-            'Magento\Backend\Block\Widget\Button'
+            \Magento\Backend\Block\Widget\Button::class
         )->addData([
             'id' => $this->_buttonId,
             'name' => $this->_buttonName,

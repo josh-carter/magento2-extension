@@ -9,14 +9,6 @@ class Delete extends \Magento\Backend\App\Action
 {
 
     /**
-     * {@inheritdoc}
-     */
-    /*protected function _isAllowed()
-    {
-        return $this->_authorization->isAllowed('Straker_Job::atachment_delete');
-    }*/
-
-    /**
      * Delete action
      *
      * @return \Magento\Framework\Controller\ResultInterface
@@ -28,7 +20,7 @@ class Delete extends \Magento\Backend\App\Action
         $resultRedirect = $this->resultRedirectFactory->create();
         if ($id) {
             try {
-                $model = $this->_objectManager->create('Straker\EasyTranslationPlatform\Model\Job');
+                $model = $this->_objectManager->create(\Straker\EasyTranslationPlatform\Model\Job::class);
                 $model->load($id);
                 $model->delete();
                 $this->messageManager->addSuccess(__('The job has been deleted.'));

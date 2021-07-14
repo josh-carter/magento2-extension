@@ -7,7 +7,6 @@ namespace Straker\EasyTranslationPlatform\Model\ResourceModel;
  */
 class Job extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
-
     const TBL_ATT_PRODUCT = 'straker_job';
 
     /**

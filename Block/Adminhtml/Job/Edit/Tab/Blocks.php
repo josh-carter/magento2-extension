@@ -3,19 +3,18 @@
 namespace Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Tab;
 
 use Magento\Backend\Block\Template\Context;
-use Magento\Backend\Block\Widget\Grid\Extended;
+use Magento\Backend\Block\Widget\Grid\Extended as GridExtended;
 use Magento\Backend\Helper\Data;
+use Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Massaction\Extended;
 use Straker\EasyTranslationPlatform\Model\BlockCollection as BlockCollectionFactory;
 use Straker\EasyTranslationPlatform\Helper\ConfigHelper;
 use Straker\EasyTranslationPlatform\Model\JobFactory;
 
-class Blocks extends Extended
+class Blocks extends GridExtended
 {
-
-    protected $_massactionBlockName = \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Massaction\Extended::class;
+    protected $_massactionBlockName = Extended::class;
     protected $_blockCollectionFactory;
     protected $_jobFactory;
-    protected $_sourceStoreId;
     protected $_configHelper;
     protected $targetStoreId;
     protected $sourceStoreId;
@@ -28,7 +27,6 @@ class Blocks extends Extended
         ConfigHelper $configHelper,
         array $data = []
     ) {
-
         $this->_jobFactory = $jobFactory;
         $this->_blockCollectionFactory = $blockCollectionFactory;
         $this->_configHelper = $configHelper;
@@ -54,10 +52,10 @@ class Blocks extends Extended
     protected function _prepareCollection()
     {
         $collection = $this->_blockCollectionFactory;
-        if($this->sourceStoreId){
+        if ($this->sourceStoreId) {
             $collection->addStoreFilter($this->sourceStoreId);
         }
-        $collection->is_translated($this->targetStoreId);
+        $collection->isTranslated($this->targetStoreId);
         $this->setCollection($collection);
         return parent::_prepareCollection();
     }
@@ -67,7 +65,6 @@ class Blocks extends Extended
      */
     protected function _prepareColumns()
     {
-
 //        $this->addColumn(
 //            'in_block',
 //            [
@@ -117,7 +114,7 @@ class Blocks extends Extended
         return parent::_prepareColumns();
     }
 
-    function _prepareMassaction()
+    protected function _prepareMassaction()
     {
         $this->setMassactionIdField('block_id');
         $this->getMassactionBlock()->setTemplate('Straker_EasyTranslationPlatform::job/massaction_extended.phtml');
@@ -159,7 +156,7 @@ class Blocks extends Extended
         return true;
     }
 
-    function filterIsTranslated($collection, $column)
+    public function filterIsTranslated($collection, $column)
     {
         $condition = $column->getFilter()->getCondition();
         $collection->getSelect()->having('`is_translated` =  ?', reset($condition));

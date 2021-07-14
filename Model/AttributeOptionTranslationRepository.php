@@ -1,8 +1,9 @@
 <?php
 namespace Straker\EasyTranslationPlatform\Model;
 
+use Exception;
+use Magento\Framework\Api\SortOrder;
 use Straker\EasyTranslationPlatform\Api\AttributeOptionTranslationRepositoryInterface;
-use Straker\EasyTranslationPlatform\Model\AttributeOptionTranslationInterface;
 use Straker\EasyTranslationPlatform\Model\AttributeOptionTranslationFactory;
 use Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeOptionTranslation\CollectionFactory;
 
@@ -12,10 +13,15 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\CouldNotDeleteException;
 use Magento\Framework\Api\SearchResultsInterfaceFactory;
 
-class AttributeOptionTranslationRepository implements \Straker\EasyTranslationPlatform\Api\AttributeOptionTranslationRepositoryInterface
+class AttributeOptionTranslationRepository implements AttributeOptionTranslationRepositoryInterface
 {
     protected $objectFactory;
     protected $collectionFactory;
+    /**
+     * @var SearchResultsInterfaceFactory
+     */
+    private $searchResultsFactory;
+
     public function __construct(
         AttributeOptionTranslationFactory $objectFactory,
         CollectionFactory $collectionFactory,
@@ -82,7 +88,6 @@ class AttributeOptionTranslationRepository implements \Straker\EasyTranslationPl
         $searchResults->setTotalCount($collection->getSize());
         $sortOrders = $criteria->getSortOrders();
         if ($sortOrders) {
-            /** @var SortOrder $sortOrder */
             foreach ($sortOrders as $sortOrder) {
                 $collection->addOrder(
                     $sortOrder->getField(),

@@ -58,18 +58,27 @@ class ConfigHelper extends AbstractHelper
 
     public function getAccessToken()
     {
-        return $this->scopeConfig->getValue('straker/general/access_token', 'default', '') ? $this->scopeConfig->getValue('straker/general/access_token', 'default', '') : false ;
+        return $this->scopeConfig->getValue(
+            'straker/general/access_token',
+            'default',
+            ''
+        ) ?: false;
     }
 
     public function getApplicationKey()
     {
-        return $this->scopeConfig->getValue('straker/general/application_key', 'default', '') ? $this->scopeConfig->getValue('straker/general/application_key', 'default', '') : false ;
+        return $this->scopeConfig->getValue(
+            'straker/general/application_key',
+            'default',
+            ''
+        ) ?: false ;
     }
 
     /**
-     * @return string or null  current version of the website hard-coded in config.xml (value would be uat, dev, live ...)
+     * @return string|null  current version of the website
+     * hard-coded in config.xml (value would be uat, dev, live ...)
      */
-    public function getVersion()
+    public function getVersion(): ?string
     {
         return $this->scopeConfig->getValue('straker/general/version');
     }
@@ -77,40 +86,39 @@ class ConfigHelper extends AbstractHelper
     public function getModuleVersion()
     {
         $moduleName = $this->_getModuleName();
-        if(empty($moduleName)){
+        if (empty($moduleName)) {
             $moduleName = 'Straker_EasyTranslationPlatform';
         }
         $moduleInfoArray = $this->_moduleList->getOne($moduleName);
         $version = '';
-        if (array_key_exists('setup_version', $moduleInfoArray)) {
+        if (isset($moduleInfoArray['setup_version'])) {
             $version = $moduleInfoArray['setup_version'];
         }
         return trim($version);
     }
 
-    public function getEnv(){
+    public function getEnv()
+    {
         $moduleInfoArray = $this->_moduleList->getAll();
 
         $env = [];
 
-        if($moduleInfoArray) {
+        if ($moduleInfoArray) {
             $env['active_plugins'] = $moduleInfoArray;
         }
 
         $env['server_information']['php_version']       = phpversion();
-        $env['server_information']['server_protocol']   = empty($_SERVER['SERVER_PROTOCOL']) ? '' : $_SERVER['SERVER_PROTOCOL'];
-        $env['server_information']['user_agent']        = empty($_SERVER['HTTP_USER_AGENT']) ? '' : $_SERVER['HTTP_USER_AGENT'];
-        $env['server_information']['web_server']        = empty($_SERVER['SERVER_SOFTWARE']) ? '' : $_SERVER['SERVER_SOFTWARE'];
-        $env['server_information']['server_host']       = empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME'];
-        $env['server_information']['https']             = isset($_SERVER['HTTPS']);
+        $env['server_information']['server_protocol']   = $this->_request->getServer('SERVER_PROTOCOL', '');
+        $env['server_information']['user_agent']        = $this->_httpHeader->getHttpUserAgent();
+        $env['server_information']['web_server']        = $this->_request->getServer('SERVER_SOFTWARE', '');
+        $env['server_information']['server_host']       = $this->_httpHeader->getHttpHost();
+        $env['server_information']['https']             = $this->_request->getServer('HTTPS', '');
         $env['server_information']['app_name']          = 'magento2';
+        $env['server_information']['app_version']       = $this->getMagentoVersion();
 
-        $magentoVersion = $this->getMagentoVersion();
-        $env['server_information']['app_version']       = empty($magentoVersion) ? '' : $magentoVersion;
-
-        if (phpversion() >= '5.4.0'){
+        if (phpversion() >= '5.4.0') {
             $jsonResult = json_encode($env, JSON_UNESCAPED_SLASHES);
-        }else{
+        } else {
             $jsonResult = json_encode($env);
         }
 
@@ -129,19 +137,19 @@ class ConfigHelper extends AbstractHelper
             $siteVersion = 'live';
         }
 
-        if(strcasecmp($domain, 'my_account_domain') === 0){
+        if (strcasecmp($domain, 'my_account_domain') === 0) {
             return $this->scopeConfig->getValue('straker/general/my_account_domain/'. $siteVersion);
-        }elseif(strcasecmp($domain, 'straker_bug_log_domain') === 0){
+        } elseif (strcasecmp($domain, 'straker_bug_log_domain') === 0) {
             return $this->scopeConfig->getValue('straker/general/straker_bug_log_domain/'. $siteVersion);
         }
 
-        if(!empty($version)){
+        if (!empty($version)) {
             return $this->scopeConfig->getValue('straker/general/domain/' . $version);
         }
 
         if ($this->isSandboxMode() && $domain !== 'support') {
             $siteDomain = $this->scopeConfig->getValue('straker/general/domain/sandbox');
-        }else{
+        } else {
             $siteDomain = $this->scopeConfig->getValue('straker/general/domain/'. $siteVersion);
             if (empty($siteDomain)) {
                 $siteDomain = 'https://app.strakertranslations.com';
@@ -188,12 +196,16 @@ class ConfigHelper extends AbstractHelper
 
     public function getPaymentPageUrl()
     {
-        return $this->_getSiteDomain('my_account_domain').'/'.$this->scopeConfig->getValue('straker/general/api_url/payment_page');
+        return $this->_getSiteDomain('my_account_domain')
+            . '/'
+            . $this->scopeConfig->getValue('straker/general/api_url/payment_page');
     }
 
     public function getBugLogUrl()
     {
-        return $this->_getSiteDomain('straker_bug_log_domain').'/'.$this->scopeConfig->getValue('straker/general/api_url/bug_log');
+        return $this->_getSiteDomain('straker_bug_log_domain')
+            . '/'
+            . $this->scopeConfig->getValue('straker/general/api_url/bug_log');
     }
 
     public function getMyAccountUrl()
@@ -201,12 +213,18 @@ class ConfigHelper extends AbstractHelper
         return $this->_getSiteDomain('my_account_domain').'/user/login';
     }
 
-    public function getDbBackupUrl(){
-        return $this->_getSiteDomain('', 'uat', 'backup') . '/' . $this->scopeConfig->getValue('straker/general/api_url/backup');
+    public function getDbBackupUrl()
+    {
+        return $this->_getSiteDomain('', 'uat')
+            . '/'
+            . $this->scopeConfig->getValue('straker/general/api_url/backup');
     }
 
-    public function getDbRestoreUrl(){
-        return $this->_getSiteDomain('', 'uat', 'restore') . '/' . $this->scopeConfig->getValue('straker/general/api_url/restore');
+    public function getDbRestoreUrl()
+    {
+        return $this->_getSiteDomain('', 'uat')
+            . '/'
+            . $this->scopeConfig->getValue('straker/general/api_url/restore');
     }
 
     public function getStoreSetup($storeId)
@@ -220,11 +238,11 @@ class ConfigHelper extends AbstractHelper
             $dbStoreConfig[$item->getPath()] = $item->getValue();
         }
 
-        $source_store = array_key_exists('straker/general/source_store', $dbStoreConfig) ? $dbStoreConfig['straker/general/source_store'] : false;
-        $source_language = array_key_exists('straker/general/source_language', $dbStoreConfig) ? $dbStoreConfig['straker/general/source_language'] :  false;
-        $destination_language = array_key_exists('straker/general/destination_language', $dbStoreConfig) ? $dbStoreConfig['straker/general/destination_language'] :  false;
+        $source_store = $dbStoreConfig['straker/general/source_store'] ?? false;
+        $source_language = $dbStoreConfig['straker/general/source_language'] ?? false;
+        $destination_language = $dbStoreConfig['straker/general/destination_language'] ?? false;
 
-        return ($source_store && $source_language && $destination_language) ? true : false;
+        return $source_store && $source_language && $destination_language;
     }
 
     public function getDefaultAttributes()
@@ -284,7 +302,11 @@ class ConfigHelper extends AbstractHelper
     public function getStoreViewLanguage($storeId = null)
     {
         if (!empty($storeId)) {
-            return $this->scopeConfig->getValue('straker/general/source_language', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $storeId);
+            return $this->scopeConfig->getValue(
+                'straker/general/source_language',
+                \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+                $storeId
+            );
         } else {
             return $this->scopeConfig->getValue('general/locale/code');
         }
@@ -292,7 +314,11 @@ class ConfigHelper extends AbstractHelper
 
     public function getSourceStore($storeId = null)
     {
-        return $this->scopeConfig->getValue('straker/general/source_store', \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $storeId);
+        return $this->scopeConfig->getValue(
+            'straker/general/source_store',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
     }
 
     public function getOriginalXMLFilePath()
@@ -330,15 +356,18 @@ class ConfigHelper extends AbstractHelper
         return
             '<p><b>' . __('Sandbox Mode Enabled') . '</b></p><p>'
             . __(
-                'Thank you for installing our plugin. We have enabled the Sandbox testing mode for you. Jobs you create while this is enabled will not be received by Straker Translations, 
-                and content will not be translated by a human - rather it will only be sample text. To change the Sandbox Mode, go to <a href="'
+                'Thank you for installing our plugin. We have enabled the Sandbox testing mode for you.
+                Jobs you create while this is enabled will not be received by Straker Translations,
+                and content will not be translated by a human - rather it will only be sample text.
+                 To change the Sandbox Mode, go to <a href="'
                 . $this->_urlFactory->create()->getUrl('adminhtml/system_config/edit', ['section' => 'straker_config'])
                 . '">Configuration</a>'
             )
             . '</p>';
     }
 
-    public function getMagentoVersion(){
+    public function getMagentoVersion()
+    {
         return trim($this->_productMetadata->getVersion());
     }
 
@@ -347,14 +376,16 @@ class ConfigHelper extends AbstractHelper
         return 'straker_testing_storeview';
     }
 
-    public function getDbName(){
+    public function getDbName()
+    {
         return $this->_deployConfig->get(
             ConfigOptionsListConstants::CONFIG_PATH_DB_CONNECTION_DEFAULT .
             '/' . ConfigOptionsListConstants::KEY_NAME
         );
     }
 
-    public function getCreateTestStoreViewMessage(){
+    public function getCreateTestStoreViewMessage()
+    {
         $url = $this->_urlFactory->create()->getUrl('adminhtml/system_config/edit', ['section' => 'straker_config']);
         return '<p>' . __('Please %1 create a testing store view.%2', '<a href="' . $url . '">', '</a>') . '</p>';
     }
@@ -381,33 +412,34 @@ class ConfigHelper extends AbstractHelper
         ];
     }
 
-    public function getUserInfo(){
-        $data = array();
-        if ( !empty($this->scopeConfig->getValue('straker/general/first_name')) ) {
+    public function getUserInfo()
+    {
+        $data = [];
+        if (!empty($this->scopeConfig->getValue('straker/general/first_name'))) {
             $data['first_name'] = $this->scopeConfig->getValue('straker/general/first_name');
         }
 
-        if ( !empty($this->scopeConfig->getValue('straker/general/last_name')) ) {
+        if (!empty($this->scopeConfig->getValue('straker/general/last_name'))) {
             $data['last_name'] = $this->scopeConfig->getValue('straker/general/last_name');
         }
 
-        if ( !empty($this->scopeConfig->getValue('straker/general/email')) ) {
+        if (!empty($this->scopeConfig->getValue('straker/general/email'))) {
             $data['email'] = $this->scopeConfig->getValue('straker/general/email');
         }
 
-        if ( !empty($this->scopeConfig->getValue('straker/general/country')) ) {
+        if (!empty($this->scopeConfig->getValue('straker/general/country'))) {
             $data['country'] = $this->scopeConfig->getValue('straker/general/country');
         }
 
-        if ( !empty($this->scopeConfig->getValue('straker/general/company_name')) ) {
+        if (!empty($this->scopeConfig->getValue('straker/general/company_name'))) {
             $data['company_name'] = $this->scopeConfig->getValue('straker/general/company_name');
         }
 
-        if ( !empty($this->scopeConfig->getValue('straker/general/phone_number')) ) {
+        if (!empty($this->scopeConfig->getValue('straker/general/phone_number'))) {
             $data['phone_number'] = $this->scopeConfig->getValue('straker/general/phone_number');
         }
 
-        if ( !empty($this->scopeConfig->getValue('straker/general/url')) ) {
+        if (!empty($this->scopeConfig->getValue('straker/general/url'))) {
             $data['url'] = $this->scopeConfig->getValue('straker/general/url');
         }
         return $data;

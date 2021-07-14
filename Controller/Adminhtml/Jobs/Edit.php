@@ -34,14 +34,6 @@ class Edit extends \Magento\Backend\App\Action
     }
 
     /**
-     * {@inheritdoc}
-     */
-    /*protected function _isAllowed()
-    {
-        return $this->_authorization->isAllowed('Straker_Job::attachment_save');
-    }*/
-
-    /**
      * Init actions
      *
      * @return \Magento\Backend\Model\View\Result\Page
@@ -54,16 +46,10 @@ class Edit extends \Magento\Backend\App\Action
         return $resultPage;
     }
 
-    /**
-     * Edit Jobs
-     *
-     * @return \Magento\Backend\Model\View\Result\Page|\Magento\Backend\Model\View\Result\Redirect
-     * @SuppressWarnings(PHPMD.NPathComplexity)
-     */
     public function execute()
     {
         $id = $this->getRequest()->getParam('job_id');
-        $model = $this->_objectManager->create('Straker\EasyTranslationPlatform\Model\Job');
+        $model = $this->_objectManager->create(\Straker\EasyTranslationPlatform\Model\Job::class);
 
         if ($id) {
             $model->load($id);
@@ -76,14 +62,13 @@ class Edit extends \Magento\Backend\App\Action
             }
         }
 
-        $data = $this->_objectManager->get('Magento\Backend\Model\Session')->getFormData(true);
+        $data = $this->_objectManager->get(\Magento\Backend\Model\Session::class)->getFormData(true);
         if (!empty($data)) {
             $model->setData($data);
         }
 
         $this->_coreRegistry->register('st_job', $model);
 
-        /** @var \Magento\Backend\Model\View\Result\Page $resultPage */
         $resultPage = $this->_initAction();
         $resultPage->addBreadcrumb(
             $id ? __('Edit Job') : __('New Translation Job'),

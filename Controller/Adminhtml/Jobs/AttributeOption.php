@@ -4,18 +4,15 @@ namespace Straker\EasyTranslationPlatform\Controller\Adminhtml\Jobs;
 
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
-use Magento\Framework\View\Result\PageFactory;
-use Magento\Framework\Registry;
 use Straker\EasyTranslationPlatform\Helper\ConfigHelper;
 use Straker\EasyTranslationPlatform\Model\JobFactory;
 use Straker\EasyTranslationPlatform\Model\StrakerAPI;
 use Straker\EasyTranslationPlatform\Logger\Logger;
-use Straker\EasyTranslationPlatform\Model;
-use Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeOptionTranslation\CollectionFactory as AttributeOptionTranslationCollectionFactory;
+use Straker\EasyTranslationPlatform\Model\ResourceModel\AttributeOptionTranslation\CollectionFactory
+    as AttributeOptionTranslationCollectionFactory;
 
 class AttributeOption extends \Magento\Backend\App\Action
 {
-
     protected $_resultJsonFactory;
     protected $_attributeOptionTranslationCollectionFactory;
     protected $_configHelper;
@@ -41,7 +38,6 @@ class AttributeOption extends \Magento\Backend\App\Action
         $this->_logger = $logger;
     }
 
-
     public function execute()
     {
         $attributeTranslationId = $this->getRequest()->getParam('attributeTranslationId');
@@ -49,13 +45,16 @@ class AttributeOption extends \Magento\Backend\App\Action
         $result = [ 'status' => true, 'message' => '', 'option_data' => []];
         $options = [];
 
-        $optionCollectionData = $this->_attributeOptionTranslationCollectionFactory->create()->addFieldToFilter('attribute_translation_id', ['eq' => $attributeTranslationId]);
+        $optionCollectionData = $this->_attributeOptionTranslationCollectionFactory
+            ->create()
+            ->addFieldToFilter('attribute_translation_id', ['eq' => $attributeTranslationId]);
 
         foreach ($optionCollectionData as $option) {
+            $translatedValue = $option->getData('translated_value');
             array_push($options, [
-                'attribute_option_translation_id'   => $option->getData('attribute_option_translation_id'),
-                'original_value'                    => $option->getData('original_value'),
-                'translated_value'                  => empty($option->getData('translated_value')) ? '':$option->getData('translated_value')
+                'attribute_option_translation_id' => $option->getData('attribute_option_translation_id'),
+                'original_value'                  => $option->getData('original_value'),
+                'translated_value'                => empty($translatedValue) ? '' : $option->getData('translated_value')
             ]);
         }
 
@@ -63,48 +62,6 @@ class AttributeOption extends \Magento\Backend\App\Action
         return $this->_resultJsonFactory->create()->setData($result);
     }
 
-    /**
-     * @param $apiJob
-     * @param \Straker\EasyTranslationPlatform\Model\Job $localJob
-     * @return array
-     */
-    protected function _compareJobs($apiJob, $localJob)
-    {
-//        if( strcasecmp($apiJob->status, $localJob->getJobStatus() ) !== 0
-//            || (strcasecmp($apiJob->status, $localJob->getJobStatus() ) === 0 &&
-//                strcasecmp($apiJob->status, 'queued') === 0 &&
-//                strcasecmp($apiJob->quotation, 'ready') === 0))
-//        {
-
-        if ($localJob->getJobStatusId() < $this->resolveApiStatus($apiJob)) {
-            return $localJob->updateStatus($apiJob);
-        }
-
-        return ['isSuccess' => false, 'Message'=> __('The status is up to date') ];
-    }
-
-    protected function resolveApiStatus($apiJob)
-    {
-        $status = 0;
-        if (!empty($apiJob) && !empty($apiJob->status)) {
-            switch (strtolower($apiJob->status)) {
-                case 'queued':
-                    $status =  strcasecmp($apiJob->quotation, 'ready') == 0  ? 3 : 2;
-                    break;
-                case 'in_progress':
-                    $status = 4;
-                    break;
-                case 'completed':
-                    $status = 5;
-                    break;
-                default:
-                    $status = 0;
-                    break;
-            }
-        }
-
-        return $status;
-    }
     /**
      * Is the user allowed to view the attachment grid.
      *

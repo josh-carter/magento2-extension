@@ -1,7 +1,10 @@
 <?php
-/** @var $block \Straker\EasyTranslationPlatform\Block\Adminhtml\Settings\Config\BackupButton */
+use Straker\EasyTranslationPlatform\Block\Adminhtml\Settings\Config\BackupButton;
+
+/** @var $block BackupButton */
+
 echo $block->getButtonHtml();
-echo '<p class="note"><span>'. __('This will backup database.') .'</span>';
+echo '<p class="note"><span>'.$block->escapeHtml(__('This will backup database.')) .'</span>';
 ?>
 
 <script>
@@ -20,7 +23,7 @@ echo '<p class="note"><span>'. __('This will backup database.') .'</span>';
                     actions: {
                         confirm:  function () {
                             $.ajax({
-                                url         : '<?php echo $block->getAjaxRequestUrl(); ?>',
+                                url         : '<?= $block->escapeUrl($block->getAjaxRequestUrl()); ?>',
                                 showLoader  : true,
                                 type        : 'get'
                             }).always(function ( data ) {
@@ -33,7 +36,9 @@ echo '<p class="note"><span>'. __('This will backup database.') .'</span>';
                                     var msg = (typeof data.message != 'undefined') ? data.message : 'unknown';
                                     alert({
                                         title   : '',
-                                        content : $.mage.__('Backup failed. Please try again. <p><b>Reason: </b>' + msg + '</p>')
+                                        content : $.mage.__(
+                                            'Backup failed. Please try again. <p><b>Reason: </b>' + msg + '</p>'
+                                        )
                                     });
                                 }
                             });

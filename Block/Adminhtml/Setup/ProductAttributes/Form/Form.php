@@ -34,12 +34,10 @@ class Form extends Generic
 
     protected function _prepareForm()
     {
-
         /** @var \Magento\Framework\Data\Form $form */
         $form = $this->_formFactory->create(
             ['data' => ['id' => 'edit_form', 'action' => $this->getData('action'), 'method' => 'post']]
         );
-
 
         $fieldset = $form->addFieldset(
             'fieldset',
@@ -90,18 +88,14 @@ class Form extends Generic
         );
 
         $form->setUseContainer(true);
-
         //$form->setValues($this->session->getData('form_data'));
-
         $this->setForm($form);
 
         return parent::_prepareForm();
     }
 
-
     public function getDefaultAttributes()
     {
-
         $values = [];
         $default = [];
         $array = [];
@@ -126,7 +120,6 @@ class Form extends Generic
 
     public function getCustomAttributes()
     {
-
         $values = [];
         $default = [];
         $array = [];
@@ -150,7 +143,6 @@ class Form extends Generic
 
     public function getCategoryAttributes()
     {
-
         $values = [];
         $default = [];
         $array = [];

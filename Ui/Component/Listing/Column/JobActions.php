@@ -18,7 +18,7 @@ class JobActions extends Column
         if (isset($dataSource['data']['items'])) {
             foreach ($dataSource['data']['items'] as & $item) {
                 $name = $this->getData('name');
-                if (array_key_exists('job_status_id', $item) && array_key_exists('job_id', $item)) {
+                if (isset($item['job_status_id']) && isset($item['job_id'])) {
                     $statusId = $item['job_status_id'];
 
                     $url = 'EasyTranslationPlatform/Jobs/ViewJob';
@@ -90,14 +90,6 @@ class JobActions extends Column
                             'label' => __('Re-Import')
                         ];
                     }
-
-//                    if ($statusId == Model\JobStatus::JOB_STATUS_CONFIRMED){
-//                        $item[$name]['publish'] = [
-//                            'href' => $this->getContext()->getUrl('EasyTranslationPlatform/Jobs/Publish',
-//                                ['job_id' => $item['job_id'], 'job_key' => $item['job_key'], 'job_type_id' => $item['job_type_id']]),
-//                            'label' => __('Publish')
-//                        ];
-//                    }
                 }
             }
         }

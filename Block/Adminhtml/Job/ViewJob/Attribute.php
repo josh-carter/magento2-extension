@@ -24,7 +24,7 @@ class Attribute extends Container
         JobFactory $jobFactory,
         array $data = []
     ) {
-    
+
         $this->_jobFactory = $jobFactory;
         parent::__construct($context, $data);
     }
@@ -33,8 +33,8 @@ class Attribute extends Container
     {
         $this->_requestData = $this->getRequest()->getParams();
         $this->_job = $this->_jobFactory->create()->load($this->_requestData['job_id']);
-        $this->_entityId = array_key_exists('entity_id', $this->_requestData) ? $this->_requestData['entity_id'] : 0;
-        $this->_referrerId = array_key_exists('job_type_referrer', $this->_requestData) ? $this->_requestData['job_type_referrer'] : 0;
+        $this->_entityId = $this->_requestData['entity_id'] ?? 0;
+        $this->_referrerId = $this->_requestData['job_type_referrer'] ?? 0;
         $this->_getReferrer();
         $this->_getEntityName();
 
@@ -86,12 +86,12 @@ class Attribute extends Container
 
         $this->addChild(
             'straker-title-manageJob',
-            'Magento\Framework\View\Element\Template'
-        )->setTemplate('Straker_EasyTranslationPlatform::job/viewJobTitle.phtml')->setData('title','Manage Jobs');
+            \Magento\Framework\View\Element\Template::class
+        )->setTemplate('Straker_EasyTranslationPlatform::job/viewJobTitle.phtml')->setData('title', 'Manage Jobs');
 
         $this->addChild(
             'straker-breadcrumbs',
-            'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Widget\Breadcrumbs',
+            \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Widget\Breadcrumbs::class,
             [
                 [
                     'label' => __('Manage Jobs'),
@@ -123,7 +123,7 @@ class Attribute extends Container
                             'source_store_id' => $this->_requestData['source_store_id']
                         ]
                     ),
-                    'title' => __('Go to %1 page',  $this->_referrer)
+                    'title' => __('Go to %1 page', $this->_referrer)
 
                 ],
                 [
@@ -134,7 +134,7 @@ class Attribute extends Container
 
         $this->addChild(
             'straker_job_attribute_grid',
-            'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Attribute\Grid',
+            \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Attribute\Grid::class,
             ['id' => 'straker_job_attribute_grid']
         );
 

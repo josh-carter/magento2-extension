@@ -1,63 +1,65 @@
 <?php
-/**
- * Copyright © 2016 Magento. All rights reserved.
- * See COPYING.txt for license details.
- */
-
-// @codingStandardsIgnoreFile
 /** @var $block \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Massaction\Extended; */
 ?>
 
-<div id="<?php echo $block->getHtmlId() ?>" class="admin__grid-massaction">
+<div id="<?= $block->getHtmlId() ?>" class="admin__grid-massaction">
     <?php if ($block->getHideFormElement() !== true):?>
-    <form action="" id="<?php echo $block->getHtmlId() ?>-form" method="post">
+    <form action="" id="<?= $block->getHtmlId() ?>-form" method="post">
     <?php endif ?>
         <div class="admin__grid-massaction-form">
-        <?php echo $block->getBlockHtml('formkey')?>
+        <?= $block->getBlockHtml('formkey')?>
             <select
-                id="<?php echo $block->getHtmlId() ?>-select"
+                id="<?= $block->getHtmlId() ?>-select"
                 class="local-validation admin__control-select">
-                <option class="admin__control-select-placeholder" value="" selected><?php /* @escapeNotVerified */ echo __('Actions') ?></option>
+                <option class="admin__control-select-placeholder"
+                        value=""
+                        selected><?=$block->escapeHtml(__('Actions')) ?>
+                </option>
                 <?php foreach ($block->getItems() as $_item): ?>
-                    <option value="<?php /* @escapeNotVerified */ echo $_item->getId() ?>"<?php echo($_item->getSelected() ? ' selected="selected"' : '')?>><?php /* @escapeNotVerified */ echo $_item->getLabel() ?></option>
+                    <option value="<?= /* @noEscape */ $_item->getId() ?>"
+                        <?=($_item->getSelected() ? ' selected="selected"' : '')?>
+                    >
+                        <?= /* @noEscape */ $_item->getLabel() ?>
+                    </option>
                 <?php endforeach; ?>
             </select>
-            <span class="outer-span" id="<?php echo $block->getHtmlId() ?>-form-hiddens"></span>
-            <span class="outer-span" id="<?php echo $block->getHtmlId() ?>-form-additional"></span>
-            <?php echo $block->getApplyButtonHtml() ?>
+            <span class="outer-span" id="<?= $block->getHtmlId() ?>-form-hiddens"></span>
+            <span class="outer-span" id="<?= $block->getHtmlId() ?>-form-additional"></span>
+            <?= $block->getApplyButtonHtml() ?>
         </div>
     <?php if ($block->getHideFormElement() !== true):?>
     </form>
     <?php endif ?>
     <div class="no-display">
         <?php foreach ($block->getItems() as $_item): ?>
-            <div id="<?php echo $block->getHtmlId() ?>-item-<?php /* @escapeNotVerified */ echo $_item->getId() ?>-block">
-                <?php echo $_item->getAdditionalActionBlockHtml() ?>
+            <div id="<?=
+            $block->escapeHtml($block->getHtmlId()) ?>-item-<?= $block->escapeHtml($_item->getId()) ?>-block">
+                <?= $_item->getAdditionalActionBlockHtml() ?>
             </div>
         <?php endforeach; ?>
     </div>
     <div class="mass-select-wrap">
         <select
-            id="<?php echo $block->getHtmlId() ?>-mass-select"
+            id="<?= $block->getHtmlId() ?>-mass-select"
             class="action-select-multiselect"
             data-menu="grid-mass-select">
                 <option disabled selected></option>
             <?php if ($block->getUseSelectAll()):?>
                 <option value="selectAll">
-                    <?php /* @escapeNotVerified */ echo __('Select All') ?>
+                    <?= $block->escapeHtml(__('Select All')) ?>
                 </option>
                 <option value="unselectAll">
-                    <?php /* @escapeNotVerified */ echo __('Deselect All') ?>
+                    <?= $block->escapeHtml(__('Deselect All')) ?>
                 </option>
             <?php endif; ?>
                 <option value="selectVisible">
-                    <?php /* @escapeNotVerified */ echo __('Select All on This Page') ?>
+                    <?= $block->escapeHtml(__('Select All on This Page')) ?>
                 </option>
                 <option value="unselectVisible">
-                    <?php /* @escapeNotVerified */ echo __('Deselect All on This Page') ?>
+                    <?= $block->escapeHtml(__('Deselect All on This Page')) ?>
                 </option>
         </select>
-        <label for="<?php echo $block->getHtmlId() ?>-mass-select"></label>
+        <label for="<?= $block->getHtmlId() ?>-mass-select"></label>
     </div>
 </div>
 <script>
@@ -69,18 +71,29 @@
     ], function(jQuery) {
         'use strict';
 
-        var showActions = function(gridIdsTotal, pageIdsTotal, pageCheckedIds, inputElement, containerId, massActionId) {
+        var showActions = function(
+            gridIdsTotal,
+            pageIdsTotal,
+            pageCheckedIds,
+            inputElement,
+            containerId,
+            massActionId
+        ) {
 //            console.log('============================= start showAction ================================');
             if(typeof containerId === 'undefined' || typeof massActionId === 'undefined'){
 //                console.log('containerId or massActionId undefined');
-                containerId = '<?php echo $block->getParentBlock()->getHtmlId(); ?>';
-                massActionId = '<?php echo $block->getHtmlId() ?>';
+                containerId = '<?= $block->getParentBlock()->getHtmlId(); ?>';
+                massActionId = '<?= $block->getHtmlId() ?>';
             }
 
-            if(typeof gridIdsTotal === 'undefined' || typeof pageIdsTotal === 'undefined'  || pageCheckedIds === 'undefined' ){
+            if(typeof gridIdsTotal === 'undefined'
+                || typeof pageIdsTotal === 'undefined'
+                || pageCheckedIds === 'undefined'
+            ){
 //                console.log('gridIdsTotal, pageIdsTotal or pageCheckedIds undefined');
-                var pageIds = jQuery('#<?php echo $block->getParentBlock()->getHtmlId(); ?> tr input[type="checkbox"][name="massaction"]');
-                gridIdsTotal = <?php echo count(explode(',',$block->getGridIdsJson())); ?>;
+                var htmlId = '<?= $block->escapeHtml($block->getParentBlock()->getHtmlId()); ?>';
+                var pageIds = jQuery('#' + htmlId + ' tr input[type="checkbox"][name="massaction"]');
+                gridIdsTotal = <?= count(explode(',', $block->getGridIdsJson())); ?>;
                 pageIdsTotal = pageIds.length;
                 pageCheckedIds = pageIds.filter(':checked').length;
             }
@@ -92,7 +105,8 @@
 
             if(typeof inputElement === 'undefined'){
 //                console.log('inputElement undefined');
-                var inputElementName = '<?php echo $block->getParentBlock()->_getHiddenInputElementName(); ?>';
+                var inputElementName = '<?= $block->escapeHtml($block->getParentBlock()
+                    ->_getHiddenInputElementName()); ?>';
                 inputElement = jQuery('input[type="hidden"][name="'+ inputElementName +'"]');
             }
 
@@ -114,13 +128,15 @@
             gridIdsTotal > allCheckedIds ? optionSelectAll.show() : optionSelectAll.hide();
             allCheckedIds > 0 && allCheckedIds <= gridIdsTotal ? optionUnSelectAll.show() : optionUnSelectAll.hide();
             pageIdsTotal > pageCheckedIds ? optionSelectVisible.show() : optionSelectVisible.hide();
-            pageCheckedIds > 0 && pageCheckedIds <= pageIdsTotal ? optionUnSelectVisible.show() : optionUnSelectVisible.hide();
+            pageCheckedIds > 0 && pageCheckedIds <= pageIdsTotal
+                ? optionUnSelectVisible.show()
+                : optionUnSelectVisible.hide();
         };
 
         showActions();
 
-        var filterAction = jQuery('#<?php echo $block->getParentBlock()->getHtmlId(); ?> .admin__filter-actions');
-        var massActionForm = jQuery('#<?php echo $block->getHtmlId() ?>-form');
+        var filterAction = jQuery('#<?= $block->getParentBlock()->getHtmlId(); ?> .admin__filter-actions');
+        var massActionForm = jQuery('#<?= $block->getHtmlId() ?>-form');
 
         if( typeof filterAction !== 'undefined' ){
             massActionForm.find('select').prop('disabled',true);
@@ -128,24 +144,20 @@
             filterAction.insertAfter(massActionForm);
         }
 
-        jQuery('#<?php echo $block->getHtmlId() ?>-mass-select').change(function () {
+        jQuery('#<?= $block->getHtmlId() ?>-mass-select').change(function () {
             var massAction = jQuery('option:selected', this).val();
 
             switch (massAction) {
             <?php if ($block->getUseSelectAll()):?>
                 case 'selectAll':
-                    return <?php /* @escapeNotVerified */ echo $block->getJsObjectName() ?>.selectAll();
-                    break;
+                    return <?= $block->escapeHtml($block->getJsObjectName()) ?>.selectAll();
                 case 'unselectAll':
-                    return <?php /* @escapeNotVerified */ echo $block->getJsObjectName() ?>.unselectAll();
-                    break;
+                    return <?= $block->escapeHtml($block->getJsObjectName()) ?>.unselectAll();
             <?php endif; ?>
                 case 'selectVisible':
-                    return <?php /* @escapeNotVerified */ echo $block->getJsObjectName() ?>.selectVisible();
-                    break;
+                    return <?= $block->escapeHtml($block->getJsObjectName()) ?>.selectVisible();
                 case 'unselectVisible':
-                    return <?php /* @escapeNotVerified */ echo $block->getJsObjectName() ?>.unselectVisible();
-                    break;
+                    return <?= $block->escapeHtml($block->getJsObjectName()) ?>.unselectVisible();
             }
 
             this.blur();
@@ -278,7 +290,10 @@
         };
 
         varienGridMassaction.prototype.updateCount = function() {
-            var checkboxesTotal = varienStringArray.count((this.useSelectAll ? this.getGridIds() : this.getCheckboxesValuesAsString())),
+            var checkboxesTotal = varienStringArray.count((this.useSelectAll
+                ? this.getGridIds()
+                : this.getCheckboxesValuesAsString()
+                )),
                 checkboxesChecked = varienStringArray.count(this.checkedString);
 
             jQuery('[data-role="counter"]' ,this.count).html(checkboxesChecked);
@@ -317,16 +332,30 @@
             }
             var gridIdsTotal = (this.gridIds.length ? this.gridIds.split(',') : []).length;
             var pageIdsTotal = this.grid.rows.length;
-            var pageCheckedIds = jQuery('#' + this.grid.containerId + ' tr input[type="checkbox"][name="massaction"]').filter(':checked').length;
+            var pageCheckedIds = jQuery('#' + this.grid.containerId + ' tr input[type="checkbox"][name="massaction"]')
+                .filter(':checked').length;
 //            console.log('checked ids: ');
 //            console.log(pageCheckedIds);
 //            console.log('============================= end updateCount ======================================');
 
-            showActions(gridIdsTotal, pageIdsTotal, pageCheckedIds, inputElement, this.grid.containerId, this.containerId);
+            showActions(
+                gridIdsTotal,
+                pageIdsTotal,
+                pageCheckedIds,
+                inputElement,
+                this.grid.containerId,
+                this.containerId
+            );
             this.grid.reloadParams[this.formFieldNameInternal] = this.checkedString;
         };
 
-        serializerController.prototype.initialize = function(hiddenDataHolder, predefinedData, inputsToManage, grid, reloadParamName){
+        serializerController.prototype.initialize = function(
+            hiddenDataHolder,
+            predefinedData,
+            inputsToManage,
+            grid,
+            reloadParamName
+        ){
             //Grid inputs
             this.tabIndex = 1000;
             this.inputsToManage       = inputsToManage;
@@ -358,7 +387,8 @@
     });
 
     <?php if (!$block->getParentBlock()->canDisplayContainer()): ?>
-    <?php /* @escapeNotVerified */ echo $block->getJsObjectName() ?>.setGridIds('<?php /* @escapeNotVerified */ echo $block->getGridIdsJson() ?>');
+        <?= $block->escapeHtml($block->getJsObjectName()) ?>
+    .setGridIds('<?= $block->escapeHtml($block->getGridIdsJson()) ?>');
     <?php endif; ?>
 
 </script>

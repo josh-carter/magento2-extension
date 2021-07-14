@@ -3,71 +3,91 @@
 ?>
 <div class="fieldset-wrapper straker">
     <div>
-        <h2><?php echo __('Select your Destination Store View')?></h2>
-        <p><?php echo __('Please select the destination Store View where you would like this translation to show.')?></p>
+        <h2><?= $block->escapeHtml(__('Select your Destination Store View')) ?></h2>
+        <p>
+            <?= $block->escapeHtml(
+                __('Please select the destination Store View where you would like this translation to show.')
+            )?>
+        </p>
     </div>
 
     <div class="field">
         <label class="label" for="magento_destination_store">
-            <span><?php echo __('Target Store View') ?></span>
+            <span><?= $block->escapeHtml(__('Target Store View')) ?></span>
         </label>
         <div class="control">
-            <select id="magento_destination_store" name="magento_destination_store" class="required-entry admin__control-select">
-                <?php echo $block->listStores('Pick a store view', true); ?>
+            <select id="magento_destination_store"
+                    name="magento_destination_store"
+                    class="required-entry admin__control-select">
+                <?= /* @noEscape */ $block->listStores('Pick a store view', true); ?>
             </select>
-            <div class="note"><?php echo __('Translations will be imported into this store')?></div>
+            <div class="note">
+                <?= $block->escapeHtml(__('Translations will be imported into this store')) ?>
+            </div>
         </div>
     </div>
 
     <div class="field">
         <label class="label" for="straker_destination_language">
-            <span><?php echo __('Target Language') ?></span>
+            <span><?= $block->escapeHtml(__('Target Language')) ?></span>
         </label>
         <div class="control">
-            <select  id="straker_destination_language" name="straker_destination_language" class="required-entry admin__control-select">
-                <option value=""><?php echo __('Select target language') ?></option>
+            <select  id="straker_destination_language"
+                     name="straker_destination_language"
+                     class="required-entry admin__control-select"
+            >
+                <option value=""><?= $block->escapeHtml(__('Select target language')) ?></option>
                 <?php foreach ($block->getOptions() as $languages): ?>
-                    <option value="<?php echo $languages->code ?>">
-                        <?php echo $languages->name ?>
+                    <option value="<?= $block->escapeHtml($languages->code) ?>">
+                        <?= $block->escapeHtml($languages->name) ?>
                     </option>
                 <?php endforeach; ?>
             </select>
-            <div class="note"><?php echo __('The target language is the language of the destination store')?></div>
+            <div class="note">
+                <?= $block->escapeHtml(__('The target language is the language of the destination store')) ?>
+            </div>
         </div>
     </div>
 </div>
 
 <div id="source-store-wrapper" class="fieldset-wrapper straker" style="display:none">
     <div>
-        <h2><?php echo __('Select your source store and language')?></h2>
-        <p><?php echo __('This is a one time setup process for each Store View.')?></p>
+        <h2><?= $block->escapeHtml(__('Select your source store and language')) ?></h2>
+        <p><?= $block->escapeHtml(__('This is a one time setup process for each Store View.')) ?></p>
     </div>
     <div class="field">
         <label class="label" for="magento_source_store">
-            <span><?php echo __('Source Store View') ?></span>
+            <span><?= $block->escapeHtml(__('Source Store View')) ?></span>
         </label>
         <div class="control">
             <select id="magento_source_store" name="magento_source_store" class="required-entry admin__control-select">
-                <?php echo $block->listStores('Pick a source store view'); ?>
+                <?=  /* @noEscape */ $block->listStores('Pick a source store view'); ?>
             </select>
-            <div class="note"><?php echo __('Content will be selected from this store view for translation')?></div>
+            <div class="note">
+                <?= $block->escapeHtml(__('Content will be selected from this store view for translation')) ?>
+            </div>
         </div>
     </div>
 
     <div class="field">
         <label class="label" for="straker_source_language">
-            <span><?php echo __('Source Language') ?></span>
+            <span><?= $block->escapeHtml(__('Source Language')) ?></span>
         </label>
         <div class="control">
-            <select id="straker_source_language" name="straker_source_language" class="required-entry admin__control-select">
-                <option value=""><?php echo __('Select source language') ?></option>
+            <select id="straker_source_language"
+                    name="straker_source_language"
+                    class="required-entry admin__control-select"
+            >
+                <option value=""><?= $block->escapeHtml(__('Select source language')) ?></option>
                 <?php foreach ($block->getOptions() as $languages): ?>
-                    <option value="<?php echo $languages->code ?>">
-                        <?php echo $languages->name ?>
+                    <option value="<?= $block->escapeHtml($languages->code) ?>">
+                        <?= $block->escapeHtml($languages->name) ?>
                     </option>
                 <?php endforeach; ?>
             </select>
-            <div class="note"><?php echo __('The source language is the language of the source store')?></div>
+            <div class="note">
+                <?= $block->escapeHtml(__('The source language is the language of the source store')) ?>
+            </div>
         </div>
     </div>
 </div>

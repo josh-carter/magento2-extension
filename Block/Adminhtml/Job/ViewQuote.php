@@ -26,7 +26,6 @@ class ViewQuote extends Container
 
     public function _construct()
     {
-
         $this->_requestData = $this->getRequest()->getParams();
         $this->_job = $this->_jobFactory->create()->load($this->_requestData['job_id']);
 
@@ -41,20 +40,18 @@ class ViewQuote extends Container
         );
 
         parent::_construct();
-
     }
 
     protected function _prepareLayout()
     {
-
         $this->addChild(
             'straker-title-job-quote',
-            'Magento\Framework\View\Element\Template'
-        )->setTemplate('Straker_EasyTranslationPlatform::job/viewJobTitle.phtml')->setData('title','Manage Jobs');
+            \Magento\Framework\View\Element\Template::class
+        )->setTemplate('Straker_EasyTranslationPlatform::job/viewJobTitle.phtml')->setData('title', 'Manage Jobs');
 
         $this->addChild(
             'straker-breadcrumbs',
-            'Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Widget\Breadcrumbs',
+            \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\ViewJob\Widget\Breadcrumbs::class,
             [
                 [
                     'label' => __('Manage Jobs'),
@@ -82,13 +79,19 @@ class ViewQuote extends Container
 
         $this->addChild(
             'straker-title-manageJob',
-            'Magento\Framework\View\Element\Template'
-        )->setTemplate('Straker_EasyTranslationPlatform::job/quote-frame.phtml')->setData('quote-url',$this->getQuoteFrameUrl());
+            \Magento\Framework\View\Element\Template::class
+        )->setTemplate(
+            'Straker_EasyTranslationPlatform::job/quote-frame.phtml'
+        )->setData(
+            'quote-url',
+            $this->getQuoteFrameUrl()
+        );
 
         return parent::_prepareLayout();
     }
 
-    public function getQuoteFrameUrl(){
+    public function getQuoteFrameUrl()
+    {
         $quoteUrl = $this->_coreRegistry->registry('quote_url');
         $this->_coreRegistry->unregister('quote_url');
         return $quoteUrl;

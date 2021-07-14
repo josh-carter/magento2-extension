@@ -5,7 +5,9 @@ namespace Straker\EasyTranslationPlatform\Controller\Adminhtml\Jobs;
 use Exception;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
+use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\LocalizedException;
+use \Magento\Framework\Filesystem\Driver\File as FileDriver;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Xml\Parser;
 
@@ -30,6 +32,14 @@ class Import extends Action
 
     /** @var  \Straker\EasyTranslationPlatform\Model\Job */
     protected $_jobModel;
+    /**
+     * @var FileDriver
+     */
+    private $driver;
+    /**
+     * @var \Magento\Framework\File\UploaderFactory
+     */
+    private $uploaderFactory;
 
     public function __construct(
         Context $context,
@@ -39,8 +49,12 @@ class Import extends Action
         Logger $logger,
         StoreManagerInterface $storeManager,
         StrakerAPIInterface $strakerAPI,
-        Parser $xmlParser
+        Parser $xmlParser,
+        FileDriver $driver,
+        \Magento\Framework\File\UploaderFactory $uploaderFactory
     ) {
+        parent::__construct($context);
+
         $this->_jobFactory      = $jobFactory;
         $this->_configHelper    = $configHelper;
         $this->_importHelper    = $importHelper;
@@ -48,23 +62,24 @@ class Import extends Action
         $this->_storeManager    = $storeManager;
         $this->_strakerApi      = $strakerAPI;
         $this->_xmlParser       = $xmlParser;
-        parent::__construct($context);
+        $this->driver           = $driver;
+        $this->uploaderFactory  = $uploaderFactory;
     }
 
     public function execute()
     {
-        //      'name' => string '-straker_job_18_1509478347.xml' (length=30)
-        //      'type' => string 'text/xml' (length=8)
-        //      'tmp_name' => string '/tmp/phpHiJUxh' (length=14)
-        //      'error' => int 0
-        //      'size' => int 22668
+        // 'name' => string '-straker_job_18_1509478347.xml' (length=30)
+        // 'type' => string 'text/xml' (length=8)
+        // 'tmp_name' => string '/tmp/phpHiJUxh' (length=14)
+        // 'error' => int 0
+        // 'size' => int 22668
         $file               = $this->getRequest()->getFiles('translated_file');
         $params             = $this->getRequest()->getParams();
-        $jobId              = array_key_exists('job_id', $params) ? $params['job_id'] : 0;
-        $jobKey             = array_key_exists('job_id', $params) ? $params['job_key'] : 0;
-        $sourceStoreId      = array_key_exists('job_id', $params) ? $params['source_store_id'] : 0;
+        $jobId              = $params['job_id'] ?? 0;
+        $jobKey             = $params['job_key'] ?? 0;
+        $sourceStoreId      = $params['source_store_id'] ?? 0;
 
-        $this->createJobModel($jobId);
+        $this->getJobModel($jobId);
 
         $redirectParams     = [
             'job_id'            => $jobId,
@@ -77,59 +92,7 @@ class Import extends Action
         $resultRedirect->setPath('*/*/ViewJob', $redirectParams);
 
         if ($this->getRequest()->isPost()) {
-
-            //check uploaded file
-            $checkResult = $this->checkUploadedFile($file);
-            if ( $checkResult['success'] ) {
-                try {
-                    //todo: save new file with the same name stored in db
-                    $renameResult = $this->renameExistingTranslatedFile($jobId);
-
-                    if ($renameResult['success']){
-                        if($renameResult['old_name']){
-                            $translatedFullFilename = $renameResult['old_name'];
-                            $translatedFilename = $this->_getFilenameFromFullName($translatedFullFilename);
-
-                            if($translatedFullFilename === '') {
-                                $fileNameArray = $this->generateTranslatedFilename($jobId);
-                                $translatedFilename = $fileNameArray['name'];
-                                $translatedFullFilename = implode(DIRECTORY_SEPARATOR, $fileNameArray);
-                            }
-
-                            if(move_uploaded_file($file['tmp_name'], $translatedFullFilename)){
-                                //todo: import
-                                if(file_exists($translatedFullFilename)){
-                                    $this->_importHelper->create($jobId)
-                                        ->parseTranslatedFile()
-                                        ->saveData();
-                                    $this->_jobModel->_setStatusForAllJobs(JobStatus::JOB_STATUS_COMPLETED);
-                                    $this->messageManager->addSuccessMessage(
-                                        'Translated '.
-                                        $this->_jobModel->getData('job_number')
-                                        . ' data has been imported for '
-                                        . $this->_storeManager->getStore(
-                                            $this->_jobModel->getData('target_store_id')
-                                        )->getName()
-                                        .' store'
-                                    );
-                                }else{
-                                    $this->processErrorMessage('Save upload failed.', __FILE__, __METHOD__);
-                                }
-                            }else{
-                                $this->processErrorMessage('File upload failed.', __FILE__, __METHOD__);
-                            }
-                        }
-                    }else{
-                        $this->processErrorMessage('Cannot generate translated file.', __FILE__, __METHOD__);
-                    }
-                } catch (LocalizedException $e) {
-                    $this->processErrorMessage('File upload failed.', __FILE__, __METHOD__, $e);
-                } catch (Exception $e) {
-                    $this->processErrorMessage('Invalid file upload attempt', __FILE__, __METHOD__, $e);
-                }
-            }else {
-                $this->processErrorMessage($checkResult['message'], __FILE__, __METHOD__);
-            }
+            $this->import($file, $jobId);
         } else {
             $this->processErrorMessage('Invalid file upload attempt', __FILE__, __METHOD__);
         }
@@ -138,100 +101,148 @@ class Import extends Action
     }
 
     /**
-     * @param $jobId
      * @return array
      */
-    private function renameExistingTranslatedFile($jobId) {
-        $this->createJobModel($jobId);
-        $oldName = $this->_jobModel->getData('translated_file');
-        $success = true;
-        $oldNameWithFullPath = '';
-        $newNameWithFullPath = '';
-
-        if($oldName){
-            $oldNameWithFullPath = $this->_configHelper->getTranslatedXMLFilePath() . DIRECTORY_SEPARATOR . $oldName;
-            if(file_exists($oldNameWithFullPath)){
-                $newNameWithFullPath  = $this->_configHelper->getTranslatedXMLFilePath() . DIRECTORY_SEPARATOR . 'old_' . time() . '_' . $oldName;
-                $success = rename($oldNameWithFullPath, $newNameWithFullPath);
-            }
-        }
-
-        return ['success' => $success, 'old_name' => $oldNameWithFullPath, 'new_name' => $newNameWithFullPath];
-    }
-
-    /**
-     * @param $file
-     * @return array
-     */
-    private function checkUploadedFile($file)
+    private function backupExistingTranslatedFile(): array
     {
-        $result = ['success'   => true, 'message'   => ''];
+        $result = [
+            'success' => true,
+            'message' => '',
+            'old_name' => '',
+            'new_name' => ''
+        ];
 
-        if (!is_uploaded_file($file['tmp_name'])) {
+        try {
+            $oldName = $this->_jobModel->getData('translated_file');
+
+            if ($oldName) {
+                $oldNameWithFullPath = $this->_configHelper->getTranslatedXMLFilePath()
+                    . DIRECTORY_SEPARATOR
+                    . $oldName;
+                $result['old_name'] = $oldName;
+
+                if ($this->driver->isExists($oldNameWithFullPath)) {
+                    $newNameWithFullPath = $this->_configHelper->getTranslatedXMLFilePath()
+                        . DIRECTORY_SEPARATOR
+                        . 'backup_'
+                        . time()
+                        . '_'
+                        . $oldName;
+                    $result['success'] = $this->driver->rename($oldNameWithFullPath, $newNameWithFullPath);
+                    $result['new_name'] = $newNameWithFullPath;
+                }
+            } else {
+                $result['success'] = false;
+                $result['message'] = 'Translated file cannot be found.';
+            }
+        } catch (FileSystemException $e) {
             $result['success'] = false;
-            $result['message'] = 'File must upload via http post.';
-        }else if ($file['error'] !== 0) {
-            $result['success'] = false;
-            $result['message'] = 'An error found while uploading (' . $file['error'] . ').';
-        }else if (empty($file['tmp_name'])){
-            $result['success'] = false;
-            $result['message'] = 'An error found while uploading.';
-        }else if ($file['type'] !== 'text/xml') {
-            $result['success'] = false;
-            $result['message'] = 'File type invalid.';
-        }else {
-            $result['success'] = true;
+            $result['message'] = $e->getMessage();
         }
-
-        $result['message'] = __($result['message']);
 
         return $result;
     }
 
     /**
-     * @param $jobId
+     * @param $file
+     * @param $newFilename
      * @return array
      */
-    private function generateTranslatedFilename($jobId)
+    private function saveFile($file, $newFilename): array
     {
-        $nameArray = [];
+        $validFilename = $this->validFilename($newFilename);
+        $result = ['success' => true, 'message' => '', 'filename' => '', 'full_path' => ''];
+        $uploader = $this->uploaderFactory->create(['fileId' => $file]);
+        $translatedFileFolder = $this->_configHelper->getTranslatedXMLFilePath();
+        $uploader->setAllowCreateFolders(true)
+            ->setAllowedExtensions(['xml'])
+            ->setAllowRenameFiles(true)
+            ->setFilenamesCaseSensitivity(true)
+            ->setFilesDispersion(false);
 
-        $this->createJobModel($jobId);
-
-        if(key_exists('source_file', $this->_jobModel->getData())){
-            //full path of filename
-            $sourceFileName = $this->_jobModel->getData('source_file');
-            //remove path and '.xml' at the end of filename
-            $sourceFileName = $this->_getFilenameFromFullName($sourceFileName, false);
-            //returns ['path' => $filePath, 'name' => $fileName]
-            $nameArray = $this->_jobModel->generateTranslatedFilename($sourceFileName);
+        try {
+            $saveResult = $uploader->save($translatedFileFolder, $validFilename);
+            $result['filename'] = $saveResult['file'];
+            $result['full_path'] = $saveResult['path'] . DIRECTORY_SEPARATOR . $result['filename'];
+            $result['success'] = $saveResult['error'] === 0;
+        } catch (Exception $e) {
+            $result['success'] = false;
+            $result['message'] = $e->getMessage();
         }
 
-        return $nameArray;
+        return $result;
     }
 
-    private function _getFilenameFromFullName($fullName, $suffix = true){
-        return $suffix
-            ?
-            substr($fullName, strrpos($fullName, DIRECTORY_SEPARATOR) + 1)
-            :
-            substr($fullName, strrpos($fullName, DIRECTORY_SEPARATOR) + 1, -4);
-    }
-
-    private function createJobModel($jobId){
-        if($this->_jobModel === null){
+    private function getJobModel($jobId)
+    {
+        if ($this->_jobModel === null) {
             $this->_jobModel = $this->_jobFactory->create()->load($jobId);
         }
     }
 
-    private function processErrorMessage($message, $file, $method, $e = null){
-        if ($e === null){
+    private function processErrorMessage($message, $file, $method, $e = null)
+    {
+        if ($e === null) {
             $this->_logger->error($message, ['file' => $file, 'method' => $method]);
             $this->_strakerApi->_callStrakerBugLog($file . ' ' . $method . ' ' . $message);
-        }else{
+        } else {
             $this->_logger->error($message, ['file' => $file, 'method' => $method, 'e' => $e->__toString()]);
             $this->_strakerApi->_callStrakerBugLog($file . ' ' . $method . ' ' . $e->getMessage(), $e->__toString());
         }
         $this->messageManager->addErrorMessage(__($message));
+    }
+
+    /**
+     * @param $file
+     * @param int $jobId
+     */
+    protected function import($file, int $jobId): void
+    {
+        $this->getJobModel($jobId);
+        //save new file with the same name stored in db
+        $backupResult = $this->backupExistingTranslatedFile();
+        if ($backupResult['success']) {
+            $saveResult = $this->saveFile($file, $backupResult['old_name']);
+
+            if ($saveResult['success']) {
+                if ($saveResult['filename'] !== $backupResult['old_name']) {
+                    $this->_jobModel->setData('translated_file', $saveResult['filename']);
+                    $this->_jobModel->save();
+                }
+
+                try {
+                    if ($this->driver->isExists($saveResult['full_path'])) {
+                        $this->_importHelper->create($jobId)
+                            ->parseTranslatedFile()
+                            ->saveData();
+                        $this->_jobModel->_setStatusForAllJobs(JobStatus::JOB_STATUS_COMPLETED);
+                        $this->messageManager->addSuccessMessage(
+                            'Translated ' .
+                            $this->_jobModel->getData('job_number')
+                            . ' data has been imported for '
+                            . $this->_storeManager->getStore(
+                                $this->_jobModel->getData('target_store_id')
+                            )->getName()
+                            . ' store'
+                        );
+                    } else {
+                        $this->processErrorMessage('Save upload failed.', __FILE__, __METHOD__);
+                    }
+                } catch (LocalizedException $e) {
+                    $this->processErrorMessage('File upload failed.', __FILE__, __METHOD__, $e);
+                } catch (Exception $e) {
+                    $this->processErrorMessage('Invalid file upload attempt', __FILE__, __METHOD__, $e);
+                }
+            } else {
+                $this->processErrorMessage($saveResult['message'], __FILE__, __METHOD__);
+            }
+        } else {
+            $this->processErrorMessage($backupResult['message'], __FILE__, __METHOD__);
+        }
+    }
+
+    private function validFilename($newFilename)
+    {
+        return str_replace('&', '-', $newFilename);
     }
 }

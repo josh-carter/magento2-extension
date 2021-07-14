@@ -17,12 +17,12 @@ class RestoreBackup extends Action
     protected $_jsonFactory;
     protected $_backupHelper;
 
-    function __construct(
+    public function __construct(
         Action\Context $context,
         JsonFactory $jsonFactory,
         StrakerAPIInterface $api,
         BackupHelper $backupHelper
-    ){
+    ) {
         $this->_api = $api;
         $this->_jsonFactory = $jsonFactory;
         $this->_backupHelper = $backupHelper;
@@ -31,8 +31,6 @@ class RestoreBackup extends Action
 
     public function execute()
     {
-        set_time_limit(0);
-        ignore_user_abort(true);
         $response = $this->_api->dbRestore();
         $this->_backupHelper->invalidateCache();
         $adminSession = $this->_getSession();

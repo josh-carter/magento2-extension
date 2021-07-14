@@ -7,9 +7,7 @@ use Magento\Framework\Registry;
 
 class FormContainer extends \Magento\Backend\Block\Widget\Form\Container
 {
-
     protected $_mode = 'form';
-
 
     public function __construct(
         Context $context,
@@ -22,15 +20,12 @@ class FormContainer extends \Magento\Backend\Block\Widget\Form\Container
 
     protected function _construct()
     {
-        $this->_blockGroup = 'Straker_EasyTranslationPlatform';
-        $this->_controller = 'adminhtml_setup_registration';
-
         parent::_construct();
 
+        $this->_blockGroup = 'Straker_EasyTranslationPlatform';
+        $this->_controller = 'adminhtml_setup_registration';
         $this->buttonList->update('save', 'label', __('Next'));
-
         $this->buttonList->remove('reset');
-
         $this->buttonList->remove('back');
     }
 

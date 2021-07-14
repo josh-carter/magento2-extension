@@ -11,7 +11,8 @@ use Straker\EasyTranslationPlatform\Model\JobFactory;
 
 class Pages extends \Magento\Backend\Block\Widget\Grid\Extended
 {
-    protected $_massactionBlockName = \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Massaction\Extended::class;
+    protected $_massactionBlockName
+        = \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Grid\Massaction\Extended::class;
     protected $pageCollection;
     protected $jobFactory;
     protected $sourceStoreId;
@@ -48,14 +49,13 @@ class Pages extends \Magento\Backend\Block\Widget\Grid\Extended
         $this->targetStoreId = $this->getRequest()->getParam('target_store_id');
     }
 
-
     protected function _prepareCollection()
     {
         $collection = $this->pageCollection;
-        if($this->sourceStoreId){
+        if ($this->sourceStoreId) {
             $collection->addStoreFilter($this->sourceStoreId);
         }
-        $collection->is_translated($this->targetStoreId);
+        $collection->isTranslated($this->targetStoreId);
         $this->setCollection($collection);
         return parent::_prepareCollection();
     }
@@ -102,7 +102,7 @@ class Pages extends \Magento\Backend\Block\Widget\Grid\Extended
             [
                 'header'                    =>  __('Translated'),
                 'index'                     =>  'is_translated',
-//                'filter_index'              =>  'stTrans.translated_value',
+            //                'filter_index'              =>  'stTrans.translated_value',
                 'width'                     =>  '50px',
                 'type'                      =>  'options',
                 'options'                   =>  [0 => __('No'), 1 => __('Yes')],
@@ -113,7 +113,7 @@ class Pages extends \Magento\Backend\Block\Widget\Grid\Extended
         return parent::_prepareColumns();
     }
 
-    function _prepareMassaction()
+    protected function _prepareMassaction()
     {
         $this->setMassactionIdField('page_id');
         $this->getMassactionBlock()->setTemplate('Straker_EasyTranslationPlatform::job/massaction_extended.phtml');
@@ -146,7 +146,7 @@ class Pages extends \Magento\Backend\Block\Widget\Grid\Extended
         return true;
     }
 
-    function filterIsTranslated($collection, $column)
+    public function filterIsTranslated($collection, $column)
     {
         $condition = $column->getFilter()->getCondition();
         $collection->getSelect()->having('`is_translated` = ? ', reset($condition));
@@ -169,5 +169,4 @@ class Pages extends \Magento\Backend\Block\Widget\Grid\Extended
         $serializerBlock = $this->_getSerializerBlock();
         return empty($serializerBlock) ? 'job_pages' : $serializerBlock->getReloadParamName();
     }
-
 }

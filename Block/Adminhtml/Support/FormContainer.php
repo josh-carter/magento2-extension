@@ -7,30 +7,17 @@ use Magento\Framework\Registry;
 
 class FormContainer extends \Magento\Backend\Block\Widget\Form\Container
 {
-
     protected $_mode = 'form';
-
-
-    public function __construct(
-        Context $context,
-        Registry $registry
-    ) {
-    
-        $this->_coreRegistry = $registry;
-        parent::__construct($context);
-    }
 
     protected function _construct()
     {
+        parent::_construct();
+
         $this->_blockGroup = 'Straker_EasyTranslationPlatform';
         $this->_controller = 'adminhtml_support';
 
-        parent::_construct();
-
         $this->buttonList->update('save', 'label', __('Send'));
-
         $this->buttonList->remove('reset');
-
         $this->buttonList->remove('back');
     }
 

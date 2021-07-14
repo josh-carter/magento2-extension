@@ -45,7 +45,6 @@ class ResetStore extends Action
         return parent::__construct($context);
     }
 
-
     public function execute()
     {
         $storeId = $this->getRequest()->getParam('store');
@@ -65,7 +64,7 @@ class ResetStore extends Action
                 $this->_logger->error($message);
                 $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $message);
             }
-        } elseif( !isset($storeId) ) {
+        } elseif (!isset($storeId)) {
             $stores = $this->_storeManager->getStores();
             foreach ($stores as $store) {
                 $this->_strakerSetup->saveStoreSetup($store->getId());
@@ -74,13 +73,11 @@ class ResetStore extends Action
             $this->messageManager->addSuccessMessage($message);
             $this->_logger->info($message);
             $this->_storeCache->clean(Config::CACHE_TAG);
-        }else{
+        } else {
             $message = __('Store code is not valid.');
             $this->messageManager->addErrorMessage($message);
             $this->_logger->error($message);
             $this->_strakerApi->_callStrakerBugLog(__FILE__ . ' ' . __METHOD__ . ' ' . $message);
         }
-
-        return;
     }
 }

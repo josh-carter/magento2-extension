@@ -3,25 +3,33 @@
  * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-// @codingStandardsIgnoreFile
-
+/** @var \Straker\EasyTranslationPlatform\Block\Adminhtml\Job\Edit\Tab\Categories $block */
 ?>
+<?php if ($block->getRoot()): ?>
     <div class="fieldset-wrapper">
-    <div class="fieldset-wrapper-title" data-role="title" aria-controls="super_config-content" role="tab" aria-selected="true" aria-expanded="true">
-        <strong class="admin__collapsible-title">
-            <span><?php echo __('Please Select Your Categories:') ?></span>
-        </strong>
-    </div>
+        <div class="fieldset-wrapper-title"
+             data-role="title"
+             aria-controls="super_config-content"
+             role="tab"
+             aria-selected="true"
+             aria-expanded="true"
+        >
+            <strong class="admin__collapsible-title">
+                <span><?= $block->escapeHtml(__('Please Select Your Categories:')) ?></span>
+            </strong>
+        </div>
     </div>
 
     <div class="categories-side-col">
-        <?php if ($block->getRoot()): ?>
         <div class="tree-actions">
             <?php if ($block->getRoot()): ?>
-                <a href="#" onclick="tree.collapseTree(); return false;"><?= /* @escapeNotVerified */ __('Collapse All') ?></a>
+                <a href="#" onclick="tree.collapseTree(); return false;">
+                    <?= $block->escapeHtml(__('Collapse All')) ?>
+                </a>
                 <span class="separator">|</span>
-                <a href="#" onclick="tree.expandTree(); return false;"><?= /* @escapeNotVerified */ __('Expand All') ?></a>
+                <a href="#" onclick="tree.expandTree(); return false;">
+                    <?= $block->escapeHtml(__('Expand All')) ?>
+                </a>
             <?php endif; ?>
         </div>
         <div class="tree-holder">
@@ -31,14 +39,14 @@
 
     <div data-id="information-dialog-tree" class="messages" style="display: none;">
         <div class="message message-notice">
-            <div><?php /* @escapeNotVerified */ echo __('This operation can take a long time'); ?></div>
+            <div><?= $block->escapeHtml(__('This operation can take a long time')); ?></div>
         </div>
     </div>
 
     <input type="hidden" name="categories" value="">
 
     <script>
-        var tree;
+        let tree;
         require([
             "jquery",
             'Magento_Ui/js/modal/modal',
@@ -113,24 +121,21 @@
                 request: function (url, params) {
                     if (!params) {
                         if (this.activeTab) {
-                            var params = {active_tab_id: this.activeTab};
-                        }
-                        else {
-                            var params = {};
+                            params = {active_tab_id: this.activeTab};
+                        } else {
+                            params = {};
                         }
                     }
                     if (!params.form_key) {
                         params.form_key = FORM_KEY;
                     }
-                    var result = new Ajax.Request(
-                        url + (url.match(new RegExp('\\?')) ? '&isAjax=true' : '?isAjax=true' ),
+                    return new Ajax.Request(
+                        url + (url.match(new RegExp('\\?')) ? '&isAjax=true' : '?isAjax=true'),
                         {
                             parameters: params,
                             method: 'post'
                         }
                     );
-
-                    return result;
                 },
 
                 selectCurrentNode: function () {
@@ -158,22 +163,11 @@
 
                 categoryClick: function (node, e) {
 
-                    if(node.attributes.checked){
+                    if (node.attributes.checked) {
                         node.getUI().check(0);
-                    }else{
+                    } else {
                         node.getUI().check(1);
                     }
-//                    var url = this.buildUrl(node.id);
-//
-//                    this.currentNodeId = node.id;
-//                    if (!this.useAjax) {
-//                        setLocation(url);
-//                        return;
-//                    }
-//                    if (this.activeTab) {
-//                        var params = {active_tab_id: this.activeTab};
-//                    }
-//                    updateContent(url, params);
                 },
 
                 buildUrl: function (id) {
@@ -191,7 +185,11 @@
                 if (tree && switcherParams) {
                     var url;
                     if (switcherParams.useConfirm) {
-                        if (!confirm("<?php /* @escapeNotVerified */ echo __('Please confirm site switching. All data that hasn\'t been saved will be lost.') ?>")) {
+                        const msg = $.mage.__(
+                            "Please confirm site switching. All data that hasn't been saved will be lost."
+                        );
+
+                        if (!confirm(msg)) {
                             return false;
                         }
                     }
@@ -199,8 +197,7 @@
                     if ($('add_root_category_button')) {
                         if (!switcherParams.scopeId) {
                             $('add_root_category_button').show();
-                        }
-                        else {
+                        } else {
                             $('add_root_category_button').hide();
                         }
                     }
@@ -214,7 +211,7 @@
                         var params = {
                             form_key: FORM_KEY
                         };
-                        new Ajax.Request(url + (url.match(new RegExp('\\?')) ? '&isAjax=true' : '?isAjax=true' ), {
+                        new Ajax.Request(url + (url.match(new RegExp('\\?')) ? '&isAjax=true' : '?isAjax=true'), {
                             parameters: params,
                             method: 'post',
                             onComplete: function (transport) {
@@ -233,7 +230,7 @@
                             }
                         });
                     } else {
-                        var baseUrl = '<?php /* @escapeNotVerified */ echo $block->getEditUrl() ?>';
+                        var baseUrl = '<?= $block->escapeUrl($block->getEditUrl()) ?>';
                         var urlExt = switcherParams.scopeParams + 'id/' + tree.currentNodeId + '/';
                         url = parseSidUrl(baseUrl, urlExt);
                         setLocation(url);
@@ -247,15 +244,15 @@
 
             function _renderNewTree(config, scopeParams) {
                 if (!config) {
-                    var config = defaultLoadTreeParams;
+                    config = defaultLoadTreeParams;
                 }
 
                 if (tree) {
                     tree.purgeListeners();
                     tree.el.dom.innerHTML = '';
                 }
-                tree = new Ext.tree.TreePanel.Enhanced('tree-div', newTreeParams);
 
+                tree = new Ext.tree.TreePanel.Enhanced('tree-div', newTreeParams);
                 tree.loadTree(config, true);
 
                 // try to select current category
@@ -280,15 +277,15 @@
 
             jQuery(function () {
                 categoryLoader = new Ext.tree.TreeLoader({
-                    dataUrl: '<?php /* @escapeNotVerified */ echo $block->getLoadTreeUrl() ?>'
+                    dataUrl: '<?= $block->escapeUrl($block->getLoadTreeUrl()) ?>'
                 });
 
-                categoryLoader.createNode = function(config) {
+                categoryLoader.createNode = function (config) {
                     config.uiProvider = Ext.tree.CheckboxNodeUI;
                     var node;
                     // var _node = Object.clone(config);
                     if (config.children && !config.children.length) {
-                        delete(config.children);
+                        delete (config.children);
                         node = new Ext.tree.AsyncTreeNode(config);
                     } else {
                         node = new Ext.tree.TreeNode(config);
@@ -316,7 +313,7 @@
                             var node;
                             var _node = Object.clone(config[i]);
                             if (_node.children && !_node.children.length) {
-                                delete(_node.children);
+                                delete (_node.children);
                                 node = new Ext.tree.AsyncTreeNode(_node);
                             } else {
                                 node = new Ext.tree.TreeNode(config[i]);
@@ -372,47 +369,46 @@
 
                 scopeSwitcherHandler = reRenderTree;
 
-                newTreeParams = {
+                window.newTreeParams = {
                     animate: false,
                     loader: categoryLoader,
                     enableDD: true,
                     containerScroll: true,
                     selModel: new Ext.tree.CheckNodeMultiSelectionModel(),
-                    rootVisible: '<?php /* @escapeNotVerified */ echo $block->getRoot()->getIsVisible() ?>',
+                    rootVisible: '<?= $block->escapeHtml($block->getRoot()->getIsVisible()) ?>',
                     useAjax: false,
-                    switchTreeUrl: '<?php /* @escapeNotVerified */ echo $block->getSwitchTreeUrl() ?>',
-                    editUrl: '<?php /* @escapeNotVerified */ echo $block->getEditUrl() ?>',
-                    currentNodeId: <?php /* @escapeNotVerified */ echo (int)$block->getCategoryId() ?>,
-                    baseUrl: '<?php /* @escapeNotVerified */ echo $block->getEditUrl() ?>',
-                    rootUIProvider:   Ext.tree.CheckboxNodeUI
+                    switchTreeUrl: '<?= $block->escapeUrl($block->getSwitchTreeUrl()) ?>',
+                    editUrl: '<?= $block->escapeUrl($block->getEditUrl()) ?>',
+                    currentNodeId: <?= (int) $block->getCategoryId() ?>,
+                    baseUrl: '<?= $block->escapeUrl($block->getEditUrl()) ?>',
+                    rootUIProvider: Ext.tree.CheckboxNodeUI
                 };
 
                 defaultLoadTreeParams = {
                     parameters: {
-                        text: '<?php /* @escapeNotVerified */ echo htmlentities($block->getRoot()->getName()) ?>',
+                        text: '<?= $block->escapeHtml($block->getRoot()->getName()) ?>',
                         draggable: false,
                         allowDrop: false,
-                        id: <?php /* @escapeNotVerified */ echo (int)$block->getRoot()->getId() ?>,
-                        expanded: <?= (int)$block->getIsWasExpanded() ?>,
-                        store_id: <?php /* @escapeNotVerified */ echo (int)$block->getStore()->getId() ?>,
-                        category_id: <?php /* @escapeNotVerified */ echo (int)$block->getCategoryId() ?>
+                        id: <?= (int) $block->getRoot()->getId() ?>,
+                        expanded: <?= (int) $block->getIsWasExpanded() ?>,
+                        store_id: <?= (int) $block->getStore()->getId() ?>,
+                        category_id: <?= (int) $block->getCategoryId() ?>
                     },
-                    data: <?php  /* @escapeNotVerified */ echo $block->getTreeJson() ?>
+                    data: <?= /* @noEscape */ $block->getTreeJson() ?>
                 };
 
                 reRenderTree();
 
 
-                tree.on('check', function(node) {
-
-                    if(node.attributes.checked) {
+                tree.on('check', function (node) {
+                    if (node.attributes.checked) {
                         categoryAdd(node.id);
-                        node.childNodes.each(function(c){
+                        node.childNodes.each(function (c) {
                             c.getUI().check(1);
                         });
                     } else {
                         categoryRemove(node.id);
-                        node.childNodes.each(function(c){
+                        node.childNodes.each(function (c) {
                             c.getUI().check(0);
                         });
                     }
@@ -423,7 +419,7 @@
 
                 tree.root.cascade(function (n) {
                     if (typeof n.id === "string") {
-                        if(n.attributes.checked){
+                        if (n.attributes.checked) {
                             catIds += n.id + ',';
                         }
                     }
@@ -441,12 +437,11 @@
             function categoryRemove(id) {
                 var ids = jQuery('input[name="categories"]').val().split(',');
                 // bug #7654 fixed
-                while (-1 != ids.indexOf(id)) {
+                while (-1 !== ids.indexOf(id)) {
                     ids.splice(ids.indexOf(id), 1);
                 }
-                jQuery('input[name="categories"]').val(ids.join(',')) ;
+                jQuery('input[name="categories"]').val(ids.join(','));
             }
-
         });
 
     </script>

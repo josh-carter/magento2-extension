@@ -6,14 +6,11 @@ use Magento\Framework\View\Element\Template;
 
 class FormContainer extends \Magento\Backend\Block\Widget\Container
 {
-
     protected $_objectId = 'id';
-
     protected $_template = 'Straker_EasyTranslationPlatform::widget/form/container.phtml';
 
     protected function _construct()
     {
-
         parent::_construct();
         
         $this->addButton(
@@ -57,8 +54,10 @@ class FormContainer extends \Magento\Backend\Block\Widget\Container
     protected function _prepareLayout()
     {
 
-        $this->addChild('form', 'Straker\EasyTranslationPlatform\Block\Adminhtml\Setup\LanguagePairs\Form\Form')
-            ->setTemplate('Straker_EasyTranslationPlatform::setup/languagepairs.phtml');
+        $this->addChild(
+            'form',
+            \Straker\EasyTranslationPlatform\Block\Adminhtml\Setup\LanguagePairs\Form\Form::class
+        )->setTemplate('Straker_EasyTranslationPlatform::setup/languagepairs.phtml');
 
         return parent::_prepareLayout();
     }
@@ -70,7 +69,6 @@ class FormContainer extends \Magento\Backend\Block\Widget\Container
 
     public function getFormHtml()
     {
-
         return $this->getChildHtml('form');
     }
 }
