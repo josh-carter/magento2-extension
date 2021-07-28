@@ -3,8 +3,14 @@
     <acl>
         <resources>
             <resource id="Magento_Backend::admin">
-            <resource id="Magento_Backend::system">
-                <resource id="Straker_EasyTranslationPlatform::customMenu" title="Custom Menu"/>
+                <resource id="Magento_Backend::system">
+                    <resource id="Straker_EasyTranslationPlatform::customMenu" title="Custom Menu">
+                        <resource id="EasyTranslationPlatform_EasyTranslationPlatform::productsgrid" title="Straker Products Grid" />
+                        <resource id="Straker_EasyTranslationPlatform::settings" title="Straker Settings" />
+                        <resource id="Straker_EasyTranslationPlatform::support" title="Straker Support" />
+                        <resource id="Straker_EasyTranslationPlatform::termsandconditions" title="Straker Terms" />
+                        <resource id="Straker_EasyTranslationPlatform::about" title="Straker About" />
+                    </resource>
                 </resource>
                 <resource id="Magento_Backend::stores">
                     <resource id="Magento_Backend::stores_settings">
